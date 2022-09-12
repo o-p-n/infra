@@ -273,7 +273,3 @@ const network = new docker.Network("public", {
 const certsVolume = new docker.Volume("certs", {
   name: "certs",
 }, dockerOpts);
-
-const webVolume = new docker.Volume("web", {
-  name: "web",
-}, dockerOpts);
