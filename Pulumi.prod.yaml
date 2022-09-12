@@ -1,4 +1,3 @@
-encryptionsalt: v1:20NBBYGkvLA=:v1:3bVinkS6b2x72bD3:slWxaYK9QdCIzf+7npspd9ZzBYllMg==
 config:
   o-p.n:do_auth_token:
-    secure: v1:Wue/+ANbdDbsqshI:QTY9J+nCxplHHivU7EghoBfDBXGQdzY0sxjc6D6PihSZ/9/u8pRhXP9Vrxi5Q2FTkNUH2oxOQwpt20RLdep52X3PUiDJAB/R2bK+v/sw52jSAO42iRBR
+    secure: AAABAOkxynxAxTSk/omwvuv5pvV1y4FPGfRWhLPBVo/teC97bCx4cnAoNFmzCMR/01fyTduy0zCa6uSVIqbTU6GEq8zErVFP4A6yhw0iKcdggvQ6z1FqTVJ+ji6buFTn4+FStYT8Lw==
