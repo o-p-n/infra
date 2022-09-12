@@ -1,0 +1,12 @@
+{
+    "name": "o-p.n",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^14"
+    },
+    "dependencies": {
+        "@pulumi/digitalocean": "^4.15.2",
+        "@pulumi/docker": "^3.4.1",
+        "@pulumi/pulumi": "^3.0.0"
+    }
+}

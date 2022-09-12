@@ -1,0 +1,6 @@
+# Copyright (c) 2022 Matthew A. Miller
+
+encryptionsalt: v1:Is/TO/N7ZO8=:v1:DNB5yZnEaYcw0eYH:IGOQpskVvLR5P4i0SIBdxAdO4wcjnA==
+config:
+  o-p.n:do_auth_token:
+    secure: v1:Op6MjsT+DqB4FVzI:VuV3e9nfW389XVx6FSYg8M5usNIi1uVfodxb/hu4kksGkxjXrTCh6XKP35wm+gZH2l5StM3M5rFcCeubYCQQjiruTOyzgTspIM+Y/XENurnR+MlX3Vfp
