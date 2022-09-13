@@ -7,6 +7,7 @@ export function dockerStack(stack: string, config: pulumi.Config) {
   });
   const dockerOpts = {
     provider: dockerProvider,
+    dependsOn: dockerProvider,
   };
   
   const network = new docker.Network("public", {
