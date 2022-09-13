@@ -229,26 +229,26 @@ export function digitaloceanStack(stack: string, config: pulumi.Config) {
     ttl: 30,
     type: "A",
     value: droplet.ipv4Address,
-  });
+  }, { dependsOn: [_default, droplet] });
   const dropletWildA = new digitalocean.DnsRecord("o-p.n-wildA", {
     domain: _default.id,
     name: "*",
     ttl: 30,
     type: "A",
     value: droplet.ipv4Address,
-  });
+  }, { dependsOn: [_default, droplet] });
   const dropletAAAA = new digitalocean.DnsRecord("o-p.n-AAAA", {
     domain: _default.id,
     name: "@",
     ttl: 30,
     type: "AAAA",
     value: droplet.ipv6Address,
-  });
+  }, { dependsOn: [_default, droplet] });
   const dropletWildAAAA = new digitalocean.DnsRecord("o-p.n-wildAAAA", {
     domain: _default.id,
     name: "*",
     ttl: 30,
     type: "AAAA",
     value: droplet.ipv6Address,
-  });
+  }, { dependsOn: [_default, droplet] });
 }
