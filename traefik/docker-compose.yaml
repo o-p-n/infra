@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   ingress:
-    image: docker.io/linuxwolf/traefik@sha256:06bcab6a89e7ce5c165d8c38e25afd81fa87b45374c226a6b224b4d57c17f067
+    image: docker.io/linuxwolf/traefik:2.8.1.6b78e270e42100250574e9a9dbed00b44ae1d9a6
     deploy:
       labels:
         - "traefik.enable=true"
