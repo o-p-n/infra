@@ -81,6 +81,7 @@ packages:
 
 package_update: true
 package_upgrade: true
+package_reboot_if_required: true
 
 users:
   - name: admin
@@ -220,6 +221,7 @@ runcmd:
     region: "nyc1",
     size: "s-1vcpu-2gb-amd",
     ipv6: true,
+    monitoring: true,
     userData: userData,
   });
   const dropletA = new digitalocean.DnsRecord("o-p.n-A", {
