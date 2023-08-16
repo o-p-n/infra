@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gateway
+  namespace: istio-ingress
+spec:
+  secretName: gateway-cert
+  isCA: false
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  commonName: outer planes
+  duration: 240h
+  renewBefore: 168h
+  issuerRef:
+    kind: ClusterIssuer
+    name: cert-manager
