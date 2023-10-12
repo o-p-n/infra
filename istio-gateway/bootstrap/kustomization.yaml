@@ -6,4 +6,4 @@ labels:
       outer-planes.net/deployment: istio-gateway
 
 resources:
-  - gateway-api.yaml
+  - gateway-api-0.8.1.yaml
