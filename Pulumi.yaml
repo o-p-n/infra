@@ -1,5 +1,0 @@
-# Copyright (c) 2022 Matthew A. Miller
-
-name: o-p.n
-description: The infrastructure for outer-planes.net
-runtime: nodejs
