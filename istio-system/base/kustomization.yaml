@@ -6,4 +6,5 @@ labels:
       outer-planes.net/deployment: istio-system
 
 resources:
+  - mtls.yaml
   - telemetry.yaml
