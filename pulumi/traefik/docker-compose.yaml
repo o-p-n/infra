@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  ingress:
+    image: docker.io/linuxwolf/traefik:2.8.1.6b78e270e42100250574e9a9dbed00b44ae1d9a6
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traeif.docker.network=public"
+        - "traefik.http.routers.dashboard.rule=Host(`traefik.outer-planes.net`)"
+        - "traefik.http.routers.dashboard.service=api@internal"
+        - "traefik.http.routers.dashboard.middlewares=dashboard-auth"
+        - "traefik.http.routers.dashboard.tls=true"
+        - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.dashboard.tls.domains[0].main=outer-planes.net"
+        - "traefik.http.routers.dashboard.tls.domains[0].sans=*.outer-planes.net"
+        - "traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_ADMIN_CREDS}"
+        - "traefik.http.services.dummy-svc.loadbalancer.server.port=9999"
+      mode: global
+      placement:
+        constraints:
+          - "node.role==manager"
+      restart_policy:
+        condition: any
+    environment:
+      - DO_AUTH_TOKEN=${DIGITALOCEAN_TOKEN}
+    networks:
+      - public
+    volumes:
+      - certs:/app/certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  certs:
+    external: true
+
+networks:
+  public:
+    external: true
