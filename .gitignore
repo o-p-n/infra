@@ -1,6 +1,6 @@
 /*.key
 
-*/tls.key
-*/secrets.env
+**/tls.key
+**/secrets.env
 
 .DS_Store
