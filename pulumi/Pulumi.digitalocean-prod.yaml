@@ -1,5 +1,0 @@
-config:
-  o-p.n:do_auth_token:
-    secure: AAABAOkxynxAxTSk/omwvuv5pvV1y4FPGfRWhLPBVo/teC97bCx4cnAoNFmzCMR/01fyTduy0zCa6uSVIqbTU6GEq8zErVFP4A6yhw0iKcdggvQ6z1FqTVJ+ji6buFTn4+FStYT8Lw==
-  o-p.n:traefik_admin_creds:
-    secure: AAABAHCTAUtrGnivLlVeZNX9ZEyIUD/1vkZgZQ3JUCvwdq5ByChYq8qTq28vdcRrjItDOBX1N2xaVhZt2h0lviPgVH+NpxGQeMzLEfVmTRy6MLgdKoN1f3cUkJC+KYs/rIc=
