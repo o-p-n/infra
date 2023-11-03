@@ -64,13 +64,31 @@ function apply() {
   decrypt_cleanup $kustomization
 }
 
-if [[ $(($#)) < 2 ]] ; then
-  log "An app and environment must be specified"
+usage() {
+  log "Usage: $0 [-B] <app> <env>"
   exit 1
-fi
+}
+
+BOOTSTRAP=""
+
+while getopts "B" OPTION; do
+  case "${OPTION}" in
+    "B")
+      BOOTSTRAP="yes"
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND-1))
 
 APPLICATION=$1
 ENVIRONMENT=$2
+
+if [ "${APPLICATION}" == "" ] || [ "${ENVIRONMENT}" == "" ] ; then
+  usage
+fi
 
 pushd "${CONFIG_BASE_DIR}/${APPLICATION}" > /dev/null
 
@@ -81,7 +99,7 @@ if [ ! -d "${ENV_DIR}" ] ; then
   exit 3
 fi
 
-if [ -d "bootstrap" ] ; then
+if [ -d "bootstrap" ] && [ "${BOOTSTRAP}" == "yes" ] ; then
   log "apply bootstrap kustomization ..."
   apply "bootstrap"
 
