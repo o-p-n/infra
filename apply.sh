@@ -20,11 +20,11 @@ function decrypt() {
   DECRYPTED=()
   log "decrypting secrets..."
 
-  for enc in $(find "${base_dir}" -name "*.age") ; do
-    local base=$(basename "$enc" ".age")
+  for enc in $(find "${base_dir}" -name "*.sops") ; do
+    local base=$(basename "$enc" ".sops")
     local dec="${base_dir}/${base}"
     log "   decrypting ${enc} --> ${dec}"
-    age -d -i "${CONFIG_BASE_DIR}/${ENVIRONMENT}.key" "${enc}" > "${dec}"
+    ${!INFRA_PRIVATAE_${ENVIRONMENT}} sops --decrypt "${enc}" > "${dec}"
     DECRYPTED+=("${dec}")
   done
 }
