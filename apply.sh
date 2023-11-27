@@ -23,8 +23,9 @@ function decrypt() {
   for enc in $(find "${base_dir}" -name "*.sops") ; do
     local base=$(basename "$enc" ".sops")
     local dec="${base_dir}/${base}"
+    local privatekey=INFRA_PRIVATE_${ENVIRONMENT}
     log "   decrypting ${enc} --> ${dec}"
-    ${!INFRA_PRIVATAE_${ENVIRONMENT}} sops --decrypt "${enc}" > "${dec}"
+    SOPS_AGE_KEY=\"${!privatekey}}\" sops --decrypt "${enc}" > "${dec}"
     DECRYPTED+=("${dec}")
   done
 }
