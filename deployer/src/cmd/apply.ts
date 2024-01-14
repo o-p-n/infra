@@ -15,13 +15,6 @@ export const ApplyCommand = {
   command: "apply",
   desc: "applies resources to given environment",
   builder: {
-    env: {
-      alias: "E",
-      desc: "environment to apply to",
-      demandOption: true,
-      requiresArg: true,
-      string: true,
-    },
     bootstrap: {
       alias: "B",
       desc: "also apply bootstrapping",

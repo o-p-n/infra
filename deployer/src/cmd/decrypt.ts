@@ -12,19 +12,24 @@ export const DecryptSchema = BaseSchema.extend({
   file: z.string().min(1),
 });
 
-export const DecryptCommand = {
-  command: "decrypt file",
-  desc: "decrypt data for environment",
-  builder: {
-    env: {
-      alias: "E",
-      desc: "environment to decrypt for",
-      demandOption: true,
-      requiresArg: true,
+// ##### Command-line Setup #####
+// deno-lint-ignore no-explicit-any
+export function configureDecrypt(yargs: any) {
+  return yargs.command(
+    "decrypt <file>",
+    "decrypt the given file for the environment",
+    builder,
+    handler,
+  );
+}
+
+// deno-lint-ignore no-explicit-any
+function builder(yargs: any) {
+  return yargs
+    .positional("file", {
+      desc: "the file to decrypt",
       string: true,
-    },
-  },
-  handler,
+    });
 }
 
 async function handler(args: unknown) {

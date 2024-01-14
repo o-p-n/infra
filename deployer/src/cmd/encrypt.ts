@@ -12,19 +12,25 @@ export const EncryptSchema = BaseSchema.extend({
   file: z.string().min(1),
 });
 
-export const EncryptCommand = {
-  command: "encrypt file",
-  desc: "encrypt data for environment",
-  builder: {
-    env: {
-      alias: "E",
-      desc: "environment to encrypt for",
-      demandOption: true,
-      requiresArg: true,
+// ##### Command-line Setup #####
+// deno-lint-ignore no-explicit-any
+export function configureEncrypt(yargs: any) {
+  return yargs
+    .command(
+      "encrypt <file>",
+      "encrypt the given file for the environment",
+      builder,
+      handler,
+    );
+}
+
+// deno-lint-ignore no-explicit-any
+function builder(yargs: any) {
+  return yargs
+    .positional("file", {
+      desc: "the file to encrypt",
       string: true,
-    },
-  },
-  handler,
+    });
 }
 
 async function handler(args: unknown) {

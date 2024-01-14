@@ -1,19 +1,22 @@
 /** */
 
 import yargs from "yargs";
-import { ApplyCommand } from "./cmd/apply.ts";
-import { DecryptCommand } from "./cmd/decrypt.ts";
-import { EncryptCommand } from "./cmd/encrypt.ts";
+import { configureDecrypt } from "./cmd/decrypt.ts";
+import { configureEncrypt } from "./cmd/encrypt.ts";
 
-yargs(Deno.args)
-  .option("identity-dir", {
-    alias: "I",
-    desc: "directory containing identities (public/private keys)",
+let argsCfg = yargs(Deno.args)
+  .option("env", {
+    desc: "the environment to operate on",
+    demandOption: true,
     requiresArg: true,
     string: true,
   })
-  .command(ApplyCommand)
-  .command(DecryptCommand)
-  .command(EncryptCommand)
-  .demandCommand()
-  .parse();
+  .option("identity-dir", {
+    desc: "the directory containing identities (public/private keys)",
+    requiresArg: true,
+    string: true,
+  });
+argsCfg = configureDecrypt(argsCfg);
+argsCfg = configureEncrypt(argsCfg);
+
+argsCfg.demandCommand().parse();
