@@ -1,8 +1,23 @@
-#! /bin/bash
+#! /usr/bin/env bash
+
+# Applies the given environment's kubernetes kustomization 
+#
+# The current working directory (PWD) is expected to the "root"
+# of the application, with the following directories:
+#
+# <PWD>
+#   +- k8s
+#       +- bootstrap
+#     [ +- base (OPTIONAL) ]
+#       +- env
+#           +- <named environment #1>
+#           +- ...
+#           +- <named environment #n>
 
 set -euo pipefail
 
-CONFIG_BASE_DIR="$( realpath $( dirname "${BASH_SOURCE[0]}" ) )"
+PROGRAM_DIR="$( realpath $( dirname "${BASH_SOURCE[0]}" ) )"
+IDENTITY_DIR=${IDENTITY_DIR:=PROGRAM_DIR}
 
 function log() {
   echo "$*" > /dev/stderr
@@ -10,10 +25,13 @@ function log() {
 
 function decrypt() {
   local base_dir=$1
-  local identity="${CONFIG_BASE_DIR}/${ENVIRONMENT}.key"
+  local privatekey
 
-  if [ ! -f "${identity}" ] ; then
-    log "decryption key for ${ENVIRONMENT} not found\!"
+  local keyfile="${IDENTITY_DIR}/${ENVIRONMENT}.key"
+  if [[ -f "${keyfile}" ]] ; then
+    privatekey=$(cat "${keyfile}")
+  else
+    log "decryption key for ${ENVIRONMENT} not found!"
     exit 1
   fi
 
@@ -23,9 +41,9 @@ function decrypt() {
   for enc in $(find "${base_dir}" -name "*.sops") ; do
     local base=$(basename "$enc" ".sops")
     local dec="${base_dir}/${base}"
-    local privatekey=INFRA_PRIVATE_${ENVIRONMENT}
+
     log "   decrypting ${enc} --> ${dec}"
-    SOPS_AGE_KEY=\"${!privatekey}}\" sops --decrypt "${enc}" > "${dec}"
+    SOPS_AGE_KEY="${privatekey}" sops --decrypt "${enc}" > "${dec}"
     DECRYPTED+=("${dec}")
   done
 }
@@ -66,7 +84,7 @@ function apply() {
 }
 
 usage() {
-  log "Usage: $0 [-B] <app> <env>"
+  log "Usage: $0 [-B] <env>"
   exit 1
 }
 
@@ -84,14 +102,13 @@ while getopts "B" OPTION; do
 done
 shift $((OPTIND-1))
 
-APPLICATION=$1
-ENVIRONMENT=$2
+ENVIRONMENT=$1
 
-if [ "${APPLICATION}" == "" ] || [ "${ENVIRONMENT}" == "" ] ; then
+if [ "${ENVIRONMENT}" == "" ] ; then
   usage
 fi
 
-pushd "${CONFIG_BASE_DIR}/${APPLICATION}" > /dev/null
+pushd "k8s" > /dev/null
 
 ENV_DIR="env/${ENVIRONMENT}"
 
