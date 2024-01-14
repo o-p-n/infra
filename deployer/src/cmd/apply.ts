@@ -5,23 +5,31 @@ import { z } from "zod";
 import { BaseSchema } from "../internal/config.ts";
 
 export const ApplySchema = BaseSchema.extend({
-  env: z.string().min(1),
   bootstrap: z.boolean().optional().default(false),
 });
 
 export type ApplyConfig = z.infer<typeof ApplySchema>;
 
-export const ApplyCommand = {
-  command: "apply",
-  desc: "applies resources to given environment",
-  builder: {
-    bootstrap: {
+// ##### Command-line Setup #####
+// deno-lint-ignore no-explicit-any
+export function configureApply(yargs: any) {
+  return yargs
+    .command(
+      "apply",
+      "applies resources for the given environment",
+      builder,
+      handler,
+    );
+}
+
+// deno-lint-ignore no-explicit-any
+function builder(yargs: any) {
+  return yargs
+    .option("bootstrap", {
       alias: "B",
       desc: "also apply bootstrapping",
       boolean: true,
-    },
-  },
-  handler,
+    });
 }
 
 function handler(args: unknown) {

@@ -1,6 +1,8 @@
 /** */
 
 import yargs from "yargs";
+
+import { configureApply } from "./cmd/apply.ts";
 import { configureDecrypt } from "./cmd/decrypt.ts";
 import { configureEncrypt } from "./cmd/encrypt.ts";
 
@@ -16,6 +18,8 @@ let argsCfg = yargs(Deno.args)
     requiresArg: true,
     string: true,
   });
+
+argsCfg = configureApply(argsCfg);
 argsCfg = configureDecrypt(argsCfg);
 argsCfg = configureEncrypt(argsCfg);
 
