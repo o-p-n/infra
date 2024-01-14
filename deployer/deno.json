@@ -1,11 +1,4 @@
 {
-  "imports": {
-    "deno_std/": "https://deno.land/std@0.212.0/",
-    "dax": "https://deno.land/x/dax@0.36.0/mod.ts",
-    "yargs": "https://deno.land/x/yargs@v17.7.2-deno/deno.ts",
-    "zod": "https://deno.land/x/zod@v3.22.4/mod.ts"
-  },
-
   "tasks": {
     "compile": "deno compile --allow-read --allow-write --allow-run --allow-env --output deployer src/main.ts"
   }

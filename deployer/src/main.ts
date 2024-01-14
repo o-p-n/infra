@@ -1,6 +1,6 @@
 /** */
 
-import yargs from "yargs";
+import { yargs } from "./deps.ts";
 
 import { configureApply } from "./cmd/apply.ts";
 import { configureDecrypt } from "./cmd/decrypt.ts";

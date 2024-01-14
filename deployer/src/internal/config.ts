@@ -1,6 +1,6 @@
 /** */
 
-import { z } from "zod";
+import { z } from "../deps.ts";
 
 export const BaseSchema = z.object({
   env: z.string().min(1),

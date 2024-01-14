@@ -1,6 +1,6 @@
 /** */
 
-import { z } from "zod";
+import { z } from "../deps.ts";
 
 import { BaseSchema } from "../internal/config.ts";
 

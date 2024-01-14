@@ -1,11 +1,9 @@
 /** */
 
-import { z } from "zod";
-import $ from "dax";
-import { resolve } from "deno_std/path/mod.ts";
+import { z } from "../deps.ts";
 
 import { BaseSchema } from "../internal/config.ts";
-import { loadPrivateKey } from "../internal/keys.ts";
+import { Crypter } from "../internal/keys.ts";
 
 export const DecryptSchema = BaseSchema.extend({
   env: z.string().min(1),
@@ -34,23 +32,7 @@ function builder(yargs: any) {
 
 async function handler(args: unknown) {
   const cfg = DecryptSchema.parse(args);
-  const {
-    env,
-    file,
-  } = cfg;
+  const crypter = new Crypter(cfg);
 
-  console.log(`decrypting ${file} for ${env}`);
-  const dstPath = resolve("k8s", "env", env, file);
-
-  const srcPath = `${dstPath}.sops`;
-  const src = (await Deno.open(srcPath)).readable;
-
-  const prvKey = await loadPrivateKey(cfg);
-  const result = await $`sops --decrypt /dev/stdin`
-    .env({
-      "SOPS_AGE_KEY": prvKey,
-    })
-    .stdin(src)
-    .stdout("piped");
-  await Deno.writeFile(dstPath, result.stdoutBytes);
+  await crypter.decrypt(cfg.file);
 }
