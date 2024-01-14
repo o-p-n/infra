@@ -10,7 +10,6 @@ patches:
 generatorOptions:
  disableNameSuffixHash: true
 
-
 secretGenerator:
   - name: do-creds
     namespace: cert-manager
