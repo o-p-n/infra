@@ -1,5 +1,0 @@
-{
-  "tasks": {
-    "compile": "deno compile --allow-read --allow-write --allow-run --allow-env --output deployer src/main.ts"
-  }
-}
