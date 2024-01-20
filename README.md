@@ -2,7 +2,7 @@
 
 ## ORDER
 
-Components are best installed in the following order:
+Kubernetes components are best installed in the following order:
 
 1. `istio-system`
 2. `cert-manager`
