@@ -6,4 +6,4 @@ labels:
       outer-planes.net/deployment: istio-system
 resources:
   - namespace.yaml
-  - core-1.19.3.yaml
+  - core-1.20.2.yaml
