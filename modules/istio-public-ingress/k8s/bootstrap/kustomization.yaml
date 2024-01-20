@@ -6,4 +6,4 @@ labels:
       outer-planes.net/deployment: istio-public-ingress
 
 resources:
-  - gateway-api-0.8.1.yaml
+  - gateway-api-1.0.0.yaml
