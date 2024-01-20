@@ -3,7 +3,7 @@ kind: Kustomization
 
 labels:
   - pairs:
-      outer-planes.net/deployment: istio-gateway
+      outer-planes.net/deployment: istio-public-ingress
 
 resources:
   - gateway-api-0.8.1.yaml

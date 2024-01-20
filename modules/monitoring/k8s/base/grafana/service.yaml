@@ -21,7 +21,7 @@ metadata:
 spec:
   parentRefs:
     - name: gateway
-      namespace: istio-ingress
+      namespace: istio-public-ingress
   rules:
     - backendRefs:
         - name: grafana

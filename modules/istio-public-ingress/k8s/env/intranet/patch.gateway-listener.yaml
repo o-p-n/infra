@@ -2,12 +2,12 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 kind: Gateway
 metadata:
   name: gateway
-  namespace: istio-ingress
+  namespace: istio-public-ingress
 
 spec:
   listeners:
     - name: https-wild
-      hostname: "*.outer-planes.net"
+      hostname: "*.elysium.intranet"
       port: 443
       protocol: HTTPS
       tls:
@@ -18,7 +18,7 @@ spec:
         namespaces:
           from: All
     - name: https
-      hostname: "outer-planes.net"
+      hostname: "elysium.intranet"
       port: 443
       protocol: HTTPS
       tls:
@@ -29,14 +29,14 @@ spec:
         namespaces:
           from: All
     - name: http-wild
-      hostname: "*.outer-planes.net"
+      hostname: "*.elysium.intranet"
       port: 80
       protocol: HTTP
       allowedRoutes:
         namespaces:
           from: All
     - name: http
-      hostname: "outer-planes.net"
+      hostname: "elysium.intranet"
       port: 80
       protocol: HTTP
       allowedRoutes:
