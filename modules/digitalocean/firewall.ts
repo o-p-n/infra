@@ -1,10 +1,12 @@
 import * as digitalocean from "@pulumi/digitalocean";
 
-export async function stack(droplet: digitalocean.Droplet) {
+export function stack(droplet: digitalocean.Droplet) {
   const allIps = [
     "0.0.0.0/0",
     "::/0",
   ];
+  const allPorts = "1-65535";
+
   const firewall = new digitalocean.Firewall("o-p.n", {
     dropletIds: [droplet.id.apply((id) => parseInt(id))],
     outboundRules: [
@@ -15,10 +17,12 @@ export async function stack(droplet: digitalocean.Droplet) {
       {
         protocol: "udp",
         destinationAddresses: allIps,
+        portRange: allPorts,
       },
       {
         protocol: "tcp",
         destinationAddresses: allIps,
+        portRange: allPorts,
       },
     ],
     inboundRules: [

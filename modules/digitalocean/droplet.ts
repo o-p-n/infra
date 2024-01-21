@@ -1,8 +1,8 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as digitalocean from "@pulumi/digitalocean";
 
-export async function stack() {
-  const sshKeys = (await digitalocean.getSshKeys({})).sshKeys;
+export function stack() {
+  const sshKeys = digitalocean.getSshKeys({});
 
   const userData = `
 #! /bin/bash
@@ -33,17 +33,19 @@ snap install microk8s --classic --channel=1.28
 microk8s start
 `
 
-  const droplet = new digitalocean.Droplet("o-p.n", {
+  const instance = new digitalocean.Droplet("o-p.n", {
     name: "o-p.n",
     image: "ubuntu-22-04-x64",
     region: "nyc3",
     size: "s-1vcpu-2gb-amd",
     ipv6: true,
     monitoring: true,
-    sshKeys: sshKeys.map((k) => k.fingerprint),
+    sshKeys: sshKeys.then((keys) => (
+      keys.sshKeys.map((k) => k.fingerprint)
+    )),
     userData: userData,
   });
 
 
-  return droplet;
+  return instance;
 }

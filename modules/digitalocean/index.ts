@@ -1,14 +1,17 @@
-import * as pulumi from "@pulumi/pulumi";
 import * as digitalocean from "@pulumi/digitalocean";
-import { stack as droplet } from "./droplet";
-import { stack as dns } from "./dns";
-import { stack as firewall } from "./firewall";
+import * as droplet from "./droplet";
+import * as dns from "./dns";
+import * as fw from "./firewall";
 
-export async function stack() {
-  const inst = await droplet();
+export = async () => {
+  const instance = droplet.stack();
 
-  await Promise.all([
-    firewall(inst),
-    dns(inst),
-  ])
-}
+  const firewall = fw.stack(instance);
+  const dnsRecords = dns.stack(instance);
+
+  return {
+    droplet: instance,
+    firewall,
+    dns: dnsRecords,
+  };
+};
