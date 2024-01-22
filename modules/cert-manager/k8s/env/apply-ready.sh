@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-kubectl --context=local wait --for=condition=ready clusterIssuer cert-manager
+kubectl --context=${ENV} wait --for=condition=ready clusterIssuer cert-manager
