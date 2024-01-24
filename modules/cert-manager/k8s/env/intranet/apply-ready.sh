@@ -1,1 +1,1 @@
-../apply-ready.sh
+../../base/apply-ready.sh
