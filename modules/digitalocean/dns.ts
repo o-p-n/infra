@@ -134,7 +134,7 @@ function txt() {
   });
 
   return [
-    txtSpf, txtKeybase, txtGoogle,
+    txtSpf, txtKeybase, txtGoogle, txtGitHubOPN,
   ];
 }
 
@@ -193,15 +193,20 @@ function a(droplet: digitalocean.Droplet) {
   return [ dropletA, dropletWildA ];
 }
 
-export function stack(droplet: digitalocean.Droplet) {
-  return {
+export function stack(droplet?: digitalocean.Droplet) {
+  let result: Record<string, unknown> = {
     domain,
     ns: ns(),
     caa: caa(),
     mx: mx(),
     txt: txt(),
-
-    a: a(droplet),
-    aaaa: aaaa(droplet),
   };
+  if (droplet) {
+    result = {
+      ...result,
+      a: a(droplet),
+      aaaa: aaaa(droplet),
+    };
+  }
+  return result;
 }

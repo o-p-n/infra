@@ -5,6 +5,7 @@ import * as fw from "./firewall";
 
 export = async () => {
   const instance = droplet.stack();
+  // const instance = undefined;
 
   const firewall = fw.stack(instance);
   const dnsRecords = dns.stack(instance);
