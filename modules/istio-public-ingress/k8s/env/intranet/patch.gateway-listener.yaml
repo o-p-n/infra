@@ -7,7 +7,7 @@ metadata:
 spec:
   listeners:
     - name: https-wild
-      hostname: "*.elysium.local"
+      hostname: "*.outlands.intranet"
       port: 443
       protocol: HTTPS
       tls:
@@ -18,7 +18,7 @@ spec:
         namespaces:
           from: All
     - name: https
-      hostname: "elysium.local"
+      hostname: "outlands.intranet"
       port: 443
       protocol: HTTPS
       tls:
@@ -29,14 +29,14 @@ spec:
         namespaces:
           from: All
     - name: http-wild
-      hostname: "*.elysium.local"
+      hostname: "*.outlands.intranet"
       port: 80
       protocol: HTTP
       allowedRoutes:
         namespaces:
           from: All
     - name: http
-      hostname: "elysium.local"
+      hostname: "outlands.intranet"
       port: 80
       protocol: HTTP
       allowedRoutes:

@@ -1,4 +1,4 @@
 - op: add
   path: /spec/hostnames
   value:
-    - metrics.elysium.intranet
+    - metrics.outlands.intranet
