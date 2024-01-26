@@ -7,3 +7,4 @@ labels:
 resources:
   - namespace.yaml
   - core-1.20.2.yaml
+  - gateway-api-1.0.0.yaml
