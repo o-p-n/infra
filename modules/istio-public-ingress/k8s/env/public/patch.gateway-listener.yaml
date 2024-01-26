@@ -6,37 +6,17 @@ metadata:
 
 spec:
   listeners:
-    - name: https-wild
-      hostname: "*.outer-planes.net"
-      port: 443
-      protocol: HTTPS
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: gateway-cert
-      allowedRoutes:
-        namespaces:
-          from: All
     - name: https
-      hostname: "outer-planes.net"
       port: 443
       protocol: HTTPS
       tls:
         mode: Terminate
         certificateRefs:
           - name: gateway-cert
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: http-wild
-      hostname: "*.outer-planes.net"
-      port: 80
-      protocol: HTTP
       allowedRoutes:
         namespaces:
           from: All
     - name: http
-      hostname: "outer-planes.net"
       port: 80
       protocol: HTTP
       allowedRoutes:

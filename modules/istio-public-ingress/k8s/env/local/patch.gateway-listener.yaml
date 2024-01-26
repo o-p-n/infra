@@ -6,37 +6,17 @@ metadata:
 
 spec:
   listeners:
-    - name: https-wild
-      hostname: "*.k8s.test"
-      port: 443
-      protocol: HTTPS
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: gateway-cert
-      allowedRoutes:
-        namespaces:
-          from: All
     - name: https
-      hostname: "k8s.test"
       port: 443
       protocol: HTTPS
       tls:
         mode: Terminate
         certificateRefs:
           - name: gateway-cert
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: http-wild
-      hostname: "*.k8s.test"
-      port: 80
-      protocol: HTTP
       allowedRoutes:
         namespaces:
           from: All
     - name: http
-      hostname: "k8s.test"
       port: 80
       protocol: HTTP
       allowedRoutes:
