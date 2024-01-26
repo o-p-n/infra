@@ -22,6 +22,7 @@ spec:
   parentRefs:
     - name: gateway
       namespace: istio-public-ingress
+      sectionName: https
   rules:
     - backendRefs:
         - name: grafana
