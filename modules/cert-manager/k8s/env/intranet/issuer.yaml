@@ -3,5 +3,13 @@ kind: ClusterIssuer
 metadata:
   name: cert-manager
 spec:
-  ca:
-    secretName: ca-root
+  acme:
+    email: admin@outer-planes.casa
+    privateKeySecretRef:
+      name: cert-manager-account-key
+    solvers:
+      - dns01:
+        digitalocean:
+          tokenSecretRef:
+            name: do-creds
+            key: ACCESS_TOKEN
