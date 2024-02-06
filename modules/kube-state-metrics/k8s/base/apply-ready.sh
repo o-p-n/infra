@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-kubectl --context=${ENV} wait \
+kubectl wait \
   --namespace=kube-system \
   --for=condition=ready \
   pod \
