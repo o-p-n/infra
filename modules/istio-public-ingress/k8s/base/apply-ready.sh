@@ -2,10 +2,11 @@
 
 set -euo pipefail
 
-kubectl --context=${ENV} --namespace=istio-public-ingress \
-  wait --for=condition=ready \
-  certificate gateway
-
-kubectl --context=${ENV} --namespace=istio-public-ingress \
+kubectl --namespace=istio-public-ingress \
   wait --for=condition=programmed \
   gateway gateway
+
+kubectl --namespace=istio-public-ingress \
+  wait --for=condition=ready --timeout=300s \
+  certificate gateway
+

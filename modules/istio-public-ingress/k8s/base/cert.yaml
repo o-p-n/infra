@@ -9,7 +9,6 @@ spec:
   privateKey:
     algorithm: ECDSA
     size: 256
-  commonName: outer planes
   duration: 240h
   renewBefore: 168h
   issuerRef:
