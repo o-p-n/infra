@@ -11,9 +11,8 @@ generatorOptions:
  disableNameSuffixHash: true
 
 secretGenerator:
-  - name: ca-root
+  - name: do-creds
     namespace: cert-manager
-    type: "kubernetes.io/tls"
-    files:
-      - tls.crt
-      - tls.key
+    type: Opaque
+    envs:
+      - secrets.env

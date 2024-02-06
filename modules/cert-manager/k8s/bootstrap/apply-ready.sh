@@ -2,21 +2,21 @@
 
 set -euo pipefail
 
-kubectl --context=${ENV} \
+kubectl \
   wait --for=condition=Established \
   crd certificates.cert-manager.io
 
-kubectl --context=${ENV} \
+kubectl \
    --namespace cert-manager \
   wait --for=condition=ready pod \
   -l app=webhook
 
-kubectl --context=${ENV} \
+kubectl \
   --namespace cert-manager \
   wait --for=condition=ready pod \
   -l app=cainjector
 
-kubectl --context=${ENV} \
+kubectl \
   --namespace cert-manager \
   wait --for=condition=ready pod \
   -l app=cert-manager
@@ -32,7 +32,7 @@ spec:
 EOFEOFEOF
 )
 
-while ! echo "${SPEC}" | kubectl --context=${ENV} apply --dry-run=server -f -  > /dev/null 2>&1 ; do
+while ! echo "${SPEC}" | kubectl apply --dry-run=server -f -  > /dev/null 2>&1 ; do
   echo "Waiting for dry-run clusterIssuer ..."
   sleep 5
 done

@@ -5,11 +5,12 @@ metadata:
 spec:
   acme:
     email: admin@outer-planes.net
+    server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: cert-manager-account-key
     solvers:
       - dns01:
-        digitalocean:
-          tokenSecretRef:
-            name: do-creds
-            key: ACCESS_TOKEN
+          digitalocean:
+            tokenSecretRef:
+              name: do-creds
+              key: ACCESS_TOKEN
