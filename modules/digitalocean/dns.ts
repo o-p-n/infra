@@ -140,7 +140,7 @@ function txt() {
 
 function caa() {
   const caa = new digitalocean.DnsRecord("o-p.caa_letsencrypt", {
-    domain: "outer-planes.net",
+    domain: domain.id,
     name: "@",
     tag: "issue",
     ttl: 3600,
@@ -155,6 +155,23 @@ function caa() {
   ]
 }
 
+function cname() {
+  const cname = new digitalocean.DnsRecord("o-p.n_cname-wild", {
+    domain: domain.id,
+    name: "*",
+    ttl: 3600,
+    type: "CNAME",
+    value: "@",
+  }, {
+    protect: true,
+    dependsOn: [domain] ,
+  });
+
+  return [
+    cname,
+  ]
+}
+
 function aaaa(droplet: digitalocean.Droplet) {
   const dropletAAAA = new digitalocean.DnsRecord("o-p.n_aaaa-host", {
     domain: domain.id,
@@ -163,15 +180,8 @@ function aaaa(droplet: digitalocean.Droplet) {
     type: "AAAA",
     value: droplet.ipv6Address,
   }, { dependsOn: [domain, droplet] });
-  const dropletWildAAAA = new digitalocean.DnsRecord("o-p.n_aaaa-wild", {
-    domain: domain.id,
-    name: "*",
-    ttl: 30,
-    type: "AAAA",
-    value: droplet.ipv6Address,
-  }, { dependsOn: [domain, droplet] }); 
 
-  return [ dropletAAAA, dropletWildAAAA ];
+  return [ dropletAAAA ];
 }
 
 function a(droplet: digitalocean.Droplet) {
@@ -182,15 +192,8 @@ function a(droplet: digitalocean.Droplet) {
     type: "A",
     value: droplet.ipv4Address,
   }, { dependsOn: [domain, droplet] });
-  const dropletWildA = new digitalocean.DnsRecord("o-p.n_a-wild", {
-    domain: domain.id,
-    name: "*",
-    ttl: 30,
-    type: "A",
-    value: droplet.ipv4Address,
-  }, { dependsOn: [domain, droplet] });
 
-  return [ dropletA, dropletWildA ];
+  return [ dropletA ];
 }
 
 export function stack(droplet?: digitalocean.Droplet) {
@@ -200,6 +203,7 @@ export function stack(droplet?: digitalocean.Droplet) {
     caa: caa(),
     mx: mx(),
     txt: txt(),
+    cname: cname(),
   };
   if (droplet) {
     result = {
