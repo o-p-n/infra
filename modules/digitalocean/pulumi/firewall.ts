@@ -50,6 +50,16 @@ export function stack(droplet: digitalocean.Droplet) {
         portRange: "443",
         sourceAddresses: allIps,
       },
+      {
+        protocol: "tcp",
+        portRange: "16443",
+        sourceAddresses: allIps,
+      },
+      {
+        protocol: "udp",
+        portRange: "16443",
+        sourceAddresses: allIps,
+      },
     ],
   });
 
