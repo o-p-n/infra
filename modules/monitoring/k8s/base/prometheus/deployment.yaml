@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: prom/prometheus
+          image: prom/prometheus:v2.50.1@sha256:bc1794e85c9e00293351b967efa267ce6af1c824ac875a9d0c7ac84700a8b53e
           args:
             - "--storage.tsdb.retention.time=14d"
             - "--config.file=/etc/prometheus/prometheus.yaml"
