@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      outer-planes.net/deployment: istio-system
+resources:
+  - namespace.yaml
+  - core-1.20.2.yaml
+  - gateway-api-1.0.0.yaml

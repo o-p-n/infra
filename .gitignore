@@ -1,2 +1,10 @@
-/bin/
-/node_modules/
+/*.key
+
+**/tls.key
+**/*.secret
+**/secrets.env
+
+/deployer/deployer
+
+.DS_Store
+**/node_modules/*
