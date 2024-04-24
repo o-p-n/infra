@@ -4,6 +4,8 @@ metadata:
   name: gateway
   namespace: istio-public-ingress
 spec:
+  duration: 168h
+  renewBefore: 96h
   dnsNames:
     - k8s.test
     - "*.k8s.test"

@@ -9,8 +9,8 @@ spec:
   privateKey:
     algorithm: ECDSA
     size: 256
-  duration: 240h
-  renewBefore: 168h
+  duration: 2160h
+  renewBefore: 720h
   issuerRef:
     kind: ClusterIssuer
     name: cert-manager
