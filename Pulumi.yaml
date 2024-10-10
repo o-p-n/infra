@@ -1,10 +1,9 @@
 name: o-p-n
-description: A minimal DigitalOcean TypeScript Pulumi program
+description: Infrastructure for outer-planes.net
 runtime:
   name: nodejs
   options:
     packagemanager: npm
 config:
   pulumi:tags:
-    value:
-      pulumi:template: digitalocean-typescript
+    value: {}
