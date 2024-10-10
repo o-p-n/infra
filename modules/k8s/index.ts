@@ -1,13 +1,17 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
+import { getProvider } from "./_provider";
 
-import * as istioSystem from "./istio-system";
+import istioSystemStack from "./istio-system";
+import infraCoreStack from "./infra-core";
 
-const infraCore = new k8s.helm.v3.Release("infra-core", {
-  chart: __dirname + "/infra-core",
-});
+export default async function stack() {
+  const provider = await getProvider();
+  const infraCore = await infraCoreStack(provider);
+  const istioSystem = await istioSystemStack(provider);
 
-export {
-  infraCore,
-  istioSystem,
-};
+  return {
+    infraCore,
+    istioSystem,
+  };
+}
