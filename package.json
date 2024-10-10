@@ -1,0 +1,13 @@
+{
+    "name": "o-p-n",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^22",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@pulumi/digitalocean": "^4.0.0",
+        "@pulumi/kubernetes": "^4.18.1",
+        "@pulumi/pulumi": "^3.113.0"
+    }
+}
