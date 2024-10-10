@@ -1,1 +1,0 @@
-../../base/apply-ready.sh

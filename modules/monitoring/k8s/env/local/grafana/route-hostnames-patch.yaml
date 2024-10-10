@@ -1,4 +1,0 @@
-- op: add
-  path: /spec/hostnames
-  value:
-    - metrics.k8s.test
