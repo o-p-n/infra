@@ -1,1 +1,4 @@
 encryptionsalt: v1:gWpB8WAQDGM=:v1:0MBisHyqxs4lEXoS:nYr/ORzSCa1z6mFHG0xooVXu/ElySg==
+config:
+  o-p-n:monitoring-admin-password:
+    secure: v1:WOd306Lfcn8aLTvo:DH9TuiWv1b2CtmXVBrreBj0eNhQx2BoqMONWnhpAyq8=
