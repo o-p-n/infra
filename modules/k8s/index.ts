@@ -6,6 +6,7 @@ import infraCoreStack from "./infra-core";
 import istioSystemStack from "./istio-system";
 import certManagerStack from "./cert-manager";
 import metallbStack from "./metallb";
+import monitoringStack from "./monitoring";
 
 export default async function stack() {
   const stackName = pulumi.getStack();
@@ -14,6 +15,7 @@ export default async function stack() {
   const infraCore = await infraCoreStack(provider);
   const istioSystem = await istioSystemStack(provider);
   const certManager = await certManagerStack(provider);
+  const monitoring = await monitoringStack(provider);
 
   const metallb = (stackName !== "local") ?
     await metallbStack(provider) :
@@ -23,6 +25,7 @@ export default async function stack() {
     infraCore,
     istioSystem,
     certManager,
+    monitoring,
     metallb,
   };
 }
