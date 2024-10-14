@@ -10,10 +10,13 @@ export default async function stack() {
     delete: "minikube delete",
     environment,
   });
+  const metrics = new local.Command("local-metrics-server", {
+    create: "minikube addons enable metrics-server",
+  }, { dependsOn: [minikube]});
   const runnit = new local.Command("local-kubeconfig", {
     create: "cat ${KUBECONFIG}",
     environment,
-  }, { dependsOn: [minikube] });
+  }, { dependsOn: [minikube, metrics] });
 
   return {
     kubeconfig: runnit.stdout,
