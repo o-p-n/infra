@@ -1,5 +1,4 @@
 import * as k8s from "@pulumi/kubernetes";
-import { outputs } from "./_util";
 
 const namespace = "metallb-system";
 const version = "0.14.8";
@@ -26,7 +25,8 @@ export default async function metallbStack(provider: k8s.Provider) {
   });
 
   return {
-    namespace,
-    metallb: outputs(metallb),
+    namespace: ns,
+    releases: [ metallb ],
+    metallb,
   }
 }

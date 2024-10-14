@@ -1,5 +1,4 @@
 import * as k8s from "@pulumi/kubernetes";
-import { outputs } from "./_util";
 
 const version = "1.23.2";
 const namespace = "istio-system";
@@ -34,8 +33,9 @@ export default async function stack(provider: k8s.Provider) {
   });
 
   return {
-    namespace,
-    base: outputs(base),
-    istiod: outputs(istiod),
+    namespace: ns,
+    releases: [ base, istiod ],
+    base,
+    istiod,
   }
 }

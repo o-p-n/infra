@@ -1,5 +1,4 @@
 import * as k8s from "@pulumi/kubernetes";
-import { outputs } from "../_util";
 
 const namespace = "monitoring";
 
@@ -7,6 +6,9 @@ export default async function stack(provider: k8s.Provider) {
   const ns = new k8s.core.v1.Namespace(namespace, {
     metadata: {
       name: namespace,
+      labels: {
+        "istio-injection": "enabled",
+      }
     },
   }, { provider });
 
@@ -27,7 +29,8 @@ export default async function stack(provider: k8s.Provider) {
 
   
   return {
-    namespace,
-    prometheus: outputs(prometheus),
+    namespace: ns,
+    releases: [ prometheus ],
+    prometheus,
   };
 }

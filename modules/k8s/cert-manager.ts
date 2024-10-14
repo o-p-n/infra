@@ -1,5 +1,4 @@
 import * as k8s from "@pulumi/kubernetes";
-import { outputs } from "./_util";
 
 const namespace = "cert-manager";
 const version = "1.16.1";
@@ -27,7 +26,8 @@ export default async function stack(provider: k8s.Provider) {
   });
 
   return {
-    namespace,
-    certManager: outputs(certManager),
+    namespace: ns,
+    releases: [ certManager ],
+    certManager,
   }
 }
