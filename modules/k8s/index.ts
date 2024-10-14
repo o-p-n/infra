@@ -22,7 +22,6 @@ function outputStack(input: ComponentInput) {
   const result: ComponentOutput = {};
 
   if (input.namespace) {
-    console.log(`output namespace!`);
     result.namespace = input.namespace.metadata.namespace;
   }
 
@@ -36,25 +35,34 @@ function outputStack(input: ComponentInput) {
   return result;
 }
 
+class StackDeploy {
+  provider: k8s.Provider;
+  deployed: Record<string, ComponentOutput> = {};
+
+  constructor(provider: k8s.Provider) {
+    this.provider = provider;
+  }
+
+  async apply(name: string, fn: (provider: k8s.Provider, deployed?: Record<string, ComponentOutput>) => Promise<ComponentInput>) {
+    const input = await fn(this.provider, this.deployed);
+    const output = outputStack(input);
+    this.deployed[name] = output;
+  }
+}
+
 export default async function stack() {
   const stackName = pulumi.getStack();
-
   const provider = await getProvider();
 
-  const infraCore = outputStack(await infraCoreStack(provider));
-  const istioSystem = outputStack(await istioSystemStack(provider));
-  const certManager = outputStack(await certManagerStack(provider));
-  const monitoring = outputStack(await monitoringStack(provider));
+  const deployer = new StackDeploy(provider);
+  await deployer.apply("infraCore", infraCoreStack);
+  await deployer.apply("istioSystem", istioSystemStack);
+  await deployer.apply("certManager", certManagerStack);
+  await deployer.apply("monitoring", monitoringStack);
 
-  const metallb = (stackName !== "local") ?
-    outputStack(await metallbStack(provider)) :
-    pulumi.output(undefined);
+  if (stackName !== "local") {
+    await deployer.apply("metallb", metallbStack);
+  }
 
-  return {
-    infraCore,
-    istioSystem,
-    certManager,
-    monitoring,
-    metallb,
-  };
+  return deployer.deployed;
 }
