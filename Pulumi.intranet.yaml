@@ -1,1 +1,7 @@
 encryptionsalt: v1:JyUSIrcpqWY=:v1:Du2Ax+phn5y+2Qef:0uH4epmKLB7ehP2Zv+0luvEHl6wCtQ==
+config:
+  o-p-n:metallb-enabled: "true"
+  o-p-n:monitoring-admin-password:
+    secure: v1:zi5wrG4vgqeaEu4h:e/POwSRKyTb7J4LCLbuiEJrAptMLmZTzZ8tLsbrRWvy/WRgZz4P5kg==
+  o-p-n:ssh-private-key:
+    secure: v1:GAeYBwIlLDvyxxV0:syYzbUx/Mil9ssN7M/qVE0AHdtle+jHS9panYm2VwcsOuiTEDhf0VSUX0ZM5VulqgBNGRtrnF7tKGGFN0Y0thHmgHRTl7IjIWp36VlPKT7PRh8g+jW3ZFxaXXeMUc9DoDn5x/Wy85jpQEeIjO+QTIvqxIBxHzVAiXHHrCCZGQuMpwdV7oG7phGdRO8wegloWo99leJGoK0+gQvisQEtq0z3BXxY0o1CqRsD+IGgDrkKxli8B4gENaUx+xM+otRchcAIZLryc9BQxNhMeocJ6788ImAmr5Moe8JZejMcwsL0Nv3tyLoJ2ECq9G5YSJtUaZ1uwkXsrI1ardSghct2E0LqLOo+vPfcuc8LMazRrUVkSGQuHfvlkwX9XELPaETg7CLxW7Pj17Q0vEQlTfS8vlQ8JxPu1KQ0do/WGUPHd04Z0qXXNGhhk5bl0qzK92RszG9Rtlhi9C5Y/gCSlz1QUaSRYB1Cvr/4a0Ukh3H365y/fvcyUJfsQsHiOd9xAQlFIV6FgBvfzem8fe84aCZj7zOXSswnOPmYOyXLrr+Ta/X+w0cAlycblTUNx
