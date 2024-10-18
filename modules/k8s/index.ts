@@ -8,8 +8,12 @@ import certManagerStack from "./cert-manager";
 import metallbStack from "./metallb";
 import monitoringStack from "./monitoring";
 
+const config = new pulumi.Config();
+
 export default async function stack() {
-  const stackName = pulumi.getStack();
+  const enabled = {
+    metallb: config.requireBoolean("metallb-enabled"),
+  };
   const provider = await getProvider();
 
   const modules = new K8sModuleRegistry(provider);
@@ -18,7 +22,7 @@ export default async function stack() {
   await modules.apply("certManager", certManagerStack);
   await modules.apply("monitoring", monitoringStack);
 
-  if (stackName !== "local") {
+  if (enabled.metallb) {
     await modules.apply("metallb", metallbStack);
   }
 
