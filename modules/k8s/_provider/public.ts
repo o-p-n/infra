@@ -6,12 +6,14 @@ const config = new pulumi.Config();
 
 export default async function stack() {
   const digitalocean = await doStack();
+  const user = config.requireSecret("ssh-username");
   const privateKey = config.requireSecret("ssh-private-key");
 
   const runnit = new remote.Command("public-kubeconfig", {
     create: "microk8s config",
     connection: {
       host: "outer-planes.net",
+      user,
       privateKey,
     },
   }, {
