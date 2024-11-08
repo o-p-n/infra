@@ -22,7 +22,7 @@ export default async function metallbStack(provider: k8s.Provider) {
     repositoryOpts: {
       repo: "https://metallb.github.io/metallb",
     },
-  });
+  }, { provider, dependsOn: [ns] });
 
   return {
     namespace: ns,
