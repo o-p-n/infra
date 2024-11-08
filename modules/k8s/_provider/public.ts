@@ -9,7 +9,7 @@ export default async function stack() {
   const user = config.requireSecret("ssh-username");
   const privateKey = config.requireSecret("ssh-private-key");
 
-  const runnit = new remote.Command("public-kubeconfig", {
+  const kubeconfig = new remote.Command("public-kubeconfig", {
     create: "microk8s config",
     connection: {
       host: "outer-planes.net",
@@ -19,4 +19,8 @@ export default async function stack() {
   }, {
     dependsOn: [digitalocean.droplet ],
   });
+
+  return {
+    kubeconfig: kubeconfig.stdout,
+  };
 }
