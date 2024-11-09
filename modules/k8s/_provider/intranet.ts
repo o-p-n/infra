@@ -5,7 +5,7 @@ import { Microk8sCluster, Microk8sConnection } from "../../../providers/microk8s
 const config = new pulumi.Config();
 
 export default async function stack() {
-  const domain = "outer-planes.casa";
+  const domain = config.require("domain");
   const launchConfig = {
     "version": "0.1.0",
     "addons": [
@@ -28,7 +28,7 @@ export default async function stack() {
   const username = config.require("ssh-username");
   const privateKey = config.require("ssh-private-key");
   const bastion: Microk8sConnection = {
-    host: "outer-planes.casa",
+    host: domain,
     port: 22,
     username,
     privateKey,
