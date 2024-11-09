@@ -4,6 +4,7 @@ import * as k8s from "@pulumi/kubernetes";
 export interface ModuleResult {
   namespace?: k8s.core.v1.Namespace,
   releases: k8s.helm.v3.Release[],
+  dependencies?: pulumi.Resource[];
 }
 
 export interface ModuleOutput {
@@ -28,18 +29,31 @@ function outputStack(input: ModuleResult) {
   return result;
 }
 
+export type ModuleResultSet = Record<string, ModuleResult>;
+
 export class K8sModuleRegistry {
   provider: k8s.Provider;
-  deployed: Record<string, ModuleOutput> = {};
+  results: ModuleResultSet = {};
 
   constructor(provider: k8s.Provider) {
     this.provider = provider;
   }
 
-  async apply(name: string, fn: (provider: k8s.Provider, deployed?: Record<string, ModuleOutput>) => Promise<ModuleResult>) {
-    const input = await fn(this.provider, this.deployed);
-    const output = outputStack(input);
-    this.deployed[name] = output;
+  async apply(name: string, fn: (provider: k8s.Provider, deployed?: ModuleResultSet) => Promise<ModuleResult>) {
+    const input = await fn(this.provider, this.results);
+    input.dependencies = [
+      ...(input.dependencies ?? []),
+      ...((input.namespace && [ input.namespace ]) ?? []),
+      ...input.releases,
+    ];
+    this.results[name] = input;
+  }
+
+  get deployed(): Record<string, ModuleOutput> {
+    const entries = Object.entries(this.results);
+    const outputs = entries.map(([name, result]) => [name, outputStack(result)]);
+
+    return Object.fromEntries(outputs);
   }
 }
 

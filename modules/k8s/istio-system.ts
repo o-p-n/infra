@@ -28,7 +28,7 @@ export default async function stack(provider: k8s.Provider) {
     namespace,
     repositoryOpts,
   }, {
-    dependsOn: ns,
+    dependsOn: [ ns, base ],
     provider,
   });
 
