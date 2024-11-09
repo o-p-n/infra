@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as YAML from "yaml";
-import { Microk8s, Microk8sConnection, Microk8sJoinInfo } from "../../../providers/microk8s";
+import { Microk8sCluster, Microk8sConnection } from "../../../providers/microk8s";
 
 const config = new pulumi.Config();
 
@@ -34,42 +34,17 @@ export default async function stack() {
     privateKey,
   };
 
-  let join: pulumi.Output<Microk8sJoinInfo> | undefined;
-  let kubeconfig: pulumi.Output<string> | undefined;
-
-  for (const host of hosts) {
-    const primary = host === hosts[0];
-    const remote = {
+  const cluster = new Microk8sCluster(domain, {
+    hosts,
+    remote: {
       port: 22,
-      host,
       username,
       privateKey,
-    };
-    const resource = new Microk8s(host, {
-      launchConfig,
-      remote,
-      bastion,
-      join,
-      primary,
-    });
-    join = join ?? resource.join;
-    kubeconfig = kubeconfig ?? resource.kubeconfig;
-  }
-
-  kubeconfig = kubeconfig?.apply((cfg) => {
-    // fix-up cluster name
-    const config = YAML.parse(cfg);
-
-    // fix-up server URL
-    const loc = new URL(config.clusters[0].cluster.server);
-    loc.hostname = domain;
-    config.clusters[0].cluster.server = loc.toString();
-
-    cfg = YAML.stringify(config);
-    return cfg;
+    },
+    launchConfig,
   });
 
   return {
-    kubeconfig,
+    kubeconfig: cluster.kubeconfig,
   }
 }

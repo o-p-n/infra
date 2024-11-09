@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 
 import * as _ from "underscore";
 import * as YAML from "yaml";
-import { ComponentResource, ComponentResourceOptions, CustomResourceOptions, ID, Input, Output, secret } from "@pulumi/pulumi";
+import { all, ComponentResource, ComponentResourceOptions, CustomResourceOptions, ID, Input, Output, secret } from "@pulumi/pulumi";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 import { NodeSSH, SSHExecCommandOptions } from "node-ssh";
 
@@ -218,5 +218,72 @@ export class Microk8s extends dynamic.Resource {
         additionalSecretOutputs: ["bastion", "join", "kubeconfig", "remote"],
       },
     );
+  }
+}
+
+export interface Microk8sClusterInputs {
+  hosts: string[];
+  remote: Partial<Microk8sConnection> & { port: number };
+  bastion?: Microk8sConnection;
+
+  version?: string;
+  launchConfig?: LaunchConfigType;
+}
+
+export class Microk8sCluster extends ComponentResource {
+  readonly kubeconfig: Output<string>;
+
+  constructor(domain: string, args: Microk8sClusterInputs, opts?: ComponentResourceOptions) {
+    super("o-p-n:microk8s:Cluster", domain, {}, opts);
+
+    const { hosts, bastion, version, launchConfig } = args;
+    if (launchConfig) {
+      const extraSANs = (launchConfig.extraSANs || []) as string[];
+      launchConfig.extraSANs = [
+        ...extraSANs,
+        domain,
+      ];
+    }
+
+    let primary: Microk8s | undefined;
+    const resources: Microk8s[] = [];
+    for (const host of hosts) {
+      const remote = {
+        ...args.remote,
+        host,
+      };
+
+      const resource = new Microk8s(
+        host,
+        {
+          remote,
+          bastion,
+          version,
+          launchConfig,
+          join: primary?.join,
+          primary: primary === undefined,
+        },
+        { parent: this },
+      );
+      primary = primary ?? resource;
+      resources.push(resource);
+    }
+    all
+
+    let kubeconfig = all(resources.map((r) => r.kubeconfig)).apply((cfgs) => {
+      const primary = cfgs[0];
+      const config = YAML.parse(primary);
+
+      // fix-up server URL
+      const loc = new URL(config.clusters[0].cluster.server);
+      loc.hostname = domain;
+      config.clusters[0].cluster.server = loc.toString();
+
+      return YAML.stringify(config);
+    });
+    kubeconfig = secret(kubeconfig);
+    this.kubeconfig = kubeconfig;
+
+    this.registerOutputs({ kubeconfig });
   }
 }
