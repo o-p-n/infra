@@ -6,22 +6,18 @@ const config = new pulumi.Config();
 
 export default async function stack() {
   const domain = "outer-planes.casa";
-  const launchConfig = YAML.stringify({
+  const launchConfig = {
     "version": "0.1.0",
     "addons": [
-      {
-        "name": "dns"
-      },
-      {
-        "name": "metrics-server"
-      }
+      { "name": "dns" },
+      { "name": "metrics-server" },
     ],
     "extraKubeletArgs": {
       "--cluster-domain": "cluster.local",
-      "--cluster-dns": "10.152.183.10"
+      "--cluster-dns": "10.152.183.10",
     },
     "extraSANs": [ domain ],
-  });
+  };
 
   const hosts = [
     "elysium-armoria.local",
@@ -49,7 +45,7 @@ export default async function stack() {
       username,
       privateKey,
     };
-    const resource = new Microk8s(`microk8s-${host}`, {
+    const resource = new Microk8s(host, {
       launchConfig,
       remote,
       bastion,

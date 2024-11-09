@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
 import * as _ from "underscore";
+import * as YAML from "yaml";
 import { ComponentResource, ComponentResourceOptions, CustomResourceOptions, ID, Input, Output, secret } from "@pulumi/pulumi";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 import { NodeSSH, SSHExecCommandOptions } from "node-ssh";
@@ -18,9 +19,11 @@ export interface Microk8sConnection {
   passphrase?: string;
 }
 
+type LaunchConfigType = Record<string, unknown>;
+
 interface Microk8sInputs {
   version?: string;
-  launchConfig?: string;
+  launchConfig?: LaunchConfigType;
 
   primary?: boolean;
   worker?: boolean;
@@ -103,23 +106,18 @@ const provider: dynamic.ResourceProvider = {
       // temp storage for transfer
       const srcDir = resolve(tmpdir(), "pulumi", "microk8s-setup", id);
       await mkdir(srcDir, { recursive: true });
-      console.log(`created (local) ${srcDir} ...`)
 
       const launchSrc = resolve(srcDir, "launch.yaml");
-      await writeFile(launchSrc, inputs.launchConfig);
-      console.log(`wrote (local) ${launchSrc} ...`)
+      await writeFile(launchSrc, YAML.stringify(inputs.launchConfig));
 
       const dstDir = `/tmp/pulumi/microk8s-setup/${id}`;
       await session.mkdir(dstDir);
-      console.log(`created (remote) ${dstDir} ...`)
 
       const launchDst = `${dstDir}/.microk8s.yaml`;
       await session.putFile(launchSrc, launchDst);
-      console.log(`wrote (remote) ${launchDst} ...`);
 
       await session.execCommand(`sudo mkdir -p /var/snap/microk8s/common`, { ...DEFAULT_EXECCOMMAND_OPTS });
       await session.execCommand(`sudo cp ${launchDst} /var/snap/microk8s/common/`, { ...DEFAULT_EXECCOMMAND_OPTS });
-      console.log(`applied launch configuration`);
     }
 
     await session.execCommand(
@@ -143,8 +141,6 @@ const provider: dynamic.ResourceProvider = {
     };
 
     if (inputs.primary) {
-      console.log(`prepare node ${id} as primary`);
-
       const token = makeID();
       const result = await session.execCommand(
         `microk8s add-node --token-ttl=600 --token=${token} --format json`,
@@ -153,7 +149,6 @@ const provider: dynamic.ResourceProvider = {
       const join = JSON.parse(result.stdout);
       outs.join = join;
     } else if (inputs.join) {
-      console.log(`join node ${id} primary`);
       // TODO: deal with expired join token
       const { urls } = inputs.join;
 
@@ -172,12 +167,10 @@ const provider: dynamic.ResourceProvider = {
     let bastion: NodeSSH | undefined = undefined;
     if (props.bastion) {
       // establish bastion
-      console.log("create bastion connection ...");
       bastion = await makeConnection(props.bastion);
     }
 
     // establish session
-    console.log("create remote connection ...");
     const session = await makeConnection(props.remote, bastion);
 
     await session.execCommand("sudo snap remove microk8s --purge", {
@@ -188,7 +181,7 @@ const provider: dynamic.ResourceProvider = {
 
 export interface Microk8sArgs {
   version?: Input<string>;
-  launchConfig?: Input<string>;
+  launchConfig?: Input<LaunchConfigType>;
   primary?: Input<boolean>;
 
   join?: Input<Microk8sJoinInfo>;
@@ -218,7 +211,6 @@ export class Microk8s extends dynamic.Resource {
       name,
       { 
         kubeconfig: undefined,
-
         ...args,
       },
       {
