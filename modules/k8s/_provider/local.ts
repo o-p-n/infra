@@ -1,5 +1,5 @@
 import { local } from "@pulumi/command";
-import { MiniKube } from "../../minikube/provider";
+import { MiniKube } from "../../../providers/minikube";
 
 export default async function stack() {
   const minikube = new MiniKube("local-minikube", {
