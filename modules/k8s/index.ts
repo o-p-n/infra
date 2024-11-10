@@ -6,6 +6,8 @@ import infraCoreStack from "./infra-core";
 import istioSystemStack from "./istio-system";
 import certManagerStack from "./cert-manager";
 import metallbStack from "./metallb";
+
+import certificatesStack from "./certificates";
 import monitoringStack from "./monitoring";
 
 const config = new pulumi.Config();
@@ -20,11 +22,13 @@ export default async function stack() {
   await modules.apply("infraCore", infraCoreStack);
   await modules.apply("istioSystem", istioSystemStack);
   await modules.apply("certManager", certManagerStack);
-  await modules.apply("monitoring", monitoringStack);
 
   if (enabled.metallb) {
     await modules.apply("metallb", metallbStack);
   }
+
+  await modules.apply("monitoring", monitoringStack);
+  await modules.apply("certificates", certificatesStack);
 
   return modules.deployed;
 }
