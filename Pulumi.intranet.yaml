@@ -12,3 +12,5 @@ config:
     secure: v1:cxEjkUV7LCbWh4xM:DwAMNxrCM90B5zYfLoPNMjErbkcsY43K7Yv1PLvax3s5c0v9eEHKuMSb7DkmjznU0REf9MBvvxzx1GY1ilRhHibbf3dppXyXBc5RZ99XLMBZ9c4VI8qN
   o-p-n:acme-email: admin@outer-planes.net
   o-p-n:acme-enabled: "true"
+  o-p-n:acme-access-token:
+    secure: v1:nw+YIXAjNb0N3+lK:ANiqCJo9F3p6MniYWT8FSZFjcLpfCnirxCPyWXgFLApUkdj0leMRx6PQwTyuLXUh5mZip4gZ1HVBEeBPyz9EjFDNOQEoY3UDS6qnL++C0REln7YfoJTU
