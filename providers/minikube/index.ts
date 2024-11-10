@@ -14,7 +14,7 @@ interface MiniKubeOutputs {
 };
 
 const DEFAULTS: Partial<MiniKubeInputs> = {
-  version: "latest",
+  version: "stable",
   cpus: 2,
   memory: "8g",
 };
@@ -43,7 +43,7 @@ const provider: pulumi.dynamic.ResourceProvider = {
     }
 
     if (!started) {
-      await $$`minikube start --cpus=${inputs.cpus!} --memory=${inputs.memory!} --driver=docker --kubernetes-version=${inputs.version!} --insecure-registry=host.minikube.internal:5000`;
+      await $$`minikube start --cpus=${inputs.cpus!} --memory=${inputs.memory!} --driver=docker --kubernetes-version=${inputs.version!} --insecure-registry=0.0.0.0/0`;
     }
 
     for (const addon of inputs.addons ?? []) {
