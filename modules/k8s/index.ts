@@ -7,6 +7,7 @@ import istioSystemStack from "./istio-system";
 import certManagerStack from "./cert-manager";
 import metallbStack from "./metallb";
 
+import publicIngressStack from "./public-ingress";
 import certificatesStack from "./certificates";
 import monitoringStack from "./monitoring";
 
@@ -27,6 +28,7 @@ export default async function stack() {
     await modules.apply("metallb", metallbStack);
   }
 
+  await modules.apply("publicIngress", publicIngressStack);
   await modules.apply("monitoring", monitoringStack);
   await modules.apply("certificates", certificatesStack);
 
