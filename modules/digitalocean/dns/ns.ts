@@ -30,7 +30,7 @@ export default function records(domain: digitalocean.Domain) {
     protect: true,
   });
 
-  return pulumi.all([
+  return [
     ns1, ns2, ns3,
-  ]);
+  ];
 }

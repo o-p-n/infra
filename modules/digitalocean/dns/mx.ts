@@ -54,7 +54,7 @@ export default function records(domain: digitalocean.Domain) {
     protect: true,
   });
 
-  return pulumi.all([
+  return [
     mx1, mx2, mx3, mx4, mx5,
-  ]);
+  ];
 }

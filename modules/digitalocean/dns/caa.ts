@@ -15,7 +15,7 @@ export default function records(domain: digitalocean.Domain) {
       protect: true,
   });
 
-  return pulumi.all([
+  return [
     caa,
-  ]);
+  ];
 }

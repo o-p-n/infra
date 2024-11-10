@@ -29,9 +29,9 @@ export default function records(domain: digitalocean.Domain, droplet: digitaloce
     value: droplet.ipv4Address,
   }, { dependsOn: [domain, droplet] });
 
-  return pulumi.all([
+  return [
     cname,
     dropletAAAA,
     dropletA,
-  ]);
+  ];
 }

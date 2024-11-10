@@ -46,7 +46,7 @@ export default function records(domain: digitalocean.Domain) {
     value: "did=did:plc:q7quflbj34fos4eb7l4eqbsy",
   }, { protect: true });
 
-  return pulumi.all([
+  return [
     txtSpf, txtKeybase, txtGoogle, txtGitHubOPN, txtAtProto,
-  ]);
+  ];
 }
