@@ -30,7 +30,6 @@ export default async function stack() {
     port: 22,
     username,
     privateKey,
-    readyTimeout: 300000,   // 5 minutes, in milliseconds
   };
   const cluster = new Microk8s("public-microk8s", {
     remote,
