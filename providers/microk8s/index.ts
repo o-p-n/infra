@@ -6,9 +6,15 @@ import * as _ from "underscore";
 import * as YAML from "yaml";
 import { all, ComponentResource, ComponentResourceOptions, CustomResourceOptions, ID, Input, Output, secret } from "@pulumi/pulumi";
 import * as dynamic from "@pulumi/pulumi/dynamic";
-import { NodeSSH, SSHExecCommandOptions } from "node-ssh";
+import { NodeSSH, SSHExecCommandOptions, SSHError } from "node-ssh";
 
 import { makeID } from "../utils";
+import * as sleep from "sleep-promise";
+
+const ATTEMPTS_DEFAULTS = {
+  max: 5,
+  backoff: 1000,
+};
 
 export interface Microk8sConnection {
   port: number;
@@ -56,6 +62,25 @@ const DEFAULT_EXECCOMMAND_OPTS: Partial<SSHExecCommandOptions> = {
 async function makeConnection(conn: Microk8sConnection, bastion?: NodeSSH): Promise<NodeSSH> {
   const target = new NodeSSH();
 
+  async function attemptConn(p: Promise<NodeSSH>) {
+    let done = false;
+    for (let attempt = 0; !done && attempt < ATTEMPTS_DEFAULTS.max; attempt++) {
+      try {
+        await p;
+        done = true;
+      } catch (error) {
+        const err = error as Error;
+        const duration = ATTEMPTS_DEFAULTS.backoff * Math.pow(2, attempt);
+        console.error(`SSH attempt #${attempt + 1}/${ATTEMPTS_DEFAULTS.max} failed, retry in ${duration}ms (${err.message})`);
+        await sleep(duration);
+      }  
+    }
+
+    if (!done) {
+      throw new Error("failed all SSH connection attempts");
+    }
+  }
+
   if (bastion) {
     // chain cleanup
     bastion.connection?.on("close", () => {
@@ -73,7 +98,7 @@ async function makeConnection(conn: Microk8sConnection, bastion?: NodeSSH): Prom
     });
   } else {
     // direct connection
-    await target.connect(conn);
+    await attemptConn(target.connect(conn));
   }
 
   return target;
