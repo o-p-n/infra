@@ -9,3 +9,8 @@ config:
     secure: v1:2127ZnlCOmvFmMwl:SM2U6FAA7DsLeqzznHgVAjIv8W7QIx8j35h8emdCkcDCXoDHZr8pQQ==
   o-p-n:ssh-username:
     secure: v1:ihltiXtPlXeGnb1H:+H3x8V+vT8IPTBrIASWsEoiqFw==
+  o-p-n:acme-enabled: "true"
+  o-p-n:acme-email: admin@outer-planes.net
+  o-p-n:acme-access-token:
+    secure: v1:0Ly0oE7IS4ZQ99k4:fqDq5TzH4oKvLJMCAgBu73YHqfPRSnESBiY4s6St01kRVGsdEbEftek3EoixGqnbmtPRMUnEr1Vw25uqIteATsHApNgbCzfDO7H2lKBMIubBBUsUlKHx
+  o-p-n:domain: outer-planes.net

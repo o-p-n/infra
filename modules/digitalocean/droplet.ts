@@ -15,9 +15,8 @@ export default function dropletStack() {
 #cloud-config
 package_update: true
 package_upgrade: true
-snap:
-  commands:
-    - snap install microk8s --classic --channel=1.31
+groups:
+  - microk8s
 users:
   - name: human
     lock-password: false
@@ -27,6 +26,7 @@ users:
     ssh_authorized_keys: [${humanKeys.join(", ")}]
   - name: bot
     lock-password: false
+    sudo: ALL=(ALL) NOPASSWD:ALL
     groups: microk8s
     shell: /bin/bash
     ssh_authorized_keys: [${botKeys.join(", ")}]
@@ -43,10 +43,11 @@ ssh_pwauth: false
 
   const instance = new digitalocean.Droplet("o-p.n", {
     name: "o-p.n",
-    image: "ubuntu-22-04-x64",
-    region: "sfo3",
+    image: "ubuntu-24-04-x64",
+    region: digitalocean.Region.SFO3,
     size: "s-4vcpu-8gb",
     ipv6: true,
+    dropletAgent: true,
     monitoring: true,
     userData: userData,
     sshKeys,

@@ -40,7 +40,7 @@ export default function records(domain: digitalocean.Domain) {
   });
   const txtAtProto = new digitalocean.DnsRecord("o-p.n_txt-atproto", {
     domain: domain.id,
-    name: "_atproto.linuxwolf.outer-planes.net",
+    name: "_atproto.linuxwolf",
     ttl: 600,
     type: "TXT",
     value: "did=did:plc:q7quflbj34fos4eb7l4eqbsy",

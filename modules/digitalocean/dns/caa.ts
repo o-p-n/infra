@@ -3,7 +3,7 @@ import * as digitalocean from "@pulumi/digitalocean";
 
 export default function records(domain: digitalocean.Domain) {
 
-  const caa = new digitalocean.DnsRecord("o-p.caa_letsencrypt", {
+  const caa = new digitalocean.DnsRecord("o-p.n_caa-letsencrypt", {
     domain: domain.id,
     name: "@",
     tag: "issue",

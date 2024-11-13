@@ -18,12 +18,12 @@ export default function firewallStack(droplet: digitalocean.Droplet) {
       {
         protocol: "udp",
         destinationAddresses: allIps,
-        portRange: allPorts,
+        portRange: "all",
       },
       {
         protocol: "tcp",
         destinationAddresses: allIps,
-        portRange: allPorts,
+        portRange: "all",
       },
     ],
     inboundRules: [

@@ -24,7 +24,7 @@ let provisioned: DigitalOceanStack | undefined;
 
 export default async function stack(mustExist = false) {
   if (!provisioned) {
-    if (!mustExist) {
+    if (mustExist) {
       throw new Error("stack should exist but doesn't");
     }
 
