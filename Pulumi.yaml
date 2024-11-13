@@ -1,0 +1,9 @@
+name: o-p-n
+description: Infrastructure for outer-planes.net
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+config:
+  pulumi:tags:
+    value: {}

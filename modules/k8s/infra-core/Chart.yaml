@@ -1,0 +1,7 @@
+apiVersion: v2
+name: infra-core
+description: Core infrastructure components for outer-planes.net
+
+type: application
+version: 0.3.0
+appVersion: "1.0.0"

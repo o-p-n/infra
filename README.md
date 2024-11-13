@@ -1,14 +1,10 @@
 # outer-planes.net Kubernetes Infrastructure
 
-## ORDER
+This repository manages the base infrastructure for [outer-planes.net](https://outer-planes.net):
 
-Kubernetes components are best installed in the following order:
+* Kubernetes cluster
+* Foundational resources
 
-1. `metallb`
-2. `istio-system`
-3. `cert-manager`
-4. `kube-state-metrics`
-5. `istio-public-ingress`
-6. `monitoring`
+Resources are provisioned using [Pulumi](https://pulumi.com), with three stacks that represent the deployment environment.
 
-Then applications (e.g., `website`) can be installed.
+The backend is the Pulumi Cloud, and secrets are managed using a separate per-environment passphrase.
