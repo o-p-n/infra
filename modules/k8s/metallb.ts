@@ -1,6 +1,6 @@
 import * as k8s from "@pulumi/kubernetes";
 import { ModuleResultSet } from "./_basics";
-import { getStack } from "@pulumi/pulumi";
+import { all, getStack, Input, interpolate, Output } from "@pulumi/pulumi";
 import digitalocean from "../digitalocean";
 
 const namespace = "metallb-system";
@@ -62,17 +62,19 @@ export default async function metallbStack(provider: k8s.Provider, deployed: Mod
   }
 }
 
-async function getAddresses(): Promise<string[]> {
+async function getAddresses(): Promise<Input<string[]>> {
   switch(getStack()) {
     case "intranet":
       return [ "192.168.68.24/32" ];
     case "public": {
       const { droplet } = await digitalocean(true);
       
-      return [
-        `${droplet.ipv4Address}/32`,
-        `${droplet.ipv6Address}/128`,
-      ];
+      return all([droplet.ipv4Address, droplet.ipv6Address]).apply(([ipv4, ipv6]) => {
+        return [
+          `${ipv4}/32`,
+          `${ipv6}/128`,
+        ];
+      });
     }
     default:
       throw new Error("stack not supported");
