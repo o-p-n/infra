@@ -1,6 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as YAML from "yaml";
 import { Microk8sCluster, Microk8sConnection } from "../../../providers/microk8s";
+import { VERSION_CHANNEL } from "./version";
 
 const config = new pulumi.Config();
 
@@ -42,6 +43,7 @@ export default async function stack() {
       privateKey,
     },
     launchConfig,
+    version: VERSION_CHANNEL,
   });
 
   return {
