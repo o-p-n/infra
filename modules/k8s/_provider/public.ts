@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { remote } from "@pulumi/command";
 import doStack from "../../digitalocean";
 import { Microk8s, Microk8sConnection } from "../../../providers/microk8s";
+import { VERSION_CHANNEL } from "./version";
 
 const config = new pulumi.Config();
 
@@ -34,6 +35,7 @@ export default async function stack() {
   const cluster = new Microk8s("public-microk8s", {
     remote,
     launchConfig,
+    version: VERSION_CHANNEL,
   }, {
     dependsOn: digitalocean.droplet,
   });
