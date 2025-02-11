@@ -1,13 +1,12 @@
 import { local } from "@pulumi/command";
-import { MiniKube } from "../../../providers/minikube";
+import { Kind } from "../../../providers/kind";
 import { VERSION } from "./version";
 
 export default async function stack() {
-  const minikube = new MiniKube("local-minikube", {
+  const minikube = new Kind("local-minikube", {
     configPath: `${process.env["HOME"]}/.kube/local.config`,
     version: VERSION,
-    addons: ["metrics-server"],
-  })
+  });
 
   return {
     kubeconfig: minikube.kubeconfig,
