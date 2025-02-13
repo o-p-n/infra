@@ -1,11 +1,12 @@
 import { $ } from "zx";
-import { randomBytes, subtle } from "node:crypto";
 import * as os from "node:os";
 import * as fs from "node:fs/promises";
 import * as _ from "underscore";
 
 import { CustomResourceOptions, ID, Input, log, Output } from "@pulumi/pulumi";
 import * as dynamic from "@pulumi/pulumi/dynamic";
+
+import { makeId } from "../utils";
 
 interface ProviderInputs {
   configPath: string;
@@ -18,12 +19,6 @@ const DEFAULTS: Partial<ProviderInputs> = {
 
 interface ProviderOutputs extends ProviderInputs {
   kubeconfig: string;
-}
-
-async function makeId(props: Record<string, string>): Promise<string> {
-  const data = Buffer.from(JSON.stringify(props));
-  const digest = await subtle.digest("SHA-256", data);
-  return Buffer.from(digest).toString("hex").substring(0, 32);
 }
 
 async function findCluster(id: ID): Promise<boolean> {
