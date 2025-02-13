@@ -1,11 +1,11 @@
 import { local } from "@pulumi/command";
 import { Kind } from "../../../providers/kind";
-import { VERSION } from "./version";
+import { VERSION_FULL } from "./version";
 
 export default async function stack() {
   const minikube = new Kind("local-minikube", {
     configPath: `${process.env["HOME"]}/.kube/local.config`,
-    version: VERSION,
+    version: VERSION_FULL,
   });
 
   return {
