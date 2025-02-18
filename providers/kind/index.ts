@@ -134,6 +134,13 @@ export class Kind extends dynamic.Resource {
   readonly kubeconfig!: Output<string>;
 
   constructor(name: string, args: KindArgs, opts?: CustomResourceOptions) {
-    super(new Provider(), name, { kubeconfig: undefined, ...args }, opts);
+    super(
+      new Provider(),
+      name,
+      { kubeconfig: undefined, ...args },
+      {
+        ...opts,
+        additionalSecretOutputs: ["kubeconfig"],
+      });
   }
 }
