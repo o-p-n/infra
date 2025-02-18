@@ -1,0 +1,4 @@
+encryptionsalt: v1:gWpB8WAQDGM=:v1:0MBisHyqxs4lEXoS:nYr/ORzSCa1z6mFHG0xooVXu/ElySg==
+config:
+  o-p-n:base: kind
+  o-p-n:domain: k8s.test

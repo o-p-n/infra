@@ -1,0 +1,19 @@
+encryptionsalt: v1:JyUSIrcpqWY=:v1:Du2Ax+phn5y+2Qef:0uH4epmKLB7ehP2Zv+0luvEHl6wCtQ==
+config:
+  o-p-n:base: microk8s
+  o-p-n:domain: outer-planes.casa
+  o-p-n:ssh-username:
+    secure: v1:F0h+sheG44zrdTIC:J9KFa9+iFnr8EBZ6NOe5Z6oicw==
+  o-p-n:ssh-private-key:
+    secure: v1:GAeYBwIlLDvyxxV0:syYzbUx/Mil9ssN7M/qVE0AHdtle+jHS9panYm2VwcsOuiTEDhf0VSUX0ZM5VulqgBNGRtrnF7tKGGFN0Y0thHmgHRTl7IjIWp36VlPKT7PRh8g+jW3ZFxaXXeMUc9DoDn5x/Wy85jpQEeIjO+QTIvqxIBxHzVAiXHHrCCZGQuMpwdV7oG7phGdRO8wegloWo99leJGoK0+gQvisQEtq0z3BXxY0o1CqRsD+IGgDrkKxli8B4gENaUx+xM+otRchcAIZLryc9BQxNhMeocJ6788ImAmr5Moe8JZejMcwsL0Nv3tyLoJ2ECq9G5YSJtUaZ1uwkXsrI1ardSghct2E0LqLOo+vPfcuc8LMazRrUVkSGQuHfvlkwX9XELPaETg7CLxW7Pj17Q0vEQlTfS8vlQ8JxPu1KQ0do/WGUPHd04Z0qXXNGhhk5bl0qzK92RszG9Rtlhi9C5Y/gCSlz1QUaSRYB1Cvr/4a0Ukh3H365y/fvcyUJfsQsHiOd9xAQlFIV6FgBvfzem8fe84aCZj7zOXSswnOPmYOyXLrr+Ta/X+w0cAlycblTUNx
+  microk8s:remote-opts:
+    port: 22
+    username:
+      secure: v1:Ck84tRvfA3pT8tH1:/qXdzFlFL2Ofc7npUi4ypB5Pyw==
+    privateKey:
+      secure: v1:4fvnVq3sv8sMt+D6:KjzqqC2X5AEK6jc9AgeQ23QAE2hmQ8BNoVBC6pOe7RoiSWM8/JQuBOtX4pbhJjxuNgztlDAqzkYO8wrr7p6gJiOJqnR/wgXWN/4PfXt5mu55NDKqjpeGCZ6wfwuYmuOg8S2GieRdvRRYjerEr8cmO5K+EEgzV4mpOC6Mdv1zMJS0SrJragFkZ4ae5KTUxKiCdAkMye7w/82M9irRSGKJLxzFT6LvoDBueCwiZoJP1BfzFMCs9UBNd3DtISbu0HHLMYqLMGopp++lQObxDK0i1mPhhkFn1zvrTwTwAAY32QtfXn2d8pVsB0WLH6lHMdGNJx2enU5WK37fbpIxRe48MdVfp+qDy2bxNzA9ImUiVzqt2TCgYaVtV/pln65LyVRKe2qzJzGcVjiH6/p+p330dJcem8vMUA1NJGj/1rrT5o5myw+K0eFsGtHatdwF2xw5TtPdlxw00ZiaVWkQg7ouR3sIiVynfyXkw0bS1qq6ELjZ1nvUTW/HznaudHSBDgPzN4CYN9B/iDDDUzSqS/72jNLywrIcsyYzUYfyYH4Gbb+0I/WmzYGLjC1+
+  microk8s:bastion: outer-planes.casa
+  microk8s:hosts:
+    - elysium-armoria.local
+    - elysium-eronia.local
+    - elysium-belierin.local
