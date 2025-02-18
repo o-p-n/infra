@@ -1,0 +1,10 @@
+config:
+  o-p-n:domain: outer-planes.casa
+  microk8s:remote:
+    port: 22
+    username:
+      secure: AAABAC+a8nhyN4gVPXWhy18aHzOpuhKO3GKLMJT24Ge29ss=
+    privateKey:
+      secure: AAABAPKgleJEEV4t4IElN/4GOre6RuD4w5VA12NEGoivEtzZYW6zfA5w/dRaUfGvi3SI+HLzNLKrdUc4UvehUeYimfn9kgeuG7awBGTf0ixTLKvYOLWgqTXxFUS0cHvdfNHLd9rGpXdo4sw/w7JDr0vYfq7Mo61/OIkQ0OI6+ffhJrjc7u/cKrHLHwMH2chGu0UlFR6XoMoLXkGFBZz/D0Lk2edxf8sMaHQUsOgyNauDOzpIlVqTdVaTXDqrxZpi7WhOjWKYM+u4NXQRfX0OLV6etDowvbQgyAt2PhxVJJ7KkLcDiT3R31nGARabfke1W2ce/hTWMXCHJ8kunEBXpU/BC3roXo7CKb6f/eg+uj++VuV+viYHB+b4q51qcEFcw2zuf6F1S3gyt5AFI+j/PZBnb81+7dvoBd5noqVrWCLoBHmCSKh0Qau4R3Bz+BVLy72nwBcaLrnYSIGIcfe9cGRVgN3FC6sijGRKq1YmkdcBkHOKWNqZtGNmHSJSp5zJht9JKRpU/J0tCHYARR/QmHVApJQpY+c2Goaa0VkTcc3Rn7v7B2cC9lXL+YhFW7aV6oB06IzwC1FYTw==
+  microk8s:bastion:
+    host: outer-planes.casa
