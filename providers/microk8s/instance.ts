@@ -1,9 +1,11 @@
+import { randomBytes } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import * as YAML from "yaml";
 
-import { Config, CustomResourceOptions, ID, Output, all } from "@pulumi/pulumi";
+import { Config, CustomResourceOptions, ID, Input, Output, all } from "@pulumi/pulumi";
+import * as log from "@pulumi/pulumi/log";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 
 import { Conn, ConnOptions, create as createSession } from "./conn";
@@ -18,11 +20,13 @@ export interface JoinInfo {
 
 interface Inputs {
   hostname: string;
+  remote: ConnOptions;
+  bastion?: ConnOptions;
 
   version?: string;
   launchConfig?: LaunchConfigType;
 
-  primary?: boolean;
+  primary?: ConnOptions & { host: string };
   worker?: boolean;
   join?: JoinInfo;
 }
@@ -35,47 +39,27 @@ const INPUTS_DEFAULT: Partial<Inputs> = {
   version: "latest/stable",
 };
 
-const REMOTE_OPTS_DEFAULTS: Partial<ConnOptions> = {
+const REMOTE_OPTS_DEFAULTS: ConnOptions = {
   port: 22,
 };
 
 class Provider implements dynamic.ResourceProvider {
-  private remoteOpts!: ConnOptions;
-  private bastionOpts?: ConnOptions;
+  private async session(inputs: Inputs): Promise<Conn> {
+    const host = inputs.hostname;
 
-  private async session(host: string): Promise<Conn> {
     let bastion: Conn | undefined = undefined;
-    if (this.bastionOpts) {
+    if (inputs.bastion) {
       bastion = await createSession({
-        ...this.remoteOpts,
-        ...this.bastionOpts,
+        ...inputs.remote,
+        ...inputs.bastion,
       });
     }
     const session = await createSession({
-      ...this.remoteOpts,
+      ...inputs.remote,
       host,
     }, bastion);
 
     return session;
-  }
-
-  async configure(req: dynamic.ConfigureRequest) {
-    const remoteOpts = req.config.get("microk8s:remote");
-    this.remoteOpts = {
-      ...REMOTE_OPTS_DEFAULTS,
-      ...JSON.parse(remoteOpts || "{}"),
-    };
-    console.error(`remote options: ${JSON.stringify(this.remoteOpts, null, "  ")}`);
-
-    const bastionOpts = req.config.get("microk8s:bastion");
-    if (bastionOpts) {
-      const bastion = {
-        ...this.remoteOpts,
-        ...JSON.parse(bastionOpts || "{}"),
-      }
-      this.bastionOpts = bastion;
-      console.error(`bastion options: ${JSON.stringify(this.bastionOpts, null, "  ")}`);
-    }
   }
 
   async check(_olds: Inputs, news: Inputs): Promise<dynamic.CheckResult<Inputs>> {
@@ -102,7 +86,6 @@ class Provider implements dynamic.ResourceProvider {
   }
 
   async create(inputs: Inputs): Promise<dynamic.CreateResult<Outputs>> {
-    console.error("start create ...");
     inputs = {
       ...INPUTS_DEFAULT,
       ...inputs,
@@ -111,10 +94,13 @@ class Provider implements dynamic.ResourceProvider {
     const id = await makeId({
       hostname: inputs.hostname,
     });
+    log.info(`create instance ${id} at ${inputs.hostname} @ v${inputs.version}`);
 
-    const session = await this.session(inputs.hostname);
+    const session = await this.session(inputs);
 
     if (inputs.launchConfig) {
+      log.info(`initialize launch config for ${id}`);
+
       // temp storage for transfer
       const srcDir = resolve(tmpdir(), "pulumi", "microk8s-setup", id);
       await mkdir(srcDir, { recursive: true });
@@ -129,7 +115,10 @@ class Provider implements dynamic.ResourceProvider {
       await session.execute(`sudo cp ${launchDst} /var/snap/microk8s/common/`);
     }
 
+    log.info(`install microk8s at ${id}`);
     await session.execute(`sudo snap install microk8s --classic --channel=${inputs.version!}`);
+
+    log.info(`start microk8s at ${id}`);
     await session.execute("microk8s start");
 
     const kubeconfig = await session.execute("microk8s config");
@@ -139,15 +128,21 @@ class Provider implements dynamic.ResourceProvider {
       kubeconfig,
     };
 
+    let join = inputs.join;
     if (inputs.primary) {
+      log.info(`create join for ${id} on primary ${JSON.stringify(inputs.primary)}`);
       const token = await makeId({
+        random: randomBytes(8).toString("hex"),
       });
-      const result = await session.execute(`microk8s add-node --token-ttl=600 --token=${token} --format=json`);
-      outs.join = JSON.parse(result);
+
+      const primary = await session.forward(inputs.primary);
+      const result = await primary.execute(`microk8s add-node --token-ttl=600 --token=${token} --format=json`);
+      join = JSON.parse(result) as JoinInfo;
     }
-    if (inputs.join) {
+    if (join) {
+      log.info(`join node ${id} to ${JSON.stringify(join)}...`);
       // TODO: deal with expired tokens
-      const { urls } = inputs.join;
+      const { urls } = join;
 
       // TODO: iterate through urls
       const worker = (inputs.worker) ? "--worker" : "";
@@ -161,7 +156,7 @@ class Provider implements dynamic.ResourceProvider {
   }
 
   async delete(id: ID, props: Inputs) {
-    const session = await this.session(props.hostname);
+    const session = await this.session(props);
 
     await session.execute("sudo snap remove microk8s --purge");
   }
@@ -172,17 +167,30 @@ class Provider implements dynamic.ResourceProvider {
 }
 
 export interface Microk8sArgs {
-  hostname: string;
-  version?: string;
-  launchConfig?: LaunchConfigType;
+  hostname: Input<string>;
+  remote?: Input<ConnOptions>;
+  bastion?: Input<ConnOptions>;
 
-  primary?: boolean;
-  worker?: boolean;
-  join?: JoinInfo;
+  version?: Input<string>;
+  launchConfig?: Input<LaunchConfigType>;
+
+  primary?: Input<ConnOptions>;
+  worker?: Input<boolean>;
+  join?: Input<JoinInfo>;
 };
 
 export class Microk8sInstance extends dynamic.Resource {
   readonly kubeconfig!: Output<string>;
+
+  readonly hostname!: Output<string>;
+  readonly remote!: Output<ConnOptions>;
+  readonly bastion?: Output<ConnOptions>;
+
+  readonly version?: Output<string>;
+  readonly launchConfig?: Output<string>;
+
+  readonly worker?: Output<boolean>;
+  readonly join?: Output<JoinInfo>;
 
   constructor(name: string, args: Microk8sArgs, opts?: CustomResourceOptions) {
     super(
@@ -194,7 +202,7 @@ export class Microk8sInstance extends dynamic.Resource {
       },
       {
         ...opts,
-        additionalSecretOutputs: ["join", "kubeconfig"],
+        additionalSecretOutputs: ["bastion", "join", "kubeconfig", "remote"],
       },
     );
   }
