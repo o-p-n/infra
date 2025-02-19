@@ -1,16 +1,23 @@
 encryptionsalt: v1:YUgVtkReVco=:v1:hVEEoOGWSQjW4H2f:Wc5e3QI7Iu5Wx2PLeHwJ9pCY6SFQaw==
 config:
-  o-p-n:ssh-private-key:
-    secure: v1:uf7jdTg6vI+Ncnk5:Nr1DchtJHU7FkbpvvwhR/I8qOxHk3TAylYtmtmP7GhdCxNlIjxoN4fjhwyHPFiexbG6jPOsg+gTZj7WtZ6OYa3If/VPqsFxRJ5wLeYJabF/LBupBwywQY2Nz4EpSmk9kO+64kEizd9XJvkSDVW8dQV/jlkoGRQhRzFmg5gkP1NA+VRLjRG+hDCJzhsDNL0aUvVmUgsH0N3yBRTDWZEltm1VnxLj/Hw3MHM5CGgtouU8j2jvWWQwQc1jhWJYTcKYTOW95muqlkFpCBLndiJXAiQFypb/PlAj+BAMGWtF3bTtTFlm9ZH3CVI5hZJUm0PvHNdP1+qN5zGliuRNY6nlntDcG34wKjjtexjQ4xWh0hDz/86FFcrMwAc+VOJPbGK8kPAqycH8pLAd4xsLZQykd4OfJJPdZxWAA1lZ329SqdfAgror2qYCJV2uXgV9GUHFkhbrTFaFMViTOWqHQdDo2CpLHMGMySAxBgyOMtYWkhY628uW3W5C16dG9gl9GdCCJH74LsfDLI3Az7TKin5dWokoE0L8Zl78hUuqQICFm2sPyg3m37di8YELv
   digitalocean:token:
-    secure: v1:Eca4revIK5OOs8TO:W9MHluamUGvVfw/IxFhO5dmVezWaXy37fUVK8eeU9shF1nEhilrHB1SeAi7MLn2IGzdF/H3uyheINJAB8Ipdy3ZdTYNhRTFIXZ1YD7Mt8l9Cg1B3ngAi
+    secure: v1:Cdi02dKlVRBKTiTY:IyZCF/ouVSS0rTNa8vQNC9g2xBnGcH0mjJpEwiJZaeMI6oidqmYNU4o8Zpe+9EI3qYoob2sP0dbFlmqUunQvM+tYmcbO9P1oOBRYM4K+gM2RLzwvY8zl
   o-p-n:metallb-enabled: "true"
   o-p-n:monitoring-admin-password:
     secure: v1:2127ZnlCOmvFmMwl:SM2U6FAA7DsLeqzznHgVAjIv8W7QIx8j35h8emdCkcDCXoDHZr8pQQ==
-  o-p-n:ssh-username:
-    secure: v1:ihltiXtPlXeGnb1H:+H3x8V+vT8IPTBrIASWsEoiqFw==
   o-p-n:acme-enabled: "true"
   o-p-n:acme-email: admin@outer-planes.net
   o-p-n:acme-access-token:
     secure: v1:0Ly0oE7IS4ZQ99k4:fqDq5TzH4oKvLJMCAgBu73YHqfPRSnESBiY4s6St01kRVGsdEbEftek3EoixGqnbmtPRMUnEr1Vw25uqIteATsHApNgbCzfDO7H2lKBMIubBBUsUlKHx
   o-p-n:domain: outer-planes.net
+  microk8s:remote:
+    port: 22
+    username: bot
+    privateKey: |-
+      -----BEGIN OPENSSH PRIVATE KEY-----
+      b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+      QyNTUxOQAAACDbXOg5t0GxGTsRHn/jfG8ImlkFDGU3xa2UiC4q7bdx0AAAAJjxYtBY8WLQ
+      WAAAAAtzc2gtZWQyNTUxOQAAACDbXOg5t0GxGTsRHn/jfG8ImlkFDGU3xa2UiC4q7bdx0A
+      AAAEB8dbiNYhrzX6mfOjLHwjBsdZUcjdYqoscR6JwOcOxhittc6Dm3QbEZOxEef+N8bwia
+      WQUMZTfFrZSILirtt3HQAAAAFUdpdEh1YiBBY3Rpb25zIERlcGxveQ==
+      -----END OPENSSH PRIVATE KEY-----

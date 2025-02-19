@@ -4,11 +4,19 @@ config:
   o-p-n:metallb-enabled: "true"
   o-p-n:monitoring-admin-password:
     secure: v1:zi5wrG4vgqeaEu4h:e/POwSRKyTb7J4LCLbuiEJrAptMLmZTzZ8tLsbrRWvy/WRgZz4P5kg==
-  o-p-n:ssh-username:
-    secure: v1:F0h+sheG44zrdTIC:J9KFa9+iFnr8EBZ6NOe5Z6oicw==
-  o-p-n:ssh-private-key:
-    secure: v1:GAeYBwIlLDvyxxV0:syYzbUx/Mil9ssN7M/qVE0AHdtle+jHS9panYm2VwcsOuiTEDhf0VSUX0ZM5VulqgBNGRtrnF7tKGGFN0Y0thHmgHRTl7IjIWp36VlPKT7PRh8g+jW3ZFxaXXeMUc9DoDn5x/Wy85jpQEeIjO+QTIvqxIBxHzVAiXHHrCCZGQuMpwdV7oG7phGdRO8wegloWo99leJGoK0+gQvisQEtq0z3BXxY0o1CqRsD+IGgDrkKxli8B4gENaUx+xM+otRchcAIZLryc9BQxNhMeocJ6788ImAmr5Moe8JZejMcwsL0Nv3tyLoJ2ECq9G5YSJtUaZ1uwkXsrI1ardSghct2E0LqLOo+vPfcuc8LMazRrUVkSGQuHfvlkwX9XELPaETg7CLxW7Pj17Q0vEQlTfS8vlQ8JxPu1KQ0do/WGUPHd04Z0qXXNGhhk5bl0qzK92RszG9Rtlhi9C5Y/gCSlz1QUaSRYB1Cvr/4a0Ukh3H365y/fvcyUJfsQsHiOd9xAQlFIV6FgBvfzem8fe84aCZj7zOXSswnOPmYOyXLrr+Ta/X+w0cAlycblTUNx
   o-p-n:acme-email: admin@outer-planes.net
   o-p-n:acme-enabled: "true"
   o-p-n:acme-access-token:
     secure: v1:AMdGUqMU17KyU6MB:zF+iSvpaopXRouV6r2T6XnKml56wR+2sdZaWrYcZ2W1DXjRiZf6+F8oPJuzqBHwL5h7HfophFJdDy10fyeKghVAV+F7QMw3qSWyDkZQNITWEBu9AEaPh
+  microk8s:remote:
+    port: 22
+    username:
+      secure: v1:Y1w8ysqThnbSElN9:gPDmxoiXK4JbQxrzdQ3Izt+tYw==
+    privateKey:
+      secure: v1:CrVedl57tiAKBRYh:su5pU/QKPP1H06024imsMEijsoR21Bc6xicq6Y3XK4+sMCg3TShtgjdKEw2c9oBrJ8+8Ugn9JIjxt8ss3Yizr7CeJB2PvaAfTPfq8g7r6wz+DHMvjW2rYXUp5HqrwyanZqT+MZrr1IvtyE7EEvsfTAgb5OHrjCTRS6jTq4vqMTqRA/TdsgoKONdF2cjt61FeIhy4JKeS3N+GvHWK0tt7K/pMwpVqKLdWH9kZkwIh0+M395DQ1CjwebtnKsePlmAbcLqkS07Et1DEz9tkFzt/pb31n1vGImQVkVVBTm58x5mjyVPH6sHoO1IpIW0wRjYEa/BXLE1GajL3wvS/FGCF3WAsF0gwRBVeGKReeRrernFxfpXkWaqXeiB8+GvYvLlhf5XF9bGz3vcfmvYs23ZDGFN+rJ0IQWV/hqLFATaoKQvBW83LvZitYJnxjH4tGUXHeMnERa0a/+aDSsw4vG9X2diO/Cu15irf/nGvjnY01ik8fsHONq8hq8M+FzBNLwMCWclCPMx+R8hR0rOToWKGPXRxmxQy1Zhxynn5v+XYkuLvSPEsFddLzD2l
+  microk8s:bastion:
+    host: outer-planes.casa
+  microk8s:hosts:
+    - elysium-armoria.local
+    - elysium-eronia.local
+    - elysium-belierin.local

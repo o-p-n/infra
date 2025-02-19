@@ -1,11 +1,15 @@
 import * as pulumi from "@pulumi/pulumi";
-import * as YAML from "yaml";
 import { Microk8sCluster, Microk8sConnection } from "../../../providers/microk8s";
 import { VERSION_CHANNEL } from "./version";
 
 const config = new pulumi.Config();
+const microk8sConfig = new pulumi.Config("microk8s");
 
 export default async function stack() {
+  const hosts = microk8sConfig.requireObject<string[]>("hosts");
+  const remote = microk8sConfig.requireSecretObject<Microk8sConnection>("remote");
+  const bastion = microk8sConfig.getSecretObject<Microk8sConnection>("bastion");
+
   const domain = config.require("domain");
   const launchConfig = {
     "version": "0.1.0",
@@ -20,28 +24,10 @@ export default async function stack() {
     "extraSANs": [ domain ],
   };
 
-  const hosts = [
-    "elysium-armoria.local",
-    "elysium-eronia.local",
-    "elysium-belierin.local",
-  ];
-
-  const username = config.require("ssh-username");
-  const privateKey = config.require("ssh-private-key");
-  const bastion: Microk8sConnection = {
-    host: domain,
-    port: 22,
-    username,
-    privateKey,
-  };
-
   const cluster = new Microk8sCluster(domain, {
     hosts,
-    remote: {
-      port: 22,
-      username,
-      privateKey,
-    },
+    remote,
+    bastion,
     launchConfig,
     version: VERSION_CHANNEL,
   });
