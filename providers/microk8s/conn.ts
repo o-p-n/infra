@@ -11,8 +11,8 @@ export {
 };
 
 export interface ConnOptions {
-  host: string;
-  port: number;
+  host?: string;
+  port?: number;
   username?: string;
   password?: string;
   privateKey?: string;
@@ -65,7 +65,7 @@ export class Conn {
       target.dispose();
     });
 
-    const sock = await this.session.forwardOut("127.0.0.1", pickPort(), conn.host, conn.port);
+    const sock = await this.session.forwardOut("127.0.0.1", pickPort(), conn.host!, conn.port!);
     await target.connect(conn);
 
     return new Conn(target);
