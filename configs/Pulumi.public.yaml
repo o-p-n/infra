@@ -13,11 +13,5 @@ config:
   microk8s:remote:
     port: 22
     username: bot
-    privateKey: |-
-      -----BEGIN OPENSSH PRIVATE KEY-----
-      b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-      QyNTUxOQAAACDbXOg5t0GxGTsRHn/jfG8ImlkFDGU3xa2UiC4q7bdx0AAAAJjxYtBY8WLQ
-      WAAAAAtzc2gtZWQyNTUxOQAAACDbXOg5t0GxGTsRHn/jfG8ImlkFDGU3xa2UiC4q7bdx0A
-      AAAEB8dbiNYhrzX6mfOjLHwjBsdZUcjdYqoscR6JwOcOxhittc6Dm3QbEZOxEef+N8bwia
-      WQUMZTfFrZSILirtt3HQAAAAFUdpdEh1YiBBY3Rpb25zIERlcGxveQ==
-      -----END OPENSSH PRIVATE KEY-----
+    privateKey:
+      secure: v1:FZG107JUiC1VxY2Q:0zc/NPAisZSz+13n8W4CVm7en6Av0azke6lJt9n1Xveb3mc3FqrR05vDD5biJ2ymjK+v4KJUVDr9aw6k6C9S8K/cAgBg0Cr2gaF0CgMNcdBVqw+9JRMfEkGxQL99lMDq37xWfdhbIo/88qBnrT8wrRc6SQhrbJDnhpb51HzyG7+umsFz8c/kytyNf/8oAFZf2XL3EIMthEx1bNyadJD01VSpBW7qD/clHTAcpkH30Q0tVqF9edJ1wdl6FE4ByYt8jtqjOd4DQiks3i4huAUcS8dhS0YpSU5uSjsG60O4gXvJkjVTBicu5iNxrftB2JdHyUUJFtLqe4+J366PSv3WvIExZ80g2S7aV8hgg+sKJHCPZdN/JLprQupyqZhQTW8XmTFQy1M0OtdVu2LvRoupgTUQBgpDNVZGJtjMuCwGRxMnTynfgPgpzlqdugHVpnv5Z8BrVs3aci8nlC5mrhyoQblDDXxtgQvt+DXQXM1EsQaEJ+61mVbNb32p6U4hW+hJlAzn7y+yD60t2VIs90uATj3dvGerPuLicH3+3VhJTMW2IVQlDpar21Ah4um5DQUlQ4U=
