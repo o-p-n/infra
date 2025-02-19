@@ -1,17 +1,18 @@
 import * as pulumi from "@pulumi/pulumi";
 import { remote } from "@pulumi/command";
 import doStack from "../../digitalocean";
-import { Microk8s, Microk8sConnection } from "../../../providers/microk8s";
+import { Microk8sCluster, Microk8sConnection } from "../../../providers/microk8s";
 import { VERSION_CHANNEL } from "./version";
 
 const config = new pulumi.Config();
+const microk8sConfig = new pulumi.Config("microk8s");
 
 export default async function stack() {
   const domain = config.require("domain");
+  const remote = microk8sConfig.requireSecretObject<Microk8sConnection>("remote");
+  const bastion = microk8sConfig.getSecretObject<Microk8sConnection>("bastion");
 
   const digitalocean = await doStack();
-  const username = config.require("ssh-username");
-  const privateKey = config.require("ssh-private-key");
   const launchConfig = {
     "version": "0.1.0",
     "addons": [
@@ -26,14 +27,10 @@ export default async function stack() {
   };
 
   // validate server is up and running ...
-  const remote: Microk8sConnection = {
-    host: "outer-planes.net",
-    port: 22,
-    username,
-    privateKey,
-  };
-  const cluster = new Microk8s("public-microk8s", {
+  const cluster = new Microk8sCluster(domain, {
+    hosts: [ domain ],
     remote,
+    bastion,
     launchConfig,
     version: VERSION_CHANNEL,
   }, {
