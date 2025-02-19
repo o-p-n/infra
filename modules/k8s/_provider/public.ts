@@ -9,8 +9,8 @@ const microk8sConfig = new pulumi.Config("microk8s");
 
 export default async function stack() {
   const domain = config.require("domain");
-  const remote = config.requireSecretObject<Microk8sConnection>("remote");
-  const bastion = config.getSecretObject<Microk8sConnection>("bastion");
+  const remote = microk8sConfig.requireSecretObject<Microk8sConnection>("remote");
+  const bastion = microk8sConfig.getSecretObject<Microk8sConnection>("bastion");
 
   const digitalocean = await doStack();
   const launchConfig = {

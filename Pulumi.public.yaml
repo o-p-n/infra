@@ -1,7 +1,7 @@
 encryptionsalt: v1:YUgVtkReVco=:v1:hVEEoOGWSQjW4H2f:Wc5e3QI7Iu5Wx2PLeHwJ9pCY6SFQaw==
 config:
   digitalocean:token:
-    secure: v1:Eca4revIK5OOs8TO:W9MHluamUGvVfw/IxFhO5dmVezWaXy37fUVK8eeU9shF1nEhilrHB1SeAi7MLn2IGzdF/H3uyheINJAB8Ipdy3ZdTYNhRTFIXZ1YD7Mt8l9Cg1B3ngAi
+    secure: v1:Cdi02dKlVRBKTiTY:IyZCF/ouVSS0rTNa8vQNC9g2xBnGcH0mjJpEwiJZaeMI6oidqmYNU4o8Zpe+9EI3qYoob2sP0dbFlmqUunQvM+tYmcbO9P1oOBRYM4K+gM2RLzwvY8zl
   o-p-n:metallb-enabled: "true"
   o-p-n:monitoring-admin-password:
     secure: v1:2127ZnlCOmvFmMwl:SM2U6FAA7DsLeqzznHgVAjIv8W7QIx8j35h8emdCkcDCXoDHZr8pQQ==
