@@ -39,9 +39,31 @@ export = async () => {
 
 async function deployKind(domain: string, resOpts?: ResourceOptions): Promise<StackOutputs> {
   const version = output(VERSION_FULL);
+  const launchConfig = {
+    kind: "Cluster",
+    apiVersion: "kind.x-k8s.io/v1alpha4",
+    nodes: [
+      {
+        role: "control-plane",
+        extraPortMappings:[
+          {
+            containerPort: 80,
+            hostPort: 80,
+            protocol: "TCP",
+          },
+          {
+            containerPort: 443,
+            hostPort: 443,
+            protocol: "TCP",
+          },
+        ]
+      },
+    ]
+  }
 
   const kind = new Kind(domain, {
     configPath: `${process.env["HOME"]}/.kube/local.config`,
+    launchConfig,
     version,
   }, resOpts);
 

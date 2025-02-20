@@ -1,15 +1,23 @@
-import { $ } from "zx";
+import { mkdir, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { resolve } from "node:path";
 import * as os from "node:os";
 import * as fs from "node:fs/promises";
+
+import { $ } from "zx";
 import * as _ from "underscore";
+import * as YAML from "yaml";
 
 import { CustomResourceOptions, ID, Input, log, Output } from "@pulumi/pulumi";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 
 import { makeId } from "../utils";
 
+type LaunchConfigType = Record<string, unknown>;
+
 interface ProviderInputs {
   configPath: string;
+  launchConfig?: LaunchConfigType;
   version?: string;
 }
 
@@ -19,13 +27,6 @@ const DEFAULTS: Partial<ProviderInputs> = {
 
 interface ProviderOutputs extends ProviderInputs {
   kubeconfig: string;
-}
-
-async function findCluster(id: ID): Promise<boolean> {
-  const output = await $`kind get clusters --quiet`;
-  const stdout = output.stdout.trim();
-
-  return stdout.split('\n').includes(id);
 }
 
 class Provider implements dynamic.ResourceProvider {
@@ -39,9 +40,12 @@ class Provider implements dynamic.ResourceProvider {
 
     if (olds.version !== news.version) {
       replaces.push("version");
-      changes = true;
+    }
+    if (_.isEqual(olds.launchConfig, news.launchConfig)) {
+      replaces.push("launchConfig");
     }
 
+    changes = changes || replaces.length > 0
     return {
       changes,
       replaces,
@@ -65,11 +69,19 @@ class Provider implements dynamic.ResourceProvider {
     const id = await makeId({
       hostname: os.hostname(),
     });
-    let started = await findCluster(id);
 
-    if (!started) {
-      await $$`kind create cluster --name=${id} --image=docker.io/kindest/node:v${inputs.version} --wait=5m`;
+    let launchConfig = "";
+    if (inputs.launchConfig) {
+      const dstDir = resolve(tmpdir(), "pulumi", "kind-setup", id);
+      await mkdir(dstDir, { recursive: true });
+
+      const launchDst = resolve(dstDir, "launch.yaml");
+      await writeFile(launchDst, YAML.stringify(inputs.launchConfig));
+
+      launchConfig = `--config=${launchDst}`;
     }
+
+    await $$`kind create cluster --name=${id} --image=docker.io/kindest/node:v${inputs.version} ${launchConfig} --wait=5m`;
 
     const kubeconfig = await fs.readFile(inputs.configPath, { encoding: "utf-8"})
 
@@ -120,11 +132,13 @@ class Provider implements dynamic.ResourceProvider {
 
 interface KindArgs {
   configPath: Input<string>;
+  launchConfig?: Input<LaunchConfigType>;
   version?: Input<string>;
 }
 
 export class Kind extends dynamic.Resource {
   readonly configPath!: Output<string>;
+  readonly launchConfig?: Output<LaunchConfigType>;
   readonly version?: Output<string>;
   readonly kubeconfig!: Output<string>;
 
