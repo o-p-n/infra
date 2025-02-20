@@ -195,7 +195,7 @@ export class Microk8sInstance extends dynamic.Resource {
   constructor(name: string, args: Microk8sArgs, opts?: CustomResourceOptions) {
     super(
       new Provider(),
-      name,
+      `microk8s:${name}`,
       {
         kubeconfig: undefined,
         ...args,

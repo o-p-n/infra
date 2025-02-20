@@ -1,4 +1,4 @@
-import { all, ComponentResource, ComponentResourceOptions, Input, log, Output, secret } from "@pulumi/pulumi";
+import { all, ComponentResource, ComponentResourceOptions, Input, Output, output, secret } from "@pulumi/pulumi";
 import * as YAML from "yaml";
 
 import { ConnOptions } from "./conn";
@@ -10,7 +10,7 @@ export interface Microk8sClusterInputs {
   remote: Input<ConnOptions>;
   bastion?: Input<ConnOptions>;
 
-  version?: string;
+  version?: Input<string>;
   launchConfig?: Input<LaunchConfigType>;
 }
 
@@ -23,8 +23,9 @@ export class Microk8sCluster extends ComponentResource {
     let primary: Output<ConnOptions> | undefined = undefined;
     const resources: Microk8sInstance[] = [];
     for (const host of args.hosts) {
+      const id = (domain === host) ? domain : `${domain}@${host}`;
       const res: Microk8sInstance = new Microk8sInstance(
-        `${domain}@${host}`,
+        id,
         {
           ...args,
           hostname: host,
@@ -57,8 +58,9 @@ export class Microk8sCluster extends ComponentResource {
       return YAML.stringify(config);
     });
     kubeconfig = secret(kubeconfig);
+
     this.kubeconfig = kubeconfig;
 
-    this.registerOutputs({ kubeconfig });
+    this.registerOutputs();
   }
 }
