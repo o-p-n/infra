@@ -2,6 +2,7 @@ encryptionsalt: v1:YUgVtkReVco=:v1:hVEEoOGWSQjW4H2f:Wc5e3QI7Iu5Wx2PLeHwJ9pCY6SFQ
 config:
   o-p-n:base: microk8s
   o-p-n:domain: outer-planes.net
+  o-p-n:digitalocean: true
   microk8s:remote:
     port: 22
     username:
