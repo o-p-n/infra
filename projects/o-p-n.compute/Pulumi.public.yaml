@@ -2,13 +2,13 @@ encryptionsalt: v1:YUgVtkReVco=:v1:hVEEoOGWSQjW4H2f:Wc5e3QI7Iu5Wx2PLeHwJ9pCY6SFQ
 config:
   o-p-n:base: microk8s
   o-p-n:domain: outer-planes.net
-  o-p-n:digitalocean: true
+  o-p-n:digitalocean: "true"
   microk8s:remote:
     port: 22
     username:
       secure: v1:X/9vZ9o3PYnJVhId:WOgWEsqByTqnLtZ+x/JWog+F2w==
     privateKey:
-      secure: v1:FZG107JUiC1VxY2Q:0zc/NPAisZSz+13n8W4CVm7en6Av0azke6lJt9n1Xveb3mc3FqrR05vDD5biJ2ymjK+v4KJUVDr9aw6k6C9S8K/cAgBg0Cr2gaF0CgMNcdBVqw+9JRMfEkGxQL99lMDq37xWfdhbIo/88qBnrT8wrRc6SQhrbJDnhpb51HzyG7+umsFz8c/kytyNf/8oAFZf2XL3EIMthEx1bNyadJD01VSpBW7qD/clHTAcpkH30Q0tVqF9edJ1wdl6FE4ByYt8jtqjOd4DQiks3i4huAUcS8dhS0YpSU5uSjsG60O4gXvJkjVTBicu5iNxrftB2JdHyUUJFtLqe4+J366PSv3WvIExZ80g2S7aV8hgg+sKJHCPZdN/JLprQupyqZhQTW8XmTFQy1M0OtdVu2LvRoupgTUQBgpDNVZGJtjMuCwGRxMnTynfgPgpzlqdugHVpnv5Z8BrVs3aci8nlC5mrhyoQblDDXxtgQvt+DXQXM1EsQaEJ+61mVbNb32p6U4hW+hJlAzn7y+yD60t2VIs90uATj3dvGerPuLicH3+3VhJTMW2IVQlDpar21Ah4um5DQUlQ4U=
+      secure: v1:f7onb+8PCzJOSybu:tnyMZs1nLJyiBwwphx5/xlZJdUFbAdSVsavilTHc9YvWHk74TD1CdoGeMPMdr0FUJLxlt1y+MYua+vzcB00FHSXgPiSxgLa7mmjwlOPi86bkD9SCz0h/ZTKGaOAsWyta1iLr1yxjB51VvTUa991ya83ecM3hJyPtfe7/Ci+g/5ENZG1OgnyZhVSOlOPyy6/bLrt9yQiwIGAlvuA4b4TSKZrjVu24GMbtV1Zac/c3Ne4RpEoqonl8qcBlT3CCWWL46QwFXY06D2puhxP+2xwQZTLRyBWzCR2dJNocNlY5iEpYGy7407k2Jr99NMyL7191QjUQYuiJF2tIfHSxlynOOk0j/tpo7I2TDuB25Wt7WuAdK2Y004MxbqINAf2GjxhGpOou/p3CEIhvLhLu9JWSdYP2PkZ3zpxQtuO3+0/pcirNf2MlNlyLX4x5BF0v2r2ZqUZD0kFByrrSMB2SpzOIxYZPLzf5Ns6cg0J/DxHoM52XlEEoGfSTWDzgC7dCYIX3hbOc/Fj7rJ+YSy9FYI8TR+IzH/Uh2XgzZlnQjz5yLlXrxEtEr1O5UnhNBbOgj1CwuHU=
   microk8s:hosts:
     - outer-planes.net
   digitalocean:token:
