@@ -7,15 +7,24 @@ import { issuerName as certManagerIssuerName } from "./certificates";
 
 const namespace = "public-ingress";
 
-const config = new Config();
+const projectConfig = new Config("o-p-n");
+const ingressConfig = new Config("public-ingress");
 
-const CERT_DEFAULTS = {
+interface PublicIngressProps {
+  cert: CertProps;
+}
+
+interface CertProps {
+  duration: string;
+  renewBefore: string;
+}
+const CERT_DEFAULTS: CertProps = {
   duration: "2160h",
   renewBefore: "720h",
 }
 
 export default async function stack(provider: k8s.Provider, deployed: ModuleResultSet): Promise<ModuleResult> {
-  const domain = config.require("domain");
+  const domain = projectConfig.require("domain");
 
   const ns = new k8s.core.v1.Namespace("public-ingress", {
     metadata: {
@@ -23,6 +32,7 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
     }
   }, { provider });
 
+  const spec = (ingressConfig.getObject<PublicIngressProps>("public-ingress")?.cert) ?? CERT_DEFAULTS;
   const certRes = new k8s.apiextensions.CustomResource("public-ingress-cert", {
     apiVersion: "cert-manager.io/v1",
     kind: "Certificate",
@@ -41,12 +51,11 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
         algorithm: "ECDSA",
         size: 256,
       },
-      duration: config.get("public-ingress-cert-duration") ?? CERT_DEFAULTS.duration,
-      renewBefore: config.get("public-ingress-cert-renew-before") ?? CERT_DEFAULTS.renewBefore,
       dnsNames: [
         domain,
         `*.${domain}`,
       ],
+      ...spec,
     },
   }, {
     provider,

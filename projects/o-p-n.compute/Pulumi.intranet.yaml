@@ -2,6 +2,7 @@ encryptionsalt: v1:JyUSIrcpqWY=:v1:Du2Ax+phn5y+2Qef:0uH4epmKLB7ehP2Zv+0luvEHl6wC
 config:
   o-p-n:base: microk8s
   o-p-n:domain: outer-planes.casa
+
   microk8s:remote:
     port: 22
     username:

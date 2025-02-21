@@ -1,12 +1,14 @@
 import * as k8s from "@pulumi/kubernetes";
 import { ModuleResultSet } from "./_basics";
-import { all, getStack, Input, interpolate, output, Output } from "@pulumi/pulumi";
+import { Config, Output, Resource, StackReference } from "@pulumi/pulumi";
 import digitalocean from "../digitalocean";
 
 const namespace = "metallb-system";
 const version = "0.14.8";
 
-export default async function metallbStack(provider: k8s.Provider, deployed: ModuleResultSet) {
+const config = new Config("metallb");
+
+export default async function metallbStack(provider: k8s.Provider, deployed: ModuleResultSet, ref: StackReference) {
   const ns = new k8s.core.v1.Namespace(namespace, {
     metadata: {
       name: namespace,
@@ -18,22 +20,13 @@ export default async function metallbStack(provider: k8s.Provider, deployed: Mod
     },
   }, { provider });
 
-  const addresses = await getAddresses();
+  const cidrs = ref.getOutput("cidrs") as Output<string[]>;
+  const resources: Resource[] = [];
 
-  const calicoBgpRes = new k8s.apiextensions.CustomResource("calico-bgp-default", {
-    apiVersion: "crd.projectcalico.org/v1",
-    kind: "BGPConfiguration",
-    metadata: {
-      name: "default",
-    },
-    spec: {
-      serviceLoadBalancerIPs: addresses.apply((addrs) => {
-        return addrs.map((cidr) => ({ cidr }));
-      }),
-    },
-  }, {
-    provider,
-  }); 
+  if (config.getBoolean("calico-bgp")) {
+    const calicoBgpRes = setupBgpConfig(provider, cidrs);
+    resources.push(calicoBgpRes);
+}
 
   const metallb = new k8s.helm.v3.Release(namespace, {
     chart: "metallb",
@@ -48,11 +41,14 @@ export default async function metallbStack(provider: k8s.Provider, deployed: Mod
       },
     },
   }, {
-    provider,dependsOn: [
+    provider,
+    dependsOn: [
       ns,
-      calicoBgpRes,
+      ...resources,
       ...(deployed.istio?.dependencies ?? []),
-    ] });
+    ],
+  });
+  resources.push(metallb);
 
   const poolRes = new k8s.apiextensions.CustomResource("addr-pool", {
     apiVersion: "metallb.io/v1beta1",
@@ -62,36 +58,35 @@ export default async function metallbStack(provider: k8s.Provider, deployed: Mod
       namespace,
     },
     spec: {
-      addresses,
+      addresses: cidrs,
     },
   }, {
     provider,
-    dependsOn: [ ns, metallb, calicoBgpRes ],
+    dependsOn: [ ns, ...resources ],
   });
+  resources.push(poolRes);
 
   return {
     namespace: ns,
     releases: [ metallb ],
-    resources: [ calicoBgpRes, poolRes ],
+    resources,
     metallb,
   }
 }
 
-async function getAddresses(): Promise<Output<string[]>> {
-  switch(getStack()) {
-    case "intranet":
-      return output([ "192.168.68.24/32" ]);
-    case "public": {
-      const { droplet } = await digitalocean(true);
-      
-      return all([droplet.ipv4Address, droplet.ipv6Address]).apply(([ipv4, ipv6]) => {
-        return [
-          `${ipv4}/32`,
-          `${ipv6}/128`,
-        ];
-      });
-    }
-    default:
-      throw new Error("stack not supported");
-  }
+function setupBgpConfig(provider: k8s.Provider, cidrs: Output<string[]>) {
+  return new k8s.apiextensions.CustomResource("calico-bgp-default", {
+    apiVersion: "crd.projectcalico.org/v1",
+    kind: "BGPConfiguration",
+    metadata: {
+      name: "default",
+    },
+    spec: {
+      serviceLoadBalancerIPs: cidrs.apply((cidrs) => {
+        return cidrs.map((cidr) => ({ cidr }));
+      }),
+    },
+  }, {
+    provider,
+  }); 
 }

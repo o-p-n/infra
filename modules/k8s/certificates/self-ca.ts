@@ -2,11 +2,15 @@ import * as k8s from "@pulumi/kubernetes";
 import { Config } from "@pulumi/pulumi";
 import { namespace as certManagerNamespace } from "../cert-manager";
 
-const config = new Config();
+const config = new Config("certificates");
+
+interface TlsSecretProps {
+  crt: string;
+  key: string;
+}
 
 export function setupIssuer(provider: k8s.Provider) {
-  const crt = config.requireSecret("self-ca-crt");
-  const key = config.requireSecret("self-ca-key");
+  const selfCa = config.requireSecretObject<TlsSecretProps>("self-ca");
 
   const resource = new k8s.core.v1.Secret("cert-manager-creds", {
     metadata: {
@@ -14,10 +18,10 @@ export function setupIssuer(provider: k8s.Provider) {
       namespace: certManagerNamespace,
     },
     type: "kubernetes.io/tls",
-    stringData: {
-      "tls.crt": crt,
-      "tls.key": key,
-    },
+    stringData: selfCa.apply(props => ({
+      "tls.crt": props.crt,
+      "tls.key": props.key,
+    })),
   }, { provider });
 
   const spec = {
