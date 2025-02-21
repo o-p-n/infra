@@ -43,7 +43,7 @@ class Provider implements dynamic.ResourceProvider {
     if (olds.version !== news.version) {
       replaces.push("version");
     }
-    if (_.isEqual(olds.launchConfig, news.launchConfig)) {
+    if (!_.isEqual(olds.launchConfig, news.launchConfig)) {
       replaces.push("launchConfig");
     }
 
