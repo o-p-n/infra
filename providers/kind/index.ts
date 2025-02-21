@@ -7,6 +7,7 @@ import * as fs from "node:fs/promises";
 import { $ } from "zx";
 import * as _ from "underscore";
 import * as YAML from "yaml";
+import * as jsonpath from "jsonpath";
 
 import { CustomResourceOptions, ID, Input, log, Output } from "@pulumi/pulumi";
 import * as dynamic from "@pulumi/pulumi/dynamic";
@@ -27,6 +28,7 @@ const DEFAULTS: Partial<ProviderInputs> = {
 
 interface ProviderOutputs extends ProviderInputs {
   kubeconfig: string;
+  cidrs: string[];
 }
 
 class Provider implements dynamic.ResourceProvider {
@@ -83,7 +85,15 @@ class Provider implements dynamic.ResourceProvider {
 
     await $$`kind create cluster --name=${id} --image=docker.io/kindest/node:v${inputs.version} ${launchConfig} --wait=5m`;
 
-    const kubeconfig = await fs.readFile(inputs.configPath, { encoding: "utf-8"})
+    // obtain outputs
+    const kubeconfig = await fs.readFile(inputs.configPath, { encoding: "utf-8"});
+
+    const nodesConfigStr = (await $$`kubectl --kubeconfig=${inputs.configPath} get nodes --output json`).stdout;
+    const nodesConfig = JSON.parse(nodesConfigStr);
+    const cidrs: string[] = jsonpath.query(
+      nodesConfig,
+      "$..status.addresses[?(@.type==\"InternalIP\")].address",
+    ).map(addr => `${addr}/32`);
 
     return {
       id,
@@ -91,6 +101,7 @@ class Provider implements dynamic.ResourceProvider {
         ...inputs,
 
         kubeconfig,
+        cidrs,
       },
     };
   }
@@ -107,13 +118,10 @@ class Provider implements dynamic.ResourceProvider {
       await $$`cp ${olds.configPath} ${news.configPath}`;
     }
 
-    const kubeconfig = await fs.readFile(news.configPath, { encoding: "utf-8"})
-
     return {
       outs: {
         ...olds,
         ...news,
-        kubeconfig,
       },
     };
   }
@@ -141,12 +149,17 @@ export class Kind extends dynamic.Resource {
   readonly launchConfig?: Output<LaunchConfigType>;
   readonly version?: Output<string>;
   readonly kubeconfig!: Output<string>;
+  readonly cidrs!: Output<string[]>;
 
   constructor(name: string, args: KindArgs, opts?: CustomResourceOptions) {
     super(
       new Provider(),
       name,
-      { kubeconfig: undefined, ...args },
+      {
+        kubeconfig: undefined,
+        cidrs: undefined,
+        ...args,
+      },
       {
         ...opts,
         additionalSecretOutputs: ["kubeconfig"],

@@ -16,6 +16,7 @@ export interface Microk8sClusterInputs {
 
 export class Microk8sCluster extends ComponentResource {
   readonly kubeconfig: Output<string>;
+  readonly cidrs: Output<string[][]>;
 
   constructor(domain: string, args: Microk8sClusterInputs, opts?: ComponentResourceOptions) {
     super("o-p-n:microk8s:Cluster", domain, {}, opts);
@@ -60,6 +61,10 @@ export class Microk8sCluster extends ComponentResource {
     kubeconfig = secret(kubeconfig);
 
     this.kubeconfig = kubeconfig;
+    let cidrs = all(
+      resources.map(res => res.cidrs),
+    );
+    this.cidrs = cidrs;
 
     this.registerOutputs();
   }

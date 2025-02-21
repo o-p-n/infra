@@ -1,5 +1,5 @@
 import * as log from "@pulumi/pulumi/log";
-import { Config, getStack, Input, Output, output, Resource, ResourceOptions } from "@pulumi/pulumi";
+import { all, Config, getStack, Output, output, Resource, ResourceOptions } from "@pulumi/pulumi";
 
 import { Kind } from "../../providers/kind";
 import { Microk8sCluster, Microk8sConnection } from "../../providers/microk8s";
@@ -11,33 +11,53 @@ const config = new Config("o-p-n");
 interface StackOutputs {
   version: Output<string>;
   kubeconfig: Output<string>;
+  cidrs: Output<string[]>;
 }
+
+type StackDeployer = (domain: string, resOpts: ResourceOptions, addresses?: Output<string[]>) => Promise<StackOutputs>;
 
 export = async () => {
   const base = config.require("base");
   const domain = config.require("domain");
   const resOpts: ResourceOptions = {};
 
+  let cidrs: Output<string[]> | undefined = undefined;
   if (config.getBoolean("digitalocean")) {
     const doRes = await doStack();
     const droplet = doRes.droplet;
+    cidrs = all([
+      droplet.ipv4Address,
+      droplet.ipv6Address,
+    ]).apply(([ipv4, ipv6]) => [
+      `${ipv4}/32`,
+      `${ipv6}/128`,
+    ]);
     resOpts.dependsOn = droplet;
     resOpts.deletedWith = droplet;
   }
   
   log.info(`deploying ${base} for ${getStack()}`);
 
+  let deployer: StackDeployer;
   switch (base) {
     case "kind":
-      return await deployKind(domain, resOpts);
+      deployer = deployKind;
+      break;
     case "microk8s":
-      return await deployMicrok8s(domain, resOpts);
+      deployer = deployMicrok8s;
+      break;
     default:
       throw new Error(`unsupported base '${base}`);
   }
+
+  const outputs = await deployer(domain, resOpts, cidrs);
+  // if (!outputs.addresses) {
+  //   outputs.addresses = output([]);
+  // }
+  return outputs;
 }
 
-async function deployKind(domain: string, resOpts?: ResourceOptions): Promise<StackOutputs> {
+async function deployKind(domain: string, resOpts: ResourceOptions, _cidrs?: Output<string[]>): Promise<StackOutputs> {
   const version = output(VERSION_FULL);
   const launchConfig = {
     kind: "Cluster",
@@ -66,14 +86,16 @@ async function deployKind(domain: string, resOpts?: ResourceOptions): Promise<St
     launchConfig,
     version,
   }, resOpts);
+  const { kubeconfig, cidrs} = kind;
 
-  return Promise.resolve({
+  return {
     version,
-    kubeconfig: kind.kubeconfig,
-  });
+    kubeconfig,
+    cidrs,
+  };
 }
 
-async function deployMicrok8s(domain: string, resOpts?: ResourceOptions): Promise<StackOutputs> {
+async function deployMicrok8s(domain: string, resOpts: ResourceOptions, defaultCidrs?: Output<string[]>): Promise<StackOutputs> {
   const config = new Config("microk8s");
 
   const hosts = config.requireObject<string[]>("hosts");
@@ -103,8 +125,11 @@ async function deployMicrok8s(domain: string, resOpts?: ResourceOptions): Promis
   }, resOpts);
   const kubeconfig = cluster.kubeconfig;
 
+  const cidrs = defaultCidrs ?? cluster.cidrs.apply((cidrs) => cidrs[0] ?? []);
+
   return {
     kubeconfig,
+    cidrs,
     version,
   };
 }

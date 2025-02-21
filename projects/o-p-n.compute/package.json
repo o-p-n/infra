@@ -10,6 +10,7 @@
     "dependencies": {
         "@pulumi/digitalocean": "^4.0.0",
         "@pulumi/pulumi": "^3.113.0",
+        "jsonpath": "^1.1.1",
         "node-ssh": "^13.2.0",
         "sleep-promise": "^9.1.0",
         "ssh2": "^1.16.0",

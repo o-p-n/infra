@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import * as YAML from "yaml";
+import * as jsonpath from "jsonpath";
 
 import { Config, CustomResourceOptions, ID, Input, Output, all } from "@pulumi/pulumi";
 import * as log from "@pulumi/pulumi/log";
@@ -32,6 +33,7 @@ interface Inputs {
 }
 interface Outputs {
   kubeconfig: string;
+  cidrs: string[];
   join?: JoinInfo;
 }
 
@@ -122,10 +124,16 @@ class Provider implements dynamic.ResourceProvider {
     await session.execute("microk8s start");
 
     const kubeconfig = await session.execute("microk8s config");
+    const nodeConfigStr = await session.execute(`microk8s kubectl get nodes --output=json`);
+    const nodeConfig = JSON.parse(nodeConfigStr);
+    const cidrs: string[] = jsonpath.query(
+      nodeConfig, "$..status.addresses[?(@.type==\"InternalIP\")].address",
+    ).map(addr => `${addr}/32`);
 
     const outs: Outputs = {
       ...inputs,
       kubeconfig,
+      cidrs,
     };
 
     let join = inputs.join;
@@ -181,6 +189,7 @@ export interface Microk8sArgs {
 
 export class Microk8sInstance extends dynamic.Resource {
   readonly kubeconfig!: Output<string>;
+  readonly cidrs!: Output<string[]>;
 
   readonly hostname!: Output<string>;
   readonly remote!: Output<ConnOptions>;
@@ -198,6 +207,7 @@ export class Microk8sInstance extends dynamic.Resource {
       `microk8s:${name}`,
       {
         kubeconfig: undefined,
+        cidrs: undefined,
         ...args,
       },
       {
