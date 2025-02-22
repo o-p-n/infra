@@ -62,6 +62,11 @@ async function deployKind(domain: string, resOpts: ResourceOptions, _cidrs?: Out
   const launchConfig = {
     kind: "Cluster",
     apiVersion: "kind.x-k8s.io/v1alpha4",
+    containerdConfigPatches: [
+`[plugins."io.containerd.grpc.v1.cri".registry]
+  config_path = "/etc/containerd/certs.d"
+`
+    ],
     nodes: [
       {
         role: "control-plane",
