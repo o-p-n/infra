@@ -1,5 +1,9 @@
 import * as log from "@pulumi/pulumi/log";
+
 import { all, Config, getStack, Output, output, Resource, ResourceOptions } from "@pulumi/pulumi";
+
+import * as command from "@pulumi/command/local";
+import * as k8s  from "@pulumi/kubernetes";
 
 import { Kind } from "../../providers/kind";
 import { Microk8sCluster, Microk8sConnection } from "../../providers/microk8s";
@@ -11,7 +15,7 @@ const config = new Config("o-p-n");
 interface StackOutputs {
   version: Output<string>;
   kubeconfig: Output<string>;
-  cidrs: Output<string[]>;
+  cidrs?: Output<string[]>;
 }
 
 type StackDeployer = (domain: string, resOpts: ResourceOptions, addresses?: Output<string[]>) => Promise<StackOutputs>;
@@ -21,21 +25,6 @@ export = async () => {
   const domain = config.require("domain");
   const resOpts: ResourceOptions = {};
 
-  let cidrs: Output<string[]> | undefined = undefined;
-  if (config.getBoolean("digitalocean")) {
-    const doRes = await doStack();
-    const droplet = doRes.droplet;
-    cidrs = all([
-      droplet.ipv4Address,
-      droplet.ipv6Address,
-    ]).apply(([ipv4, ipv6]) => [
-      `${ipv4}/32`,
-      `${ipv6}/128`,
-    ]);
-    resOpts.dependsOn = droplet;
-    resOpts.deletedWith = droplet;
-  }
-  
   log.info(`deploying ${base} for ${getStack()}`);
 
   let deployer: StackDeployer;
@@ -46,18 +35,38 @@ export = async () => {
     case "microk8s":
       deployer = deployMicrok8s;
       break;
+    case "digitalocean":
+      deployer = deployDigitalOcean;
+      break;
     default:
       throw new Error(`unsupported base '${base}`);
   }
 
-  const outputs = await deployer(domain, resOpts, cidrs);
-  // if (!outputs.addresses) {
-  //   outputs.addresses = output([]);
-  // }
+  const outputs = await deployer(domain, resOpts);
   return outputs;
 }
 
-async function deployKind(domain: string, resOpts: ResourceOptions, _cidrs?: Output<string[]>): Promise<StackOutputs> {
+interface KindRegistry {
+  containerName: string;
+  containerPort: number;
+
+  hostName: string;
+  hostPort: number;
+}
+
+const DEFAULTS_KIND_REGISTRY: Partial<KindRegistry> = {
+  containerName: "registry",
+  containerPort: 5000,
+  hostName: "localhost",
+}
+
+async function deployKind(domain: string, resOpts: ResourceOptions): Promise<StackOutputs> {
+  const config = new Config("kind");
+  const registry = {
+    ...DEFAULTS_KIND_REGISTRY,
+    ...config.requireObject<KindRegistry>("registry"),
+  };
+
   const version = output(VERSION_FULL);
   const launchConfig = {
     kind: "Cluster",
@@ -92,6 +101,39 @@ async function deployKind(domain: string, resOpts: ResourceOptions, _cidrs?: Out
     version,
   }, resOpts);
   const { kubeconfig, cidrs} = kind;
+
+  const k8sProvider = new k8s.Provider("kind-provider", { kubeconfig });
+
+  // setup local registry mapping
+  const mappingCmdCreateStr = kind.id.apply(id => (
+`
+for node in $(kind get nodes --name="${id}"); do
+    docker exec "$node" mkdir -p "${registryDir}"
+    cat <<EOF | docker exec -i "$node" cp /dev/stdin "${registryDir}/hosts.toml"
+[host."http://${registry.containerName}:${registry.containerPort}"]
+EOF
+done
+`
+  ));
+  const registryDir = `/etc/containerd/certs.d/${registry.hostName}:${registry.hostPort}`;
+  const mappingCmd = new command.Command("kind-local-registry-mapping", {
+    create: mappingCmdCreateStr,
+  }, { deletedWith: kind });
+  const mappingConfigMap = new k8s.core.v1.ConfigMap("kind-local-registry-configmap", {
+    metadata: {
+      name: "local-registry-hosting",
+      namespace: "kube-public",
+    },
+    data: {
+      "localRegistryHosting.v1": `
+host: "${registry.hostName}:${registry.hostPort}"
+help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
+      `
+    },
+  }, {
+    provider: k8sProvider,
+    dependsOn: [mappingCmd, kind],
+  });
 
   return {
     version,
@@ -137,4 +179,17 @@ async function deployMicrok8s(domain: string, resOpts: ResourceOptions, defaultC
     cidrs,
     version,
   };
+}
+
+async function deployDigitalOcean(domain: string, resOpts: ResourceOptions): Promise<StackOutputs> {
+  const doRes = await doStack();
+  const { doks } = doRes;
+  const kubeconfig = doks.kubeConfigs.apply(configs => {
+    return configs[0].rawConfig
+  });
+
+  return {
+    version: doks.version,
+    kubeconfig,
+  }
 }

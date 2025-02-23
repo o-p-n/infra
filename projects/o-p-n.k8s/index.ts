@@ -18,14 +18,19 @@ interface ComputeOutputs {
   kubeconfig: Output<string>;
 }
 
+type ModuleDisabledInfo = Record<string, boolean>;
 export = async () => {
+  const disabled = config.getObject<ModuleDisabledInfo>("disabled") ?? {};
+
   const ref = getStackRef("o-p-n.compute");
   const modules = new K8sModuleRegistry(ref);
 
   await modules.apply("infraCore", infraCoreStack);
   await modules.apply("istioSystem", istioSystemStack);
   await modules.apply("certManager", certManagerStack);
-  await modules.apply("metallb", metallbStack);
+  if (!disabled.metallb) {
+    await modules.apply("metallb", metallbStack);
+  }
   await modules.apply("publicIngress", publicIngressStack);
   await modules.apply("monitoring", monitoringStack);
   await modules.apply("certificates", certificatesStack);

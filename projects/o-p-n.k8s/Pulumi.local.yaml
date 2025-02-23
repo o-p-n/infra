@@ -1,10 +1,10 @@
 encryptionsalt: v1:gWpB8WAQDGM=:v1:0MBisHyqxs4lEXoS:nYr/ORzSCa1z6mFHG0xooVXu/ElySg==
 config:
   o-p-n:domain: k8s.test
-  o-p-n:public-ingress:
-    cert:
-      duration: 168h
-      renewBefore: 96h
+
+  public-ingress:cert-spec:
+    duration: 168h
+    renewBefore: 96h
 
   certificates:mode: self-ca
   certificates:self-ca:

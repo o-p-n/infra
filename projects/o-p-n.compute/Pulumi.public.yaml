@@ -3,7 +3,7 @@ config:
   digitalocean:token:
     secure: v1:Cdi02dKlVRBKTiTY:IyZCF/ouVSS0rTNa8vQNC9g2xBnGcH0mjJpEwiJZaeMI6oidqmYNU4o8Zpe+9EI3qYoob2sP0dbFlmqUunQvM+tYmcbO9P1oOBRYM4K+gM2RLzwvY8zl
 
-  o-p-n:base: microk8s
+  o-p-n:base: digitalocean
   o-p-n:domain: outer-planes.net
   o-p-n:digitalocean: "true"
 

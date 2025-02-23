@@ -1,10 +1,7 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { resolve } from "node:path";
 import * as os from "node:os";
 import * as fs from "node:fs/promises";
 
-import { $ } from "zx";
+import { $, ProcessPromise } from "zx";
 import * as _ from "underscore";
 import * as YAML from "yaml";
 import * as jsonpath from "jsonpath";
@@ -22,19 +19,32 @@ interface ProviderInputs {
   version?: string;
 }
 
-const DEFAULTS: Partial<ProviderInputs> = {
+const DEFAULTS_INPUTS: Partial<ProviderInputs> = {
   version: "v1.31.4",
 };
 
+const DEFAULTS_LAUNCH_CONFIG: LaunchConfigType = {
+  kind: "Cluster",
+  apiVersion: "kind.x-k8s.io/v1alpha4",
+};
 interface ProviderOutputs extends ProviderInputs {
   kubeconfig: string;
   cidrs: string[];
 }
 
+async function obtainCIDRs(exec: ProcessPromise): Promise<string[]> {
+  const result = await exec;
+  const json = JSON.parse(result.stdout);
+  return jsonpath.query(
+    json,
+    "$..status.addresses[?(@.type==\"InternalIP\")].address",
+  ).map(addr => `${addr}/32`);
+}
+
 class Provider implements dynamic.ResourceProvider {
   async diff (id: ID, olds: ProviderOutputs, news:ProviderInputs): Promise<dynamic.DiffResult> {
     news = {
-      ...DEFAULTS,
+      ...DEFAULTS_INPUTS,
       ...news,
     };
     const replaces: string[] = [];
@@ -57,7 +67,7 @@ class Provider implements dynamic.ResourceProvider {
 
   async create(inputs: ProviderInputs): Promise<dynamic.CreateResult<ProviderOutputs>> {
     inputs = {
-      ...DEFAULTS,
+      ...DEFAULTS_INPUTS,
       ...inputs,
     }
 
@@ -72,28 +82,16 @@ class Provider implements dynamic.ResourceProvider {
       hostname: os.hostname(),
     });
 
-    let launchConfig = "";
-    if (inputs.launchConfig) {
-      const dstDir = resolve(tmpdir(), "pulumi", "kind-setup", id);
-      await mkdir(dstDir, { recursive: true });
+    const launchConfig = inputs.launchConfig ?? DEFAULTS_LAUNCH_CONFIG;
 
-      const launchDst = resolve(dstDir, "launch.yaml");
-      await writeFile(launchDst, YAML.stringify(inputs.launchConfig));
-
-      launchConfig = `--config=${launchDst}`;
-    }
-
-    await $$`kind create cluster --name=${id} --image=docker.io/kindest/node:v${inputs.version} ${launchConfig} --wait=5m`;
+    const createProc = $$`kind create cluster --name=${id} --image=docker.io/kindest/node:v${inputs.version} --config=- --wait=5m`;
+    createProc.stdin.write(YAML.stringify(launchConfig));
+    createProc.stdin.end();
+    await createProc;
 
     // obtain outputs
     const kubeconfig = await fs.readFile(inputs.configPath, { encoding: "utf-8"});
-
-    const nodesConfigStr = (await $$`kubectl --kubeconfig=${inputs.configPath} get nodes --output json`).stdout;
-    const nodesConfig = JSON.parse(nodesConfigStr);
-    const cidrs: string[] = jsonpath.query(
-      nodesConfig,
-      "$..status.addresses[?(@.type==\"InternalIP\")].address",
-    ).map(addr => `${addr}/32`);
+    const cidrs = await obtainCIDRs($$`kubectl --kubeconfig=${inputs.configPath} get nodes --output json`);
 
     return {
       id,

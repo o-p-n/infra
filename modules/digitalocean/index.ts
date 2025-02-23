@@ -1,8 +1,9 @@
 import * as digitalocean from "@pulumi/digitalocean";
 
+import doksStack from "./doks";
 import dropletStack from "./droplet";
 import firewallStack from "./firewall";
-import dnsStack from "./dns";
+import dnsStack, { protectedStack as dnsProtectedStack } from "./dns";
 
 
 interface DigitalOceanDnsStack {
@@ -22,7 +23,17 @@ interface DigitalOceanStack {
 
 let provisioned: DigitalOceanStack | undefined;
 
-export default async function stack(mustExist = false) {
+export default async function stack() {
+  const dns = await dnsProtectedStack();
+  const doks = await doksStack();
+
+  return {
+    dns,
+    doks,
+  };
+}
+
+export async function monoStack(mustExist = false) {
   if (!provisioned) {
     if (mustExist) {
       throw new Error("stack should exist but doesn't");
