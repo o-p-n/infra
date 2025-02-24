@@ -1,7 +1,6 @@
 import * as digitalocean from "@pulumi/digitalocean";
 
 import doksStack from "./doks";
-import dropletStack from "./droplet";
 import firewallStack from "./firewall";
 import dnsStack, { protectedStack as dnsProtectedStack } from "./dns";
 
@@ -31,24 +30,4 @@ export default async function stack() {
     dns,
     doks,
   };
-}
-
-export async function monoStack(mustExist = false) {
-  if (!provisioned) {
-    if (mustExist) {
-      throw new Error("stack should exist but doesn't");
-    }
-
-    const droplet = dropletStack();
-    const firewall = firewallStack(droplet);
-    const dns = await dnsStack(droplet);
-  
-    provisioned = {
-      dns,
-      firewall,
-      droplet,
-    };
-  }
-
-  return provisioned;
 }

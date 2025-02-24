@@ -10,7 +10,7 @@ import * as log from "@pulumi/pulumi/log";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 
 import { Conn, ConnOptions, create as createSession } from "./conn";
-import { makeId } from "../utils";
+import { makeId } from "../../internal/utils";
 
 export type LaunchConfigType = Record<string, unknown>;
 

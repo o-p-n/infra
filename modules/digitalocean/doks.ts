@@ -1,7 +1,5 @@
 import * as digitalocean from "@pulumi/digitalocean";
 
-import { VERSION } from "../../versions/k8s";
-
 export default async function k8sStack() {
   const doks = new digitalocean.KubernetesCluster("o-p-n", {
     version: "1.31.5-do.0",

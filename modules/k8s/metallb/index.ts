@@ -1,7 +1,7 @@
 import * as k8s from "@pulumi/kubernetes";
-import { ModuleResultSet } from "./_basics";
+import { ModuleResultSet } from "../_basics";
 import { Config, Output, Resource, StackReference } from "@pulumi/pulumi";
-import digitalocean from "../digitalocean";
+import digitalocean from "../../digitalocean";
 
 const namespace = "metallb-system";
 const version = "0.14.8";

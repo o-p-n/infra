@@ -5,9 +5,9 @@ import { all, Config, getStack, Output, output, Resource, ResourceOptions } from
 import * as command from "@pulumi/command/local";
 import * as k8s  from "@pulumi/kubernetes";
 
-import { Kind } from "../../providers/kind";
-import { Microk8sCluster, Microk8sConnection } from "../../providers/microk8s";
-import { VERSION_CHANNEL, VERSION_FULL } from "../../versions/k8s";
+import { Kind } from "../../modules/kind";
+import { Microk8sCluster, Microk8sConnection } from "../../modules/microk8s";
+import { VERSION_CHANNEL, VERSION_FULL } from "../../modules/k8s/version";
 import doStack from "../../modules/digitalocean";
 
 const config = new Config("o-p-n");
@@ -24,8 +24,6 @@ export = async () => {
   const base = config.require("base");
   const domain = config.require("domain");
   const resOpts: ResourceOptions = {};
-
-  log.info(`deploying ${base} for ${getStack()}`);
 
   let deployer: StackDeployer;
   switch (base) {

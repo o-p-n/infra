@@ -9,7 +9,7 @@ import * as jsonpath from "jsonpath";
 import { CustomResourceOptions, ID, Input, log, Output } from "@pulumi/pulumi";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 
-import { makeId } from "../utils";
+import { makeId } from "../../internal/utils";
 
 type LaunchConfigType = Record<string, unknown>;
 

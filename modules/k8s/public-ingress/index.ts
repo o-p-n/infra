@@ -1,9 +1,9 @@
 import * as k8s from "@pulumi/kubernetes";
 
-import { ModuleResult, ModuleResultSet } from "./_basics";
+import { ModuleResult, ModuleResultSet } from "../_basics";
 import { Config } from "@pulumi/pulumi";
 
-import { issuerName as certManagerIssuerName } from "./certificates";
+import { issuerName as certManagerIssuerName } from "../certificates";
 
 const namespace = "public-ingress";
 
