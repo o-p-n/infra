@@ -1,0 +1,26 @@
+encryptionsalt: v1:YUgVtkReVco=:v1:hVEEoOGWSQjW4H2f:Wc5e3QI7Iu5Wx2PLeHwJ9pCY6SFQaw==
+config:
+  digitalocean:token:
+    secure: v1:Cdi02dKlVRBKTiTY:IyZCF/ouVSS0rTNa8vQNC9g2xBnGcH0mjJpEwiJZaeMI6oidqmYNU4o8Zpe+9EI3qYoob2sP0dbFlmqUunQvM+tYmcbO9P1oOBRYM4K+gM2RLzwvY8zl
+
+  o-p-n:compute-base: digitalocean
+  o-p-n:domain: outer-planes.net
+  o-p-n:digitalocean: "true"
+  o-p-n:disabled:
+    metallb: true
+
+  certificates:mode: acme
+  certificates:acme:
+    email:
+      secure: v1:yeHVdHF8L7HIZsK6:AfBk1XQL2ATANoEYY1GYGPftuTqO6NU2hAafyE4wZhgIG1s/SqM=
+    accessToken:
+      secure: v1:EajkrvVsHHhPjC7c:vR+kxQ7vQrY+rF6kMJsCIxBI4LfoTQVo2Um54EKdf0gfnUValaSpGuopGyW01q6YTY5QX5eeL1Sq35+droQZpJ+iqdsLn8ZdkAweMCNG3fX7pUPMwYbZ
+
+  monitoring:admin-password:
+    secure: v1:XkAY76eivBf45+9e:AlK8fcSYW+NwJjiuOQ3wKrDz2EMBWMPO9EpcrMXzgvkv4FKVoxxiFw==
+
+  public-ingress:external-dns:
+    provider: digitalocean
+    envVarName: DO_TOKEN
+    accessToken:
+      secure: v1:qE+Fi4xpSquf8DX1:LVVeBxTqH4jXtfeRboDJuQaEdAnR31Czg43i4ysVFTvxjjYfqrzynsUxDvTWXIfeNLaLe/42+STR3WuQKSL+RUbuuXFYTE/+71NEzXOvTl6A0rED3ID8

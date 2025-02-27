@@ -21,7 +21,7 @@ interface StackOutputs {
 type StackDeployer = (domain: string, resOpts: ResourceOptions, addresses?: Output<string[]>) => Promise<StackOutputs>;
 
 export = async () => {
-  const base = config.require("base");
+  const base = config.require("compute-base");
   const domain = config.require("domain");
   const resOpts: ResourceOptions = {};
 

@@ -1,0 +1,24 @@
+encryptionsalt: v1:gWpB8WAQDGM=:v1:0MBisHyqxs4lEXoS:nYr/ORzSCa1z6mFHG0xooVXu/ElySg==
+config:
+  o-p-n:compute-base: kind
+  o-p-n:domain: k8s.test
+
+  public-ingress:cert-spec:
+    duration: 168h
+    renewBefore: 96h
+
+  certificates:mode: self-ca
+  certificates:self-ca:
+    crt:
+      secure: v1:m0lWJkIKNhhRVvXb:AVPFWiNawcupeIffpfOyQ790rPAluTvKjn9ww733fNgafxfo75NCy6lUDX/IH+YQsduZ4OhDbtZJr+xY6wBinUXcg58rpa1SJu6vrMcl1oWZsvpK9clyFy2Jd61T/C9s6qF8FOdMxQZhYieSI6IFrn+gi397ZgYlK1xb53iPWXg0lrZXDS54j7l/S9UQYOPYxDk2w16XCTfykwZZAQWqegpAVVmgGzxhqpXrkYVX78/WT5upyvlnACXHy1YsyKh8QdCmY7IRibMB9JHMthLTzFfRM8/q/qXGRaBh/di1e3LgSY5ILozVBWLNeMsoWNcSfmX2g6dJLrndruVK7vxKl1yJQyBS58/s5lE3Ho+EHWSnu9hLhiBhQGhP1Ohl+Lfc2y0SQdzAdME41diW39axQArUHFj1thI5CglNxac/PtNfwcYdBOrh7lSxpvGg1INzmptRKNk0IbrGFi+Iu4dG9kWHH9N3lL5DGjr4UQV49TW5Nb6NtYHBP0V57Aws67nIyOP1FdalYEeVCl3xL+WdVkY3eX9GO57+Yrr9OJ4+o3rIst1npG428TE9LiWBSbspallglR+YON5456fTwtIfyUAwTzQ3ayPL8kN6bR6Cb2SFP97yAHgatGIG0L6vBMLVUG1LkO37hyOw/nUjc7/Eewd2D56IgyB5rFchy0dlajH9staQHJProBfTikd2wWgxvQQ+1aiPLCVvk0sIQruimL7TehXz0uKuSc35Lscti88sb3yNSKpQ6GWWy2rE7bhtSNM61RVKdkaG2nd0GN66xTxIHkWRawlKpKyvl5CCSM4K3704JjBiVVn/y433FIqFq5sPhpjJW3IRyT23+b9PvnnvG+5uyQ+CyTFwO8lBNir7A1wLcfO0qvnpJ98lE7lUMrnDqHrbsO1MefRlSWEQADEzMoXelSP8HgpupvPJt5wMMfZwE2/FIEIO08qQy/hS7VTMg3BHVnY2elYAdZSVjRWMomrxukfxm6iGKl/rOPeK2ybTy+1IrNkDFnVOWmiB
+    key:
+      secure: v1:m9+HMYkp9PDECD6x:yT95edMDpyqYlyKi6Kq16p9lkN7xVkBHvOn62ldabwsXDL81uxol0BFmCS9f6mqkNXiL2TqO8cnq7DEyyknQKZUUjGg7YbgS7GYIRDc72DoLdJAKYTiVFy1/gcNcgzWzMaLmPnG6o1X/GAkHjwarj+jXv5WfZpl6HiKyhCLODKJvN96rkOIPnHGvLSlXj6A9nIr6U7gKjD4mdVoRz3fEy3vFL1Po5d94uMeEaB34myRF8h3zv0lyGPC/to4CNGZm9z03PfKZ6ctLdlTUC78K1sYVq5gaW78234S2HCYcRIC/67qYck3xwtJkaimuhqbIUo4uLb4YmwZL0LbbYjU5UQ==
+
+  monitoring:admin-password:
+    secure: v1:WOd306Lfcn8aLTvo:DH9TuiWv1b2CtmXVBrreBj0eNhQx2BoqMONWnhpAyq8=
+
+  kind:registry:
+    hostName: localhost
+    hostPort: 12676
+    containerName: registry
+    containerPort: 5000

@@ -1,0 +1,29 @@
+encryptionsalt: v1:JyUSIrcpqWY=:v1:Du2Ax+phn5y+2Qef:0uH4epmKLB7ehP2Zv+0luvEHl6wCtQ==
+config:
+  o-p-n:compute-base: microk8s
+  o-p-n:domain: outer-planes.casa
+
+  microk8s:remote:
+    port: 22
+    username:
+      secure: v1:Ck84tRvfA3pT8tH1:/qXdzFlFL2Ofc7npUi4ypB5Pyw==
+    privateKey:
+      secure: v1:D7Bv9cYPXSg4Tfav:78oTG1Doct/5yBzTl4U6D10dWwHS26aAow0yMCttDEqKXIcAT9ly1JwZBLKrsk81vSLQhhaoI8L7Zryg+YmaZMXpylTGk+46DlmcCFDyXO5r1l6fwtbNM1EllhB8PHnkplLWL0CLg+dcsH/Id6eREYvFiRLgCMk8Vu9LXdRy4R2jHGALGGfKgx0lqU9Iv9TVZxUewOAj886OFMaMXJx+O1zSvlzxFpSxeeFfl/poE60jLrhQLqsNYfEWYHn68QkB+jJhVSdqW3/ANc4XxYa/wDiKqRcUfbSuUE+GzIQ9UXuvp5nbTwzM8w2zeWKt5slGyebqTa2t3KS1HBkz6uyJrdH17ql7k6+F7nsmT/kc1DPPgDqJJLG2CBv2y2sKC9JgCNW8mxp+BZGRTEh/p5jVfyNiRlt1T2bjKZq+hYypVvTZi5GYn9r5yR2OHLWZLZWIVqvIZSQEYg8AHh9hXkZlo5VRM3DrAjuLUX/7mbL4+xwyjW8oboF/dwckVttMZNemtaeajPFcglcOmfuSNS2JAIcDi6MHYat4X3FuSjlqDXv4jZB8Ysa/yRMC0AGkgt9OMBI=
+  microk8s:bastion:
+    host: outer-planes.casa
+  microk8s:hosts:
+    - elysium-armoria.local
+    - elysium-eronia.local
+    - elysium-belierin.local
+
+  certificates:mode: acme
+  certificates:acme:
+    accessToken:
+      secure: v1:vqVFzlTLCLrCBab2:hhqJ3SqExB2uHZo8Q2Fafs4EbRyWWjVoqOxQAJyJhA9P9X5MM9ECpkin1UgwTG0ncLNbfrtVdp5xokSn27iGQJUTXUpfFFdwCUNrB2Yo6dEBmZsbpl54
+    email:
+      secure: v1:Mw+4Q5YFQJlwXzOU:z6xyYwyu9KXT2EEPkr8Os0xnuTiMvHD5GfudDXLw/wKBjydxpQE=
+
+  metallb:calico-bgp: true
+
+  monitoring:admin-password:
+    secure: v1:zi5wrG4vgqeaEu4h:e/POwSRKyTb7J4LCLbuiEJrAptMLmZTzZ8tLsbrRWvy/WRgZz4P5kg==
