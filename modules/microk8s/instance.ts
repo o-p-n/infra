@@ -3,14 +3,13 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import * as YAML from "yaml";
-import * as jsonpath from "jsonpath";
 
 import { Config, CustomResourceOptions, ID, Input, Output, all } from "@pulumi/pulumi";
 import * as log from "@pulumi/pulumi/log";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 
 import { Conn, ConnOptions, create as createSession } from "./conn";
-import { makeId } from "../../internal/utils";
+import { makeId, obtainCIDRs } from "../../internal/utils";
 
 export type LaunchConfigType = Record<string, unknown>;
 
@@ -124,11 +123,7 @@ class Provider implements dynamic.ResourceProvider {
     await session.execute("microk8s start");
 
     const kubeconfig = await session.execute("microk8s config");
-    const nodeConfigStr = await session.execute(`microk8s kubectl get nodes --output=json`);
-    const nodeConfig = JSON.parse(nodeConfigStr);
-    const cidrs: string[] = jsonpath.query(
-      nodeConfig, "$..status.addresses[?(@.type==\"InternalIP\")].address",
-    ).map(addr => `${addr}/32`);
+    const cidrs = obtainCIDRs(await session.execute(`microk8s kubectl get nodes --output=json`));
 
     const outs: Outputs = {
       ...inputs,
