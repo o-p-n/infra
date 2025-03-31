@@ -2,7 +2,7 @@ import * as digitalocean from "@pulumi/digitalocean";
 
 export default async function k8sStack() {
   const doks = new digitalocean.KubernetesCluster("o-p-n", {
-    version: "1.31.5-do.0",
+    version: "1.32.2-do.0",
     region: digitalocean.Region.SFO3,
     nodePool: {
       name: "default",
