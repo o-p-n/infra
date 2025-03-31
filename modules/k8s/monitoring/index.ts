@@ -4,11 +4,12 @@ import { ModuleResultSet } from "../_basics";
 
 const namespace = "monitoring";
 
-const config = new Config();
+const projectConfig = new Config("o-p-n");
+const monConfig = new Config("monitoring");
 
 export default async function stack(provider: k8s.Provider, deployed: ModuleResultSet) {
-  const domain = config.require("domain");
-  const adminPassword = config.require("monitoring-admin-password");
+  const domain = projectConfig.require("domain");
+  const adminPassword = monConfig.require("admin-password");
 
   const ns = new k8s.core.v1.Namespace(namespace, {
     metadata: {

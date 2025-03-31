@@ -2,17 +2,6 @@ import * as pulumi from "@pulumi/pulumi";
 import * as digitalocean from "@pulumi/digitalocean";
 
 export default function records(domain: digitalocean.Domain, droplet: digitalocean.Droplet) {
-  const cname = new digitalocean.DnsRecord("o-p.n_cname-wild", {
-    domain: domain.id,
-    name: "*",
-    ttl: 3600,
-    type: "CNAME",
-    value: "@",
-  }, {
-    protect: true,
-    dependsOn: [domain] ,
-  });
-
   const dropletAAAA = new digitalocean.DnsRecord("o-p.n_aaaa-host", {
     domain: domain.id,
     name: "@",
@@ -30,7 +19,6 @@ export default function records(domain: digitalocean.Domain, droplet: digitaloce
   }, { dependsOn: [domain, droplet] });
 
   return [
-    cname,
     dropletAAAA,
     dropletA,
   ];

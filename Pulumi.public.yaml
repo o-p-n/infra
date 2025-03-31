@@ -2,16 +2,25 @@ encryptionsalt: v1:YUgVtkReVco=:v1:hVEEoOGWSQjW4H2f:Wc5e3QI7Iu5Wx2PLeHwJ9pCY6SFQ
 config:
   digitalocean:token:
     secure: v1:Cdi02dKlVRBKTiTY:IyZCF/ouVSS0rTNa8vQNC9g2xBnGcH0mjJpEwiJZaeMI6oidqmYNU4o8Zpe+9EI3qYoob2sP0dbFlmqUunQvM+tYmcbO9P1oOBRYM4K+gM2RLzwvY8zl
-  o-p-n:metallb-enabled: "true"
-  o-p-n:monitoring-admin-password:
-    secure: v1:2127ZnlCOmvFmMwl:SM2U6FAA7DsLeqzznHgVAjIv8W7QIx8j35h8emdCkcDCXoDHZr8pQQ==
-  o-p-n:acme-enabled: "true"
-  o-p-n:acme-email: admin@outer-planes.net
-  o-p-n:acme-access-token:
-    secure: v1:0Ly0oE7IS4ZQ99k4:fqDq5TzH4oKvLJMCAgBu73YHqfPRSnESBiY4s6St01kRVGsdEbEftek3EoixGqnbmtPRMUnEr1Vw25uqIteATsHApNgbCzfDO7H2lKBMIubBBUsUlKHx
+
+  o-p-n:compute-base: digitalocean
   o-p-n:domain: outer-planes.net
-  microk8s:remote:
-    port: 22
-    username: bot
-    privateKey:
-      secure: v1:FZG107JUiC1VxY2Q:0zc/NPAisZSz+13n8W4CVm7en6Av0azke6lJt9n1Xveb3mc3FqrR05vDD5biJ2ymjK+v4KJUVDr9aw6k6C9S8K/cAgBg0Cr2gaF0CgMNcdBVqw+9JRMfEkGxQL99lMDq37xWfdhbIo/88qBnrT8wrRc6SQhrbJDnhpb51HzyG7+umsFz8c/kytyNf/8oAFZf2XL3EIMthEx1bNyadJD01VSpBW7qD/clHTAcpkH30Q0tVqF9edJ1wdl6FE4ByYt8jtqjOd4DQiks3i4huAUcS8dhS0YpSU5uSjsG60O4gXvJkjVTBicu5iNxrftB2JdHyUUJFtLqe4+J366PSv3WvIExZ80g2S7aV8hgg+sKJHCPZdN/JLprQupyqZhQTW8XmTFQy1M0OtdVu2LvRoupgTUQBgpDNVZGJtjMuCwGRxMnTynfgPgpzlqdugHVpnv5Z8BrVs3aci8nlC5mrhyoQblDDXxtgQvt+DXQXM1EsQaEJ+61mVbNb32p6U4hW+hJlAzn7y+yD60t2VIs90uATj3dvGerPuLicH3+3VhJTMW2IVQlDpar21Ah4um5DQUlQ4U=
+  o-p-n:digitalocean: "true"
+  o-p-n:disabled:
+    metallb: true
+
+  certificates:mode: acme
+  certificates:acme:
+    email:
+      secure: v1:yeHVdHF8L7HIZsK6:AfBk1XQL2ATANoEYY1GYGPftuTqO6NU2hAafyE4wZhgIG1s/SqM=
+    accessToken:
+      secure: v1:EajkrvVsHHhPjC7c:vR+kxQ7vQrY+rF6kMJsCIxBI4LfoTQVo2Um54EKdf0gfnUValaSpGuopGyW01q6YTY5QX5eeL1Sq35+droQZpJ+iqdsLn8ZdkAweMCNG3fX7pUPMwYbZ
+
+  monitoring:admin-password:
+    secure: v1:XkAY76eivBf45+9e:AlK8fcSYW+NwJjiuOQ3wKrDz2EMBWMPO9EpcrMXzgvkv4FKVoxxiFw==
+
+  public-ingress:external-dns:
+    provider: digitalocean
+    envVarName: DO_TOKEN
+    accessToken:
+      secure: v1:qE+Fi4xpSquf8DX1:LVVeBxTqH4jXtfeRboDJuQaEdAnR31Czg43i4ysVFTvxjjYfqrzynsUxDvTWXIfeNLaLe/42+STR3WuQKSL+RUbuuXFYTE/+71NEzXOvTl6A0rED3ID8

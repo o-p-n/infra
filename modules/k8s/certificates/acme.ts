@@ -2,11 +2,14 @@ import * as k8s from "@pulumi/kubernetes";
 import { Config } from "@pulumi/pulumi";
 import { namespace as certManagerNamespace } from "../cert-manager";
 
-const config = new Config();
+const config = new Config("certificates");
 
+interface AcmeProps {
+  email: string;
+  accessToken: string;
+}
 export function setupIssuer(provider: k8s.Provider) {
-  const accessToken = config.requireSecret("acme-access-token");
-  const email = config.require("acme-email");
+  const acme = config.requireSecretObject<AcmeProps>("acme");
 
   const resource = new k8s.core.v1.Secret("cert-manager-creds", {
     metadata: {
@@ -15,13 +18,13 @@ export function setupIssuer(provider: k8s.Provider) {
     },
     type: "Opaque",
     stringData: {
-      ACCESS_TOKEN: accessToken,
+      ACCESS_TOKEN: acme.apply(props => props.accessToken),
     },
   }, { provider });
 
   const spec = {
     acme: {
-      email,
+      email: acme.apply(props => props.email),
       server: "https://acme-v02.api.letsencrypt.org/directory",
       privateKeySecretRef: {
         name: "cert-manager-account-key"

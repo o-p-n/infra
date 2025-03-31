@@ -6,8 +6,7 @@ import { namespace as certManagerNamespace } from "../cert-manager";
 import { setupIssuer as setupSelfCa } from "./self-ca";
 import { setupIssuer as setupAcme } from "./acme";
 
-const config = new Config();
-const doConfig = new Config("digitalocean");
+const config = new Config("certificates");
 
 interface AcmeConfig {
   email: string;
@@ -26,16 +25,20 @@ const ACME_CONFIG_DEFAULTS = {
   server: "https://acme-v02.api.letsencrypt.org/directory",
 }
 
+function determineIssuer(mode: string): IssuerSetup {
+  switch (mode) {
+    case "self-ca":
+      return setupSelfCa;
+    case "acme":
+      return setupAcme;
+    default:
+      throw new Error(`unsupported issuer mode: ${mode}`);
+  }
+}
+
 export default async function stack(provider: k8s.Provider, deployed: ModuleResultSet) {
-  const enabled = {
-    selfCa: config.getBoolean("self-ca-enabled"),
-    acme: config.getBoolean("acme-enabled"),
-  };
-  const setupIssuer = ((enabled) => {
-    if (enabled.acme) { return setupAcme }
-    else if (enabled.selfCa) { return setupSelfCa }
-    throw new Error("no issures specified");
-  })(enabled);
+  const mode = config.require("mode");
+  const setupIssuer = determineIssuer(mode);
 
   const { resource: secretRes, spec } = setupIssuer(provider);
   const manifest = {

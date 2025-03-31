@@ -1,0 +1,9 @@
+name: o-p-n.k8s
+description: Kubernetes infrastructure for outer-planes.net
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+config:
+  pulumi:tags:
+    value: {}

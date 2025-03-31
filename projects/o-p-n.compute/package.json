@@ -1,0 +1,25 @@
+{
+    "name": "o-p-n.compute",
+    "main": "index.ts",
+    "dependencies": {
+        "@pulumi/digitalocean": "^4.0.0",
+        "@pulumi/pulumi": "^3.113.0",
+        "node-ssh": "^13.2.0",
+        "sleep-promise": "^9.1.0"
+    },
+    "version": "1.0.0",
+    "description": "Compute infrastructure for outer-planes.net",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/o-p-n/infra.git"
+    },
+    "author": "Matthew A. Miller <linuxwolf@outer-planes.net>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/o-p-n/infra/issues"
+    },
+    "homepage": "https://github.com/o-p-n/infra#readme"
+}

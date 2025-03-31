@@ -3,13 +3,14 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import * as YAML from "yaml";
+import * as _ from "underscore";
 
 import { Config, CustomResourceOptions, ID, Input, Output, all } from "@pulumi/pulumi";
 import * as log from "@pulumi/pulumi/log";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 
 import { Conn, ConnOptions, create as createSession } from "./conn";
-import { makeId } from "../utils";
+import { makeId, obtainCIDRs } from "../../internal/utils";
 
 export type LaunchConfigType = Record<string, unknown>;
 
@@ -28,10 +29,10 @@ interface Inputs {
 
   primary?: ConnOptions & { host: string };
   worker?: boolean;
-  join?: JoinInfo;
 }
-interface Outputs {
+interface Outputs extends Inputs {
   kubeconfig: string;
+  cidrs: string[];
   join?: JoinInfo;
 }
 
@@ -49,15 +50,18 @@ class Provider implements dynamic.ResourceProvider {
 
     let bastion: Conn | undefined = undefined;
     if (inputs.bastion) {
-      bastion = await createSession({
+      const cfg: ConnOptions = {
         ...inputs.remote,
         ...inputs.bastion,
-      });
+      };
+      bastion = await createSession(cfg);
     }
-    const session = await createSession({
+
+    const cfg: ConnOptions = {
       ...inputs.remote,
       host,
-    }, bastion);
+    };
+    const session = await createSession(cfg, bastion);
 
     return session;
   }
@@ -69,13 +73,6 @@ class Provider implements dynamic.ResourceProvider {
       failures.push({
         property: "hostname",
         reason: "hostname cannot be empty",
-      });
-    }
-
-    if (news.primary && news.join) {
-      failures.push({
-        property: "primary",
-        reason: "cannot set both `primary` and `join`",
       });
     }
 
@@ -99,7 +96,7 @@ class Provider implements dynamic.ResourceProvider {
     const session = await this.session(inputs);
 
     if (inputs.launchConfig) {
-      log.info(`initialize launch config for ${id}`);
+      log.debug(`initialize launch config for ${id}`);
 
       // temp storage for transfer
       const srcDir = resolve(tmpdir(), "pulumi", "microk8s-setup", id);
@@ -115,39 +112,40 @@ class Provider implements dynamic.ResourceProvider {
       await session.execute(`sudo cp ${launchDst} /var/snap/microk8s/common/`);
     }
 
-    log.info(`install microk8s at ${id}`);
+    log.debug(`install microk8s at ${id}`);
     await session.execute(`sudo snap install microk8s --classic --channel=${inputs.version!}`);
 
-    log.info(`start microk8s at ${id}`);
+    log.debug(`start microk8s at ${id}`);
     await session.execute("microk8s start");
 
     const kubeconfig = await session.execute("microk8s config");
+    const cidrs = obtainCIDRs(await session.execute(`microk8s kubectl get nodes --output=json`));
 
     const outs: Outputs = {
       ...inputs,
       kubeconfig,
+      cidrs,
     };
 
-    let join = inputs.join;
     if (inputs.primary) {
-      log.info(`create join for ${id} on primary ${JSON.stringify(inputs.primary)}`);
+      log.debug(`create join for ${id} on primary ${JSON.stringify(inputs.primary)}`);
       const token = await makeId({
         random: randomBytes(8).toString("hex"),
       });
 
-      const primary = await session.forward(inputs.primary);
-      const result = await primary.execute(`microk8s add-node --token-ttl=600 --token=${token} --format=json`);
-      join = JSON.parse(result) as JoinInfo;
-    }
-    if (join) {
+      const master = await session.forward(inputs.primary);
+      const result = await master.execute(`microk8s add-node --token-ttl=600 --token=${token} --format=json`);
+      const join = JSON.parse(result) as JoinInfo;
+
       log.info(`join node ${id} to ${JSON.stringify(join)}...`);
-      // TODO: deal with expired tokens
       const { urls } = join;
 
       // TODO: iterate through urls
       const worker = (inputs.worker) ? "--worker" : "";
       await session.execute(`microk8s join ${worker} ${urls[0]}`);
     }
+
+    log.debug(`outputs: ${JSON.stringify(outs, null, "  ")}`);
 
     return {
       id,
@@ -161,9 +159,64 @@ class Provider implements dynamic.ResourceProvider {
     await session.execute("sudo snap remove microk8s --purge");
   }
 
-  // diff?: ((id: ID, olds: any, news: any) => Promise<dynamic.DiffResult>) | undefined;
+  async diff(id: ID, olds: Outputs, news: Inputs): Promise<dynamic.DiffResult> {
+    let changes = false;
+    const replaces: string[] = [];
+
+    news = {
+      ...INPUTS_DEFAULT,
+      ...news,
+    };
+
+    // in-place changes
+    if (news.version !== olds.version) {
+      changes = true;
+    }
+
+    // replacing changes
+    if (news.hostname !== olds.hostname) {
+      replaces.push("hostname");
+    }
+    if (!_.isEqual(news.launchConfig, olds.launchConfig)) {
+      replaces.push("launchConfig");
+    }
+    if (!_.isEqual(news.primary, olds.primary)) {
+      log.info(`olds primary: ${JSON.stringify(olds.primary ?? null, null, "  ")}`);
+      log.info(`news primary: ${JSON.stringify(news.primary ?? null, null, "  ")}`);
+      replaces.push("primary");
+    }
+    if (news.worker !== olds.worker) {
+      replaces.push("worker");
+    }
+
+    // !!! everything else does not trigger an update !!!
+
+    changes = changes || (replaces.length > 0);
+    const deleteBeforeReplace = (replaces.length > 0) || undefined;
+    return {
+      changes,
+      replaces,
+      deleteBeforeReplace,
+    };
+  }
+
+  async update(id: ID, olds: Outputs, news: Inputs): Promise<dynamic.UpdateResult<Outputs>> {
+    const session = await this.session(news);
+
+    // TODO: drain this node ...
+    await session.execute(`sudo snap refresh microk8s --channel=${news.version}`);
+    // TODO: uncordon this node ...
+
+    const outs: Outputs = {
+      ...olds,
+      ...news,
+    };
+    return {
+      outs,
+    };
+  }
+
   // read?: ((id: ID, props?: any) => Promise<dynamic.ReadResult<any>>) | undefined;
-  // update?: ((id: ID, olds: any, news: any) => Promise<dynamic.UpdateResult<any>>) | undefined;
 }
 
 export interface Microk8sArgs {
@@ -181,6 +234,7 @@ export interface Microk8sArgs {
 
 export class Microk8sInstance extends dynamic.Resource {
   readonly kubeconfig!: Output<string>;
+  readonly cidrs!: Output<string[]>;
 
   readonly hostname!: Output<string>;
   readonly remote!: Output<ConnOptions>;
@@ -195,9 +249,10 @@ export class Microk8sInstance extends dynamic.Resource {
   constructor(name: string, args: Microk8sArgs, opts?: CustomResourceOptions) {
     super(
       new Provider(),
-      name,
+      `microk8s:${name}`,
       {
         kubeconfig: undefined,
+        cidrs: undefined,
         ...args,
       },
       {

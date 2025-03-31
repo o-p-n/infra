@@ -1,21 +1,37 @@
 import * as k8s from "@pulumi/kubernetes";
 
-import { ModuleResult, ModuleResultSet } from "./_basics";
+import { ModuleResult, ModuleResultSet } from "../_basics";
 import { Config } from "@pulumi/pulumi";
 
-import { issuerName as certManagerIssuerName } from "./certificates";
+import { issuerName as certManagerIssuerName } from "../certificates";
 
 const namespace = "public-ingress";
 
-const config = new Config();
+const versions: Record<string, string> = {
+  "external-dns": "1.15.2",
+};
 
-const CERT_DEFAULTS = {
+const projectConfig = new Config("o-p-n");
+const ingressConfig = new Config("public-ingress");
+
+interface CertSpecProps {
+  duration: string;
+  renewBefore: string;
+}
+const CERT_DEFAULTS: CertSpecProps = {
   duration: "2160h",
   renewBefore: "720h",
 }
 
+interface ExternalDnsConfig {
+  provider: string;
+  accessToken: string;
+  envVarName: string;
+}
+
 export default async function stack(provider: k8s.Provider, deployed: ModuleResultSet): Promise<ModuleResult> {
-  const domain = config.require("domain");
+  const domain = projectConfig.require("domain");
+  const gatewayAnnotations: Record<string, string> = {};
 
   const ns = new k8s.core.v1.Namespace("public-ingress", {
     metadata: {
@@ -23,6 +39,51 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
     }
   }, { provider });
 
+  let extDnsConfig = ingressConfig.getSecretObject<ExternalDnsConfig>("external-dns");
+  if (extDnsConfig) {
+    const extDnsSecret = new k8s.core.v1.Secret("ext-dns-token", {
+      metadata: {
+        namespace,
+        name: "ext-dns-token",
+      },
+      type: "Opaque",
+      stringData: {
+        ACCESS_TOKEN: extDnsConfig.apply(config => config.accessToken),
+      },
+    }, {
+      provider,
+      dependsOn: [ ns ],
+    });
+    const extDnsRelease = new k8s.helm.v3.Release(`${namespace}-ext-dns`, {
+      chart: "external-dns",
+      version: versions["external-dns"],
+      namespace,
+      repositoryOpts: {
+        repo: "https://kubernetes-sigs.github.io/external-dns",
+      },
+      values: {
+        provider: extDnsConfig.apply(config => config.provider),
+        env: [
+          {
+            name: extDnsConfig.apply(config => config.envVarName),
+            valueFrom: {
+              secretKeyRef: {
+                name: "ext-dns-token",
+                key: "ACCESS_TOKEN",
+              },
+            },
+          },
+        ],
+      },
+    }, {
+      dependsOn: [ ns ],
+      provider,
+    });  
+
+    gatewayAnnotations["external-dns.alpha.kubernetes.io/hostname"] = domain;
+  }
+
+  const certSpec = ingressConfig.getObject<CertSpecProps>("cert-spec") ?? CERT_DEFAULTS;
   const certRes = new k8s.apiextensions.CustomResource("public-ingress-cert", {
     apiVersion: "cert-manager.io/v1",
     kind: "Certificate",
@@ -41,12 +102,11 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
         algorithm: "ECDSA",
         size: 256,
       },
-      duration: config.get("public-ingress-cert-duration") ?? CERT_DEFAULTS.duration,
-      renewBefore: config.get("public-ingress-cert-renew-before") ?? CERT_DEFAULTS.renewBefore,
       dnsNames: [
         domain,
         `*.${domain}`,
       ],
+      ...certSpec,
     },
   }, {
     provider,
@@ -59,6 +119,7 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
     metadata: {
       name: "gateway",
       namespace,
+      annotations: gatewayAnnotations,
     },
     spec: {
       gatewayClassName: "istio",
