@@ -23,7 +23,8 @@ export = async () => {
   const disabled = config.getObject<ModuleDisabledInfo>("disabled") ?? {};
 
   const ref = getStackRef("o-p-n.compute");
-  const modules = new K8sModuleRegistry(ref);
+  let kubeconfig = config.getSecret("kubeconfig");
+  const modules = new K8sModuleRegistry(ref, kubeconfig);
 
   await modules.apply("infraCore", infraCoreStack);
   await modules.apply("istioSystem", istioSystemStack);

@@ -49,10 +49,15 @@ export class K8sModuleRegistry {
   ref: pulumi.StackReference;
   results: ModuleResultSet = {};
 
-  constructor(ref: pulumi.StackReference) {
+  constructor(ref: pulumi.StackReference, kubeconfig?: pulumi.Output<string>) {
     this.ref = ref;
 
-    const kubeconfig = ref.getOutput("kubeconfig");
+    if (!kubeconfig) {
+      console.log("### use stack output kubeconfig ...");
+      kubeconfig = ref.getOutput("kubeconfig") as pulumi.Output<string>;
+    } else {
+      console.log("!!! use provided kubeconfig!");
+    }
     this.provider = new Provider("k8s-provider", {
       kubeconfig,
       deleteUnreachable: true,
