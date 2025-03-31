@@ -1,4 +1,5 @@
-import { all, ComponentResource, ComponentResourceOptions, Input, Output, output, secret } from "@pulumi/pulumi";
+import { all, ComponentResource, ComponentResourceOptions, Input, Output, secret } from "@pulumi/pulumi";
+import * as log from "@pulumi/pulumi/log";
 import * as YAML from "yaml";
 
 import { ConnOptions } from "./conn";
@@ -23,18 +24,19 @@ export class Microk8sCluster extends ComponentResource {
 
     let primary: Output<ConnOptions> | undefined = undefined;
     const resources: Microk8sInstance[] = [];
-    for (const host of args.hosts) {
-      const id = (domain === host) ? domain : `${domain}@${host}`;
+    for (const hostname of args.hosts) {
+      const id = (domain === hostname) ? domain : `${domain}@${hostname}`;
       const res: Microk8sInstance = new Microk8sInstance(
         id,
         {
           ...args,
-          hostname: host,
+          hostname,
           primary,
         },
       );
 
-      primary = primary ?? all([res.kubeconfig, res.hostname, args.remote]).apply(([_, host, remote]) => {
+      primary = primary ?? all([res.hostname, args.remote, res.kubeconfig]).apply(([host, remote]) => {
+        log.debug(`setting ${host} as primary`);
         const conn = {
           ...remote,
           host,
