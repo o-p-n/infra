@@ -40,15 +40,18 @@ export default async function deployKind(domain: string, resOpts: ResourceOption
     nodes: [
       {
         role: "control-plane",
-      },
-      {
-        role: "worker",
-      },
-      {
-        role: "worker",
-      },
-      {
-        role: "worker",
+        extraPortMappings: [
+          {
+            containerPort: 80,
+            hostPort: 80,
+            protocol: "tcp",
+          },
+          {
+            containerPort: 443,
+            hostPort: 443,
+            protocol: "tcp",
+          },
+        ],
       },
     ],
   }
