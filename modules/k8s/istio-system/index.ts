@@ -1,6 +1,6 @@
 import * as k8s from "@pulumi/kubernetes";
 
-const version = "1.25.1";
+const version = "1.25.2";
 const namespace = "istio-system";
 const repositoryOpts = {
   repo: "https://istio-release.storage.googleapis.com/charts",
@@ -13,7 +13,7 @@ export default async function stack(provider: k8s.Provider) {
     },
   }, { provider });
   
-  const base = new k8s.helm.v3.Release(`${namespace}.base`, {
+  const base = new k8s.helm.v3.Release("istio-base", {
     chart: "base",
     version,
     namespace,
@@ -22,7 +22,7 @@ export default async function stack(provider: k8s.Provider) {
     dependsOn: ns,
     provider,
   });
-  const istiod = new k8s.helm.v3.Release(`${namespace}.istiod`, {
+  const istiod = new k8s.helm.v3.Release("istiod", {
     chart: "istiod",
     version,
     namespace,
@@ -39,3 +39,4 @@ export default async function stack(provider: k8s.Provider) {
     istiod,
   }
 }
+``
