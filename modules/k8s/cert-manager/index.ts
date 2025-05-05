@@ -1,7 +1,7 @@
 import * as k8s from "@pulumi/kubernetes";
 
 export const namespace = "cert-manager";
-const version = "1.16.1";
+const version = "1.17.2";
 
 export default async function stack(provider: k8s.Provider) {
   const ns = new k8s.core.v1.Namespace(namespace, {
