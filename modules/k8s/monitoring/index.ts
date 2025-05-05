@@ -31,7 +31,7 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
         },
         adminPassword,
         podLabels: {
-          "sidecar.istio.io/inject": "true",
+          "istio.io/dataplane-mode": "ambient",
         },
       },
     },
