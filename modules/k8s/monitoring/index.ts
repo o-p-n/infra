@@ -1,6 +1,6 @@
-import { Config } from "@pulumi/pulumi";
+import { Config, CustomResourceOptions, Resource } from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
-import { ModuleResultSet } from "../_basics";
+import { ModuleResult, ModuleResultSet } from "../_basics";
 
 const namespace = "monitoring";
 
@@ -34,11 +34,25 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
           "istio.io/dataplane-mode": "ambient",
         },
       },
+      prometheus: {
+        prometheusSpec: {
+          podMonitorSelectorNilUsesHelmValues: false,
+          serviceMonitorSelectorNilUsesHelmValues: false,
+        },
+      },
     },
   }, {
     dependsOn: ns,
     provider,
   });
+
+  const monitors: Resource[] = [];
+  if (deployed["istioSystem"]) {
+    monitors.push(...istioMonitors(deployed["istioSystem"], {
+      provider,
+      dependsOn: [ prometheus ],
+    }));
+  }
 
   const serviceRes = new k8s.core.v1.Service("grafana-service", {
     metadata: {
@@ -101,4 +115,42 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
     resources: [ serviceRes, routeRes ],
     prometheus,
   };
+}
+
+function istioMonitors(istio: ModuleResult, opts: CustomResourceOptions): Resource[] {
+  const namespace = istio.namespace!;
+  const istiodMonitor = new k8s.apiextensions.CustomResource("istio-component-monitor", {
+    apiVersion: "monitoring.coreos.com/v1",
+    kind: "ServiceMonitor",
+    metadata: {
+      name: "istio-component-monitor",
+      namespace: namespace.metadata.name,
+      labels: {
+        monitoring: "istio-components",
+        release: "istio",
+      }
+    },
+    spec: {
+      jobLabel: "istio",
+      targetLabels: [ "app" ],
+      selector:{
+        matchExpressions: [
+          {key: "istio", operator: "In", values: ["pilot"] },
+        ],
+      },
+      namespaceSelector:{ any: true },
+      endpoints:[
+        {
+          port: "http-monitoring",
+          interval: "15s",
+        },
+      ],
+    }
+  }, {
+    ...opts,
+  });
+
+  return [
+    istiodMonitor,
+  ];
 }
