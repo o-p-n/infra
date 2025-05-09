@@ -2,7 +2,7 @@ import { Config, CustomResourceOptions, Resource } from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import { ModuleResult, ModuleResultSet } from "../_basics";
 
-const version = "65.2.0";
+const version = "72.2.0";
 const namespace = "monitoring";
 
 const projectConfig = new Config("o-p-n");
