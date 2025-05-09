@@ -2,6 +2,7 @@ import { Config, CustomResourceOptions, Resource } from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import { ModuleResult, ModuleResultSet } from "../_basics";
 
+const version = "65.2.0";
 const namespace = "monitoring";
 
 const projectConfig = new Config("o-p-n");
@@ -19,7 +20,7 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
 
   const prometheus = new k8s.helm.v3.Release(`${namespace}`, {
     chart: "kube-prometheus-stack",
-    version: "65.2.0",
+    version,
     namespace,
     repositoryOpts: {
       repo: "https://prometheus-community.github.io/helm-charts",
@@ -126,19 +127,18 @@ function istioMonitors(istio: ModuleResult, opts: CustomResourceOptions): Resour
       name: "istio-component-monitor",
       namespace: namespace.metadata.name,
       labels: {
-        monitoring: "istio-components",
+        monitoring: "istiod",
         release: "istio",
       }
     },
     spec: {
-      jobLabel: "istio",
+      jobLabel: "istiod-stats",
       targetLabels: [ "app" ],
-      selector:{
-        matchExpressions: [
-          {key: "istio", operator: "In", values: ["pilot"] },
-        ],
+      selector: {
+        matchLabels: {
+          app: "istiod",
+        },
       },
-      namespaceSelector:{ any: true },
       endpoints:[
         {
           port: "http-monitoring",
@@ -150,7 +150,39 @@ function istioMonitors(istio: ModuleResult, opts: CustomResourceOptions): Resour
     ...opts,
   });
 
+  const ztunnelMonitor = new k8s.apiextensions.CustomResource("istio-ztunnel-monitor", {
+    apiVersion: "monitoring.coreos.com/v1",
+    kind: "PodMonitor",
+    metadata: {
+      name: "istio-ztunnel-monitor",
+      namespace: namespace.metadata.name,
+      labels: {
+        monitoring: "istio-ztunnels",
+        release: "istio",
+      },
+    },
+    spec: {
+      selector: {
+        matchLabels: {
+          app: "ztunnel",
+        },
+      },
+      jobLabel: "ztunnel-stats",
+      podTargetLabels: [ "app" ],
+      podMetricsEndpoints: [
+        {
+          targetPort: 15020,
+          path: "/metrics",
+          interval: "15s",
+        },
+      ],
+    },
+  }, {
+    ...opts,
+  })
+
   return [
     istiodMonitor,
+    ztunnelMonitor,
   ];
 }
