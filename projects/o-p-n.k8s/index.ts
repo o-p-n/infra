@@ -7,6 +7,7 @@ import istioSystemStack from "../../modules/k8s/istio-system";
 import certManagerStack from "../../modules/k8s/cert-manager";
 import metallbStack from "../../modules/k8s/metallb";
 
+import cloudflareStack, { Settings as CFSettings } from "../../modules/cloudflare";
 import publicIngressStack from "../../modules/k8s/public-ingress";
 import certificatesStack from "../../modules/k8s/certificates";
 import monitoringStack from "../../modules/k8s/monitoring";
@@ -21,6 +22,7 @@ interface ComputeOutputs {
 type ModuleDisabledInfo = Record<string, boolean>;
 export = async () => {
   const disabled = config.getObject<ModuleDisabledInfo>("disabled") ?? {};
+  const cloudflare = config.getObject<CFSettings>("cloudflare");
 
   const ref = getStackRef("o-p-n.compute");
   let kubeconfig = config.getSecret("kubeconfig");
@@ -35,6 +37,10 @@ export = async () => {
   await modules.apply("publicIngress", publicIngressStack);
   await modules.apply("monitoring", monitoringStack);
   await modules.apply("certificates", certificatesStack);
+
+  if (cloudflare && cloudflare.enabled) {
+    await modules.apply("cloudflare", cloudflareStack);
+  }
 
   return modules.deployed;
 }
