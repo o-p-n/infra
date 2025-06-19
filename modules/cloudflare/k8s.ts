@@ -1,6 +1,6 @@
 import * as cf from "@pulumi/cloudflare";
 import * as k8s from "@pulumi/kubernetes";
-import { Output, Resource } from "@pulumi/pulumi";
+import { Config, Output, Resource } from "@pulumi/pulumi";
 
 import { ModuleResult, ModuleResultSet } from "../k8s/_basics";
 
@@ -38,17 +38,17 @@ no-autoupdate: true
 `.trim();
   });
 
-  const secret = new k8s.core.v1.Secret(`${namespace}-creds`, {
+  const configSecret = new k8s.core.v1.Secret(`${namespace}-config`, {
     metadata: {
       namespace,
-      name: "tunnel-creds",
+      name: "tunnel-config",
     },
     type: "generic",
     stringData: {
       "config.yaml": tunnelConfig,
-    }
+    },
   }, opts);
-  resources.push(secret);
+  resources.push(configSecret);
 
   const deployment = new k8s.apps.v1.DaemonSet(`${namespace}-cloudflared`, {
     metadata: {
@@ -71,7 +71,7 @@ no-autoupdate: true
           containers: [
             {
               name: "cloudflared",
-              image: "docker.io/cloudflare/cloudflared:2025.6.1",
+              image: `docker.io/cloudflare/cloudflared:${version}`,
               args: [],
               resources: {
                 limits: {
@@ -105,7 +105,7 @@ no-autoupdate: true
             {
               name: "config",
               secret: {
-                secretName: secret.metadata.name,
+                secretName: configSecret.metadata.name,
               },
             },
           ],
