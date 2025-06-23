@@ -32,11 +32,13 @@ interface ExternalDnsConfig {
 export default async function stack(provider: k8s.Provider, deployed: ModuleResultSet): Promise<ModuleResult> {
   const domain = projectConfig.require("domain");
   const gatewayAnnotations: Record<string, string> = {};
+  const serviceType = ingressConfig.get("service-type");
+  const gatewayName = "gateway";
 
   const ns = new k8s.core.v1.Namespace("public-ingress", {
     metadata: {
       name: namespace,
-    }
+    },
   }, { provider });
 
   let extDnsConfig = ingressConfig.getSecretObject<ExternalDnsConfig>("external-dns");
@@ -82,6 +84,15 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
 
     gatewayAnnotations["external-dns.alpha.kubernetes.io/hostname"] = domain;
   }
+  if (serviceType) {
+    gatewayAnnotations["networking.istio.io/service-type"] = serviceType;
+  }
+
+  const extraHosts: string[] = [];
+  if (ingressConfig.getBoolean("local-hostname")) {
+    const hostname = `${gatewayName}-istio.${namespace}.svc.cluster.local`;
+    extraHosts.push(hostname)
+  }
 
   const certSpec = ingressConfig.getObject<CertSpecProps>("cert-spec") ?? CERT_DEFAULTS;
   const certRes = new k8s.apiextensions.CustomResource("public-ingress-cert", {
@@ -105,6 +116,7 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
       dnsNames: [
         domain,
         `*.${domain}`,
+        ...extraHosts,
       ],
       ...certSpec,
     },
@@ -117,7 +129,7 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
     apiVersion: "gateway.networking.k8s.io/v1beta1",
     kind: "Gateway",
     metadata: {
-      name: "gateway",
+      name: gatewayName,
       namespace,
       annotations: gatewayAnnotations,
     },
@@ -134,7 +146,7 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
               {
                 name: "public-ingress-cert",
               },
-            ]
+            ],
           },
           allowedRoutes: {
             namespaces: { from: "All" },

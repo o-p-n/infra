@@ -76,12 +76,14 @@ export async function create(conn: ConnOptions, bastion?: Conn): Promise<Conn> {
   const target = new NodeSSH();
 
   if (bastion) {
+    log.debug(`forward ${conn.host}:${conn.port} through bsation`);
     return bastion.forward(conn);
   }
 
   let done = false;
   for (let attempt = 0; !done && attempt < ATTEMPTS_DEFAULTS.max; attempt++) {
     try {
+      log.debug(`connecting to ${conn.host}:${conn.port} (${attempt + 1})`);
       await target.connect(conn);
       done = true;
     } catch (error) {

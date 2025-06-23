@@ -38,6 +38,9 @@ export default function tunnelStack(accountId: string, zone: cf.Zone) {
           ...ingressSettings,
           hostname: `*.${domain}`,
         },
+        {
+           service: "http_status:404",
+        },
       ],
     },
   });
@@ -45,8 +48,8 @@ export default function tunnelStack(accountId: string, zone: cf.Zone) {
   const root = new cf.DnsRecord("root", {
     zoneId,
     type: "CNAME",
-    name: "@",
-    ttl: 300,
+    name: domain,
+    ttl: 1,
     proxied: true,
     content: tunnelHostname,
   });
@@ -54,8 +57,8 @@ export default function tunnelStack(accountId: string, zone: cf.Zone) {
   const wildcard = new cf.DnsRecord("wildcard", {
     zoneId,
     type: "CNAME",
-    name: "*",
-    ttl: 300,
+    name: `*.${domain}`,
+    ttl: 1,
     proxied: true,
     content: tunnelHostname,
   });

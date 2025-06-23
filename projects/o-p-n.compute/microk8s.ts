@@ -2,12 +2,13 @@ import { Config, Output, output, ResourceOptions } from "@pulumi/pulumi";
 
 import { StackDeployer, StackOutputs } from "./types";
 import { VERSION_CHANNEL } from "../../modules/k8s/version";
-import { Microk8sConnection, Microk8sCluster } from "../../modules/microk8s";
+import { Microk8sControlPlane, Microk8sConnection, Microk8sCluster } from "../../modules/microk8s";
 
 export default async function deployMicrok8s(domain: string, resOpts: ResourceOptions, defaultCidrs?: Output<string[]>): Promise<StackOutputs> {
   const config = new Config("microk8s");
 
   const hosts = config.requireObject<string[]>("hosts");
+  const controlPlane = config.getObject<Microk8sControlPlane>("control-plane");
   const remote = config.requireSecretObject<Microk8sConnection>("remote");
   const bastion = config.getSecretObject<Microk8sConnection>("bastion");
 
@@ -21,7 +22,7 @@ export default async function deployMicrok8s(domain: string, resOpts: ResourceOp
       "--cluster-domain": "cluster.local",
       "--cluster-dns": "10.152.183.10",
     },
-    "extraSANs": [ domain ],
+    "extraSANs": [ controlPlane?.hostname || domain ],
   };
 
   const version = output(VERSION_CHANNEL);
@@ -29,6 +30,7 @@ export default async function deployMicrok8s(domain: string, resOpts: ResourceOp
     hosts,
     remote,
     bastion,
+    controlPlane,
     launchConfig,
     version,
   }, resOpts);

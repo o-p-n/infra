@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 import * as YAML from "yaml";
 import * as _ from "underscore";
 
-import { Config, CustomResourceOptions, ID, Input, Output, all } from "@pulumi/pulumi";
+import { Config, CustomResourceOptions, ID, Input, Output } from "@pulumi/pulumi";
 import * as log from "@pulumi/pulumi/log";
 import * as dynamic from "@pulumi/pulumi/dynamic";
 
@@ -13,6 +13,11 @@ import { Conn, ConnOptions, create as createSession } from "./conn";
 import { makeId, obtainCIDRs } from "../../internal/utils";
 
 export type LaunchConfigType = Record<string, unknown>;
+
+export interface ControlPlane {
+  hostname?: string;
+  proxy?: string;
+}
 
 export interface JoinInfo {
   token: string;
@@ -23,6 +28,7 @@ interface Inputs {
   hostname: string;
   remote: ConnOptions;
   bastion?: ConnOptions;
+  controlPlane?: ControlPlane;
 
   version?: string;
   launchConfig?: LaunchConfigType;
@@ -48,12 +54,15 @@ class Provider implements dynamic.ResourceProvider {
   private async session(inputs: Inputs): Promise<Conn> {
     const host = inputs.hostname;
 
+    log.info(`establish session to ${host}`);
+
     let bastion: Conn | undefined = undefined;
     if (inputs.bastion) {
       const cfg: ConnOptions = {
         ...inputs.remote,
         ...inputs.bastion,
       };
+      log.debug(`establish bastion connection ...`);
       bastion = await createSession(cfg);
     }
 
@@ -61,6 +70,7 @@ class Provider implements dynamic.ResourceProvider {
       ...inputs.remote,
       host,
     };
+    log.debug(`establish host connection ...`);
     const session = await createSession(cfg, bastion);
 
     return session;
@@ -223,6 +233,7 @@ export interface Microk8sArgs {
   hostname: Input<string>;
   remote?: Input<ConnOptions>;
   bastion?: Input<ConnOptions>;
+  controlPlane?: Input<ControlPlane>;
 
   version?: Input<string>;
   launchConfig?: Input<LaunchConfigType>;
@@ -239,6 +250,7 @@ export class Microk8sInstance extends dynamic.Resource {
   readonly hostname!: Output<string>;
   readonly remote!: Output<ConnOptions>;
   readonly bastion?: Output<ConnOptions>;
+  readonly controlPlane?: Output<ControlPlane>;
 
   readonly version?: Output<string>;
   readonly launchConfig?: Output<string>;

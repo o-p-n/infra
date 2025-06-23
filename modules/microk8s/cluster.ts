@@ -3,13 +3,14 @@ import * as log from "@pulumi/pulumi/log";
 import * as YAML from "yaml";
 
 import { ConnOptions } from "./conn";
-import { LaunchConfigType, Microk8sInstance } from "./instance";
+import { ControlPlane, LaunchConfigType, Microk8sInstance } from "./instance";
 
 export interface Microk8sClusterInputs {
   hosts: string[];
 
   remote: Input<ConnOptions>;
   bastion?: Input<ConnOptions>;
+  controlPlane?: Input<ControlPlane>;
 
   version?: Input<string>;
   launchConfig?: Input<LaunchConfigType>;
@@ -46,17 +47,32 @@ export class Microk8sCluster extends ComponentResource {
       resources.push(res);
     }
 
+    const fixup = [
+      args.controlPlane,
+      ...resources.map(res => res.kubeconfig),
+    ];
     let kubeconfig = all(
-      resources.map(res => res.kubeconfig),
-    ).apply(cfgs => {
-      const cfgStr = cfgs[0];
+      fixup
+    ).apply(args => {
+      const controlPlane = args[0] as ControlPlane;
+      const hostname = controlPlane.hostname;
+      const proxy = controlPlane.proxy;
+
+      const cfgStr = args[1] as string;
       const config = YAML.parse(cfgStr);
 
+      const info = config.clusters[0];
+
       // fix-up server URL
-      const cluster = config.clusters[0].cluster;
+      const cluster = info.cluster;
       const loc = new URL(cluster.server);
-      loc.hostname = domain;
+      loc.hostname = hostname || domain;
       cluster.server = loc.toString();
+
+      // add proxy
+      if (proxy) {
+        cluster["proxy-url"] = proxy;
+      }
 
       return YAML.stringify(config);
     });

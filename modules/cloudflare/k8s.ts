@@ -53,7 +53,7 @@ no-autoupdate: true
   const deployment = new k8s.apps.v1.DaemonSet(`${namespace}-cloudflared`, {
     metadata: {
       namespace,
-      name: "cloudfalred",
+      name: "cloudflared",
     },
     spec: {
       selector: {
@@ -72,7 +72,12 @@ no-autoupdate: true
             {
               name: "cloudflared",
               image: `docker.io/cloudflare/cloudflared:${version}`,
-              args: [],
+              args: [
+                "tunnel",
+                "--config",
+                "/etc/cloudflared/config.yaml",
+                "run",
+              ],
               resources: {
                 limits: {
                   cpu: "1",

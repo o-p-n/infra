@@ -12,9 +12,10 @@ export default function stack(accountId: string) {
     account: { id: accountId },
     name: config.require("domain"),
   }, DEFAULT_OPTS);
+  const domain = config.require("domain");
 
-  const mx = mxRecords(zone);
-  const txt = txtRecords(zone);
+  const mx = mxRecords(zone, domain);
+  const txt = txtRecords(zone, domain);
 
   return {
     zone,
@@ -23,12 +24,12 @@ export default function stack(accountId: string) {
   };
 }
 
-function mxRecords(zone: cf.Zone): cf.DnsRecord[] {
+function mxRecords(zone: cf.Zone, domain: string): cf.DnsRecord[] {
   const args = {
     zoneId: zone.id,
     ttl: 1800,
     type: "MX",
-    name: "@",
+    name: domain,
   };
 
   const result: cf.DnsRecord[] = [];
@@ -41,7 +42,7 @@ function mxRecords(zone: cf.Zone): cf.DnsRecord[] {
   );
 
   for (let idx = 1; idx <= 4; idx++) {
-    const priority = (idx <= 3) ? 5 : 10;
+    const priority = (idx <= 2) ? 5 : 10;
     const rec = new cf.DnsRecord(`mx-alt${idx}` , {
       ...args,
       priority,
@@ -53,7 +54,7 @@ function mxRecords(zone: cf.Zone): cf.DnsRecord[] {
   return result;
 }
 
-function txtRecords(zone: cf.Zone): cf.DnsRecord[] {
+function txtRecords(zone: cf.Zone, domain: string): cf.DnsRecord[] {
   const args = {
     zoneId: zone.id,
     ttl: 86400,
@@ -62,32 +63,32 @@ function txtRecords(zone: cf.Zone): cf.DnsRecord[] {
 
   const txtSpf = new cf.DnsRecord("txt-spf", {
     ...args,
-    name: "@",
-    content: "v=spf1 include:_spf.google.com ~all",
+    name: domain,
+    content: '"v=spf1 include:_spf.google.com ~all"',
   }, DEFAULT_OPTS);
 
   const txtGoogle = new cf.DnsRecord("txt-google", {
     ...args,
-    name: "@",
-    content: "google-site-verification=x16tjnYyfxwSP957-vpBpf_7J-iPbKMBQQSnW1k4jxg",    
+    name: domain,
+    content: '"google-site-verification=x16tjnYyfxwSP957-vpBpf_7J-iPbKMBQQSnW1k4jxg"',
   }, DEFAULT_OPTS);
 
   const txtKeybase = new cf.DnsRecord("txt-keybase", {
     ...args,
-    name: "_keybase",
-    content: "keybase-site-verification=B63zuCQwOofMV2JohWWXCas-pNlqQZmiwsbzbNaU0Bo",
+    name: `_keybase.${domain}`,
+    content: '"keybase-site-verification=B63zuCQwOofMV2JohWWXCas-pNlqQZmiwsbzbNaU0Bo"',
   }, DEFAULT_OPTS);
 
   const txtGithubOPN = new cf.DnsRecord("txt-github.o-p-n", {
     ...args,
-    name: "_github-challenge-o-p-n-org",
-    content: "a6c52b455f",
+    name: `_github-challenge-o-p-n-org.${domain}`,
+    content: '"a6c52b455f"',
   }, DEFAULT_OPTS);
 
   const txtAtProtoLinuxwolf = new cf.DnsRecord("txt-atproto.linuxwolf", {
     ...args,
-    name: "_atproto.linuxwolf",
-    content: "did=did:plc:q7quflbj34fos4eb7l4eqbsy",
+    name: `_atproto.linuxwolf.${domain}`,
+    content: '"did=did:plc:q7quflbj34fos4eb7l4eqbsy"',
   }, DEFAULT_OPTS);
 
   return [
