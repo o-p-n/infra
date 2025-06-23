@@ -1,22 +1,37 @@
-encryptionsalt: v1:YUgVtkReVco=:v1:hVEEoOGWSQjW4H2f:Wc5e3QI7Iu5Wx2PLeHwJ9pCY6SFQaw==
+encryptionsalt: v1:JyUSIrcpqWY=:v1:Du2Ax+phn5y+2Qef:0uH4epmKLB7ehP2Zv+0luvEHl6wCtQ==
 config:
-  digitalocean:token:
-    secure: v1:Cdi02dKlVRBKTiTY:IyZCF/ouVSS0rTNa8vQNC9g2xBnGcH0mjJpEwiJZaeMI6oidqmYNU4o8Zpe+9EI3qYoob2sP0dbFlmqUunQvM+tYmcbO9P1oOBRYM4K+gM2RLzwvY8zl
-  o-p-n:compute-base: digitalocean
+  o-p-n:compute-base: microk8s
   o-p-n:domain: outer-planes.net
-  o-p-n:digitalocean: "true"
+  o-p-n:cloudflare:
+    enabled: true
+    account: 09e23dd041054ac8d267a7e115f96d29
   o-p-n:disabled:
     metallb: true
-  certificates:mode: acme
-  certificates:acme:
-    email:
-      secure: v1:yeHVdHF8L7HIZsK6:AfBk1XQL2ATANoEYY1GYGPftuTqO6NU2hAafyE4wZhgIG1s/SqM=
-    accessToken:
-      secure: v1:EajkrvVsHHhPjC7c:vR+kxQ7vQrY+rF6kMJsCIxBI4LfoTQVo2Um54EKdf0gfnUValaSpGuopGyW01q6YTY5QX5eeL1Sq35+droQZpJ+iqdsLn8ZdkAweMCNG3fX7pUPMwYbZ
+  cloudflare:apiToken:
+    secure: v1:QokwvhrXpmYBSC42:W/84WSwFONltLEKBni6v5x0Pc8yBdd5h73Gptj24IJq0TsqqJ/3TVCONslV9Pgn08iWvYJ0T864=
+  microk8s:remote:
+    port: 22
+    username:
+      secure: v1:Ck84tRvfA3pT8tH1:/qXdzFlFL2Ofc7npUi4ypB5Pyw==
+    privateKey:
+      secure: v1:D7Bv9cYPXSg4Tfav:78oTG1Doct/5yBzTl4U6D10dWwHS26aAow0yMCttDEqKXIcAT9ly1JwZBLKrsk81vSLQhhaoI8L7Zryg+YmaZMXpylTGk+46DlmcCFDyXO5r1l6fwtbNM1EllhB8PHnkplLWL0CLg+dcsH/Id6eREYvFiRLgCMk8Vu9LXdRy4R2jHGALGGfKgx0lqU9Iv9TVZxUewOAj886OFMaMXJx+O1zSvlzxFpSxeeFfl/poE60jLrhQLqsNYfEWYHn68QkB+jJhVSdqW3/ANc4XxYa/wDiKqRcUfbSuUE+GzIQ9UXuvp5nbTwzM8w2zeWKt5slGyebqTa2t3KS1HBkz6uyJrdH17ql7k6+F7nsmT/kc1DPPgDqJJLG2CBv2y2sKC9JgCNW8mxp+BZGRTEh/p5jVfyNiRlt1T2bjKZq+hYypVvTZi5GYn9r5yR2OHLWZLZWIVqvIZSQEYg8AHh9hXkZlo5VRM3DrAjuLUX/7mbL4+xwyjW8oboF/dwckVttMZNemtaeajPFcglcOmfuSNS2JAIcDi6MHYat4X3FuSjlqDXv4jZB8Ysa/yRMC0AGkgt9OMBI=
+  microk8s:hosts:
+    - elysium-armoria.local
+    - elysium-eronia.local
+    - elysium-belierin.local
+  microk8s:control-plane:
+    hostname: outer-planes.casa
+    proxy: socks5://localhost:9876
   monitoring:admin-password:
-    secure: v1:XkAY76eivBf45+9e:AlK8fcSYW+NwJjiuOQ3wKrDz2EMBWMPO9EpcrMXzgvkv4FKVoxxiFw==
-  public-ingress:external-dns:
-    provider: digitalocean
-    envVarName: DO_TOKEN
-    accessToken:
-      secure: v1:qE+Fi4xpSquf8DX1:LVVeBxTqH4jXtfeRboDJuQaEdAnR31Czg43i4ysVFTvxjjYfqrzynsUxDvTWXIfeNLaLe/42+STR3WuQKSL+RUbuuXFYTE/+71NEzXOvTl6A0rED3ID8
+    secure: v1:zi5wrG4vgqeaEu4h:e/POwSRKyTb7J4LCLbuiEJrAptMLmZTzZ8tLsbrRWvy/WRgZz4P5kg==
+  certificates:mode: self-ca
+  certificates:self-ca:
+    crt:
+      secure: v1:0OeYMHYKKWiF4QEp:+we/zg4iH4OFZbEbXkb2PkOKEBGGWIeCXId3uMQBntKTksvpCs33MesJK1+O2UBFabYBG16HdTzUeVRMvt3UT0/xmuRLMSnupsuZ5pR5hIjkgzT9PpHOM6B0qZJkUP/ZosryU8y+v7G0tmXDSswUq4e5ZwSn6WS8/hvdM7bx+WVkZnw9Fzg9Qu4pImvsDihv6j5VwfYEsctC8ivPhuSdcKXqmIHtI6+uJSiUwVvMn8D58ij9lLzHTLdGf2H5qoTTLPQZ0bZCHJGMwJBvM3RhQSFht8ca8E+68cnrpewCKSouqD5MflTV94MCqD6cIhvkE5W9KkLquSVXYOcMLuiK0FmzhRQGsWyihTj7RB3mi0tLltTiu+w1tr+Q3AoHRpDAMIPewhhziKCQreXPLErRANFcPg0aGV9OjXmUjqiV2+suTmq5+SaeMT+/SWy0smTGRjw8axkoTS0/86bkHiHNnSHVQxf2WMmosbc4q+H3sdCJWWk44mSECZT89Is4h8b1FxOU4Y390WVfNLR/AbbYoLjO+E4sJr30WZuAQYX5N90pSNBRgOw1Mh17Afy9s8josBNH8Kd2N09DFysqrtyaeYJguUCOtAVvU0Avkb/w3CKizGbLs5eyBiXIiUi4yaXVLYvb9gRlr44KfqcIIybmeRg9WF70n2yq/SP4ZuAffoNUk+Mfj+W1KUyHOm2sqRE+JljAZmTtauv12Ee+98kvnRDt5+GN72QJ2ANoF74y9XtE4G3h3vWsREgLxAjEGcW4lcRxu6KM+UtK4ea4BbfuTEU5dOJo1HDJJQ5rM8ZlytY/hXSSPsgbBv+Ml1NXEUOquqDgnBUnwWchag==
+    key:
+      secure: v1:mSIJOwPvdq7AWy/D:bt/juEa2rSJKYOmTMLgNYtCV8qko4M3Y6Pe2F937nZTGIkcth22M5kRcTZcHmS4AbKGvH8OP/8mM7SH6G/rqXpmmd4Yu2xtpVrA4GLJhUoaQ1jmIDO6yIJlrryFgsflaND5c3Y/Em9xMdfPDHqa+catrEmLxsNX/oc1DrHTMtfcSL2Z03XlWWTiSRm8l8y4Zg2vYn5HfPkuawdDHd/xM/cfGmcnY0FXtt3l+pD0N6gr/P9OCe3xjoNziR/KxJuh52wvz862+QMtZ//QVVhLXiOBq2gevIFBjmkfFyXnMlNQKXKa+8aL8SeksHcRfKbfrBuHfS+Vtqqv7t4FYise1/g==
+  public-ingress:cert-spec:
+    duration: 168h
+    renewBefore: 96h
+  public-ingress:local-hostname: false
+  public-ingress:service-type: ClusterIP
