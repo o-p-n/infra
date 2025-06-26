@@ -2,6 +2,7 @@
     "name": "o-p-n",
     "devDependencies": {
         "@types/jsonpath": "^0.2.4",
+        "@types/libsodium-wrappers": "^0.7.14",
         "@types/node": "^22",
         "@types/ssh2": "^1.15.1",
         "@types/underscore": "^1.13.0",
@@ -9,11 +10,15 @@
         "typescript": "^5.0.0"
     },
     "dependencies": {
+        "@octokit/auth-app": "^8.0.1",
+        "@pulumi/cloudflare": "^6.3.1",
         "@pulumi/command": "^1.0.2",
         "@pulumi/digitalocean": "^4.0.0",
         "@pulumi/kubernetes": "^4.18.1",
         "@pulumi/pulumi": "^3.113.0",
         "jsonpath": "^1.1.1",
+        "libsodium-wrappers": "^0.7.15",
+        "octokit": "^5.0.3",
         "underscore": "^1.13.7",
         "yaml": "^2.7.0",
         "zx": "^8.1.9"

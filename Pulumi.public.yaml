@@ -1,22 +1,46 @@
-encryptionsalt: v1:YUgVtkReVco=:v1:hVEEoOGWSQjW4H2f:Wc5e3QI7Iu5Wx2PLeHwJ9pCY6SFQaw==
+encryptionsalt: v1:JyUSIrcpqWY=:v1:Du2Ax+phn5y+2Qef:0uH4epmKLB7ehP2Zv+0luvEHl6wCtQ==
 config:
-  digitalocean:token:
-    secure: v1:Cdi02dKlVRBKTiTY:IyZCF/ouVSS0rTNa8vQNC9g2xBnGcH0mjJpEwiJZaeMI6oidqmYNU4o8Zpe+9EI3qYoob2sP0dbFlmqUunQvM+tYmcbO9P1oOBRYM4K+gM2RLzwvY8zl
-  o-p-n:compute-base: digitalocean
+  o-p-n:compute-base: microk8s
   o-p-n:domain: outer-planes.net
-  o-p-n:digitalocean: "true"
+  o-p-n:cloudflare:
+    account: 09e23dd041054ac8d267a7e115f96d29
   o-p-n:disabled:
     metallb: true
-  certificates:mode: acme
-  certificates:acme:
-    email:
-      secure: v1:yeHVdHF8L7HIZsK6:AfBk1XQL2ATANoEYY1GYGPftuTqO6NU2hAafyE4wZhgIG1s/SqM=
-    accessToken:
-      secure: v1:EajkrvVsHHhPjC7c:vR+kxQ7vQrY+rF6kMJsCIxBI4LfoTQVo2Um54EKdf0gfnUValaSpGuopGyW01q6YTY5QX5eeL1Sq35+droQZpJ+iqdsLn8ZdkAweMCNG3fX7pUPMwYbZ
+  cloudflare:apiToken:
+    secure: v1:QokwvhrXpmYBSC42:W/84WSwFONltLEKBni6v5x0Pc8yBdd5h73Gptj24IJq0TsqqJ/3TVCONslV9Pgn08iWvYJ0T864=
+  microk8s:remote:
+    port: 22
+    username:
+      secure: v1:Ck84tRvfA3pT8tH1:/qXdzFlFL2Ofc7npUi4ypB5Pyw==
+    privateKey:
+      secure: v1:D7Bv9cYPXSg4Tfav:78oTG1Doct/5yBzTl4U6D10dWwHS26aAow0yMCttDEqKXIcAT9ly1JwZBLKrsk81vSLQhhaoI8L7Zryg+YmaZMXpylTGk+46DlmcCFDyXO5r1l6fwtbNM1EllhB8PHnkplLWL0CLg+dcsH/Id6eREYvFiRLgCMk8Vu9LXdRy4R2jHGALGGfKgx0lqU9Iv9TVZxUewOAj886OFMaMXJx+O1zSvlzxFpSxeeFfl/poE60jLrhQLqsNYfEWYHn68QkB+jJhVSdqW3/ANc4XxYa/wDiKqRcUfbSuUE+GzIQ9UXuvp5nbTwzM8w2zeWKt5slGyebqTa2t3KS1HBkz6uyJrdH17ql7k6+F7nsmT/kc1DPPgDqJJLG2CBv2y2sKC9JgCNW8mxp+BZGRTEh/p5jVfyNiRlt1T2bjKZq+hYypVvTZi5GYn9r5yR2OHLWZLZWIVqvIZSQEYg8AHh9hXkZlo5VRM3DrAjuLUX/7mbL4+xwyjW8oboF/dwckVttMZNemtaeajPFcglcOmfuSNS2JAIcDi6MHYat4X3FuSjlqDXv4jZB8Ysa/yRMC0AGkgt9OMBI=
+  microk8s:hosts:
+    - elysium-armoria.local
+    - elysium-eronia.local
+    - elysium-belierin.local
+  microk8s:control-plane:
+    hostname: outer-planes.casa
+    proxy: socks5://localhost:9876
   monitoring:admin-password:
-    secure: v1:XkAY76eivBf45+9e:AlK8fcSYW+NwJjiuOQ3wKrDz2EMBWMPO9EpcrMXzgvkv4FKVoxxiFw==
-  public-ingress:external-dns:
-    provider: digitalocean
-    envVarName: DO_TOKEN
-    accessToken:
-      secure: v1:qE+Fi4xpSquf8DX1:LVVeBxTqH4jXtfeRboDJuQaEdAnR31Czg43i4ysVFTvxjjYfqrzynsUxDvTWXIfeNLaLe/42+STR3WuQKSL+RUbuuXFYTE/+71NEzXOvTl6A0rED3ID8
+    secure: v1:zi5wrG4vgqeaEu4h:e/POwSRKyTb7J4LCLbuiEJrAptMLmZTzZ8tLsbrRWvy/WRgZz4P5kg==
+  certificates:mode: self-ca
+  certificates:self-ca:
+    crt:
+      secure: v1:0OeYMHYKKWiF4QEp:+we/zg4iH4OFZbEbXkb2PkOKEBGGWIeCXId3uMQBntKTksvpCs33MesJK1+O2UBFabYBG16HdTzUeVRMvt3UT0/xmuRLMSnupsuZ5pR5hIjkgzT9PpHOM6B0qZJkUP/ZosryU8y+v7G0tmXDSswUq4e5ZwSn6WS8/hvdM7bx+WVkZnw9Fzg9Qu4pImvsDihv6j5VwfYEsctC8ivPhuSdcKXqmIHtI6+uJSiUwVvMn8D58ij9lLzHTLdGf2H5qoTTLPQZ0bZCHJGMwJBvM3RhQSFht8ca8E+68cnrpewCKSouqD5MflTV94MCqD6cIhvkE5W9KkLquSVXYOcMLuiK0FmzhRQGsWyihTj7RB3mi0tLltTiu+w1tr+Q3AoHRpDAMIPewhhziKCQreXPLErRANFcPg0aGV9OjXmUjqiV2+suTmq5+SaeMT+/SWy0smTGRjw8axkoTS0/86bkHiHNnSHVQxf2WMmosbc4q+H3sdCJWWk44mSECZT89Is4h8b1FxOU4Y390WVfNLR/AbbYoLjO+E4sJr30WZuAQYX5N90pSNBRgOw1Mh17Afy9s8josBNH8Kd2N09DFysqrtyaeYJguUCOtAVvU0Avkb/w3CKizGbLs5eyBiXIiUi4yaXVLYvb9gRlr44KfqcIIybmeRg9WF70n2yq/SP4ZuAffoNUk+Mfj+W1KUyHOm2sqRE+JljAZmTtauv12Ee+98kvnRDt5+GN72QJ2ANoF74y9XtE4G3h3vWsREgLxAjEGcW4lcRxu6KM+UtK4ea4BbfuTEU5dOJo1HDJJQ5rM8ZlytY/hXSSPsgbBv+Ml1NXEUOquqDgnBUnwWchag==
+    key:
+      secure: v1:mSIJOwPvdq7AWy/D:bt/juEa2rSJKYOmTMLgNYtCV8qko4M3Y6Pe2F937nZTGIkcth22M5kRcTZcHmS4AbKGvH8OP/8mM7SH6G/rqXpmmd4Yu2xtpVrA4GLJhUoaQ1jmIDO6yIJlrryFgsflaND5c3Y/Em9xMdfPDHqa+catrEmLxsNX/oc1DrHTMtfcSL2Z03XlWWTiSRm8l8y4Zg2vYn5HfPkuawdDHd/xM/cfGmcnY0FXtt3l+pD0N6gr/P9OCe3xjoNziR/KxJuh52wvz862+QMtZ//QVVhLXiOBq2gevIFBjmkfFyXnMlNQKXKa+8aL8SeksHcRfKbfrBuHfS+Vtqqv7t4FYise1/g==
+  public-ingress:cert-spec:
+    duration: 168h
+    renewBefore: 96h
+  public-ingress:local-hostname: "false"
+  public-ingress:service-type: ClusterIP
+  o-p-n:enabled:
+    github: true
+    cloudflare: true
+  github:app:
+    appId:
+      secure: v1:lPtMrHfgKldNOrnv:jzd1qiDWkvpmagDAH66l1EVRk5uD/FQ=
+    installationId:
+      secure: v1:h3zOmdT0w7/PfIga:/oLzM21uNGDIiK9MdqXJwxFR1i+EyVfs
+    privateKey:
+      secure: v1:EyepqwBYZV8UX2Xt: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
