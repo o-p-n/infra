@@ -3,7 +3,6 @@ config:
   o-p-n:compute-base: microk8s
   o-p-n:domain: outer-planes.net
   o-p-n:cloudflare:
-    enabled: true
     account: 09e23dd041054ac8d267a7e115f96d29
   o-p-n:disabled:
     metallb: true
@@ -33,10 +32,11 @@ config:
   public-ingress:cert-spec:
     duration: 168h
     renewBefore: 96h
-  public-ingress:local-hostname: false
+  public-ingress:local-hostname: "false"
   public-ingress:service-type: ClusterIP
   o-p-n:enabled:
     github: true
+    cloudflare: true
   github:app:
     appId:
       secure: v1:lPtMrHfgKldNOrnv:jzd1qiDWkvpmagDAH66l1EVRk5uD/FQ=

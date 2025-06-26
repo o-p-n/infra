@@ -19,10 +19,9 @@ interface ComputeOutputs {
   kubeconfig: Output<string>;
 }
 
-type ModuleDisabledInfo = Record<string, boolean>;
+type ModuleEnabledInfo = Record<string, boolean>;
 export = async () => {
-  const disabled = config.getObject<ModuleDisabledInfo>("disabled") ?? {};
-  const cloudflare = config.getObject<CFSettings>("cloudflare");
+  const enabled = config.getObject<ModuleEnabledInfo>("enabled") ?? {};
 
   const ref = getStackRef("o-p-n.compute");
   let kubeconfig = config.getSecret("kubeconfig");
@@ -31,14 +30,14 @@ export = async () => {
   await modules.apply("infraCore", infraCoreStack);
   await modules.apply("istioSystem", istioSystemStack);
   await modules.apply("certManager", certManagerStack);
-  if (!disabled.metallb) {
+  if (enabled.metallb) {
     await modules.apply("metallb", metallbStack);
   }
   await modules.apply("publicIngress", publicIngressStack);
   await modules.apply("monitoring", monitoringStack);
   await modules.apply("certificates", certificatesStack);
 
-  if (cloudflare && cloudflare.enabled) {
+  if (enabled.cloudflare) {
     await modules.apply("cloudflare", cloudflareStack);
   }
 
