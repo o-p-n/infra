@@ -50,12 +50,13 @@ no-autoupdate: true
   }, opts);
   resources.push(configSecret);
 
-  const deployment = new k8s.apps.v1.DaemonSet(`${namespace}-cloudflared`, {
+  const deployment = new k8s.apps.v1.Deployment(`${namespace}-cloudflared`, {
     metadata: {
       namespace,
       name: "cloudflared",
     },
     spec: {
+      replicas: 1,
       selector: {
         matchLabels: {
           app: "cloudflared",
@@ -119,30 +120,6 @@ no-autoupdate: true
     },
   }, opts);
   resources.push(deployment);
-
-  const monitor = new k8s.apiextensions.CustomResource(`${namespace}-monitor`, {
-    apiVersion: "monitoring.coreos.com/v1",
-    kind: "PodMonitor",
-    metadata: {
-      namespace,
-      name: "monitor",
-    },
-    spec: {
-      selector: {
-        matchLabels: {
-          app: deployment.metadata.name,
-        },
-      },
-      podMetricsEndpoints: [
-        {
-          targetPort: metricsPort,
-        },
-      ],
-    },
-  }, {
-    ...opts,
-    dependsOn: deployed.monitoring?.dependencies ?? [],
-  });
 
   return {
     namespace: ns,
