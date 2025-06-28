@@ -22,7 +22,10 @@ export default async function deployMicrok8s(domain: string, resOpts: ResourceOp
       "--cluster-domain": "cluster.local",
       "--cluster-dns": "10.152.183.10",
     },
-    "extraSANs": [ controlPlane?.hostname || domain ],
+    "extraSANs": [
+      controlPlane?.hostname || domain,
+      ...hosts,
+    ],
   };
 
   const version = output(VERSION_CHANNEL);
