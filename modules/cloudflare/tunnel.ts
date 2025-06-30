@@ -3,8 +3,7 @@ import { getStack, Config } from "@pulumi/pulumi";
 
 const config = new Config("o-p-n");
 
-export default function tunnelStack(accountId: string, zone: cf.Zone) {
-  const zoneId = zone.id;
+export default function tunnelStack(accountId: string, zoneId: string) {
   const domain = config.require("domain");
   const stack = getStack();
   

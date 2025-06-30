@@ -1,32 +1,31 @@
 import * as cf from "@pulumi/cloudflare";
 import { Config, CustomResourceOptions } from "@pulumi/pulumi";
 
+import { Settings } from "./types";
+
 const DEFAULT_OPTS: CustomResourceOptions = {
   protect: true,
 };
 
 const config = new Config("o-p-n");
 
-export default function stack(accountId: string) {
-  const zone = new cf.Zone("zone", {
-    account: { id: accountId },
-    name: config.require("domain"),
-  }, DEFAULT_OPTS);
-  const domain = config.require("domain");
+export default function stack(domain: string) {
+  const settings = config.requireObject<Settings>("cloudflare");
+  const { zone: zoneId } = settings;
 
-  const mx = mxRecords(zone, domain);
-  const txt = txtRecords(zone, domain);
+  const mx = mxRecords(zoneId, domain);
+  const txt = txtRecords(zoneId, domain);
 
   return {
-    zone,
+    zoneId,
     mx,
     txt,
   };
 }
 
-function mxRecords(zone: cf.Zone, domain: string): cf.DnsRecord[] {
+function mxRecords(zoneId: string, domain: string): cf.DnsRecord[] {
   const args = {
-    zoneId: zone.id,
+    zoneId,
     ttl: 1800,
     type: "MX",
     name: domain,
@@ -54,9 +53,9 @@ function mxRecords(zone: cf.Zone, domain: string): cf.DnsRecord[] {
   return result;
 }
 
-function txtRecords(zone: cf.Zone, domain: string): cf.DnsRecord[] {
+function txtRecords(zoneId: string, domain: string): cf.DnsRecord[] {
   const args = {
-    zoneId: zone.id,
+    zoneId,
     ttl: 86400,
     type: "TXT",
   };

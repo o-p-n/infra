@@ -13,10 +13,9 @@ const config = new Config("o-p-n");
 
 export default async function stack(provider: k8s.Provider, deployed: ModuleResultSet) {
   const settings = config.requireObject<Settings>("cloudflare");
-  const accountId = settings.account;
+  const { account: accountId, zone: zoneId } = settings;
 
-  const dns = dnsStack(accountId);
-  const tunnel = tunnelStack(accountId, dns.zone);
+  const tunnel = tunnelStack(accountId, zoneId);
   const k8s = k8sStack(tunnel.token, provider, deployed);
 
   return k8s;
