@@ -1,9 +1,10 @@
 import * as k8s from "@pulumi/kubernetes";
 
 import { ModuleResult, ModuleResultSet } from "../_basics";
-import { Config } from "@pulumi/pulumi";
+import { Config, Resource } from "@pulumi/pulumi";
 
 import { issuerName as certManagerIssuerName } from "../certificates";
+import { Settings as CfSettings } from "../../cloudflare/types";
 
 const namespace = "public-ingress";
 
@@ -95,35 +96,57 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
   }
 
   const certSpec = ingressConfig.getObject<CertSpecProps>("cert-spec") ?? CERT_DEFAULTS;
-  const certRes = new k8s.apiextensions.CustomResource("public-ingress-cert", {
-    apiVersion: "cert-manager.io/v1",
-    kind: "Certificate",
-    metadata: {
-      name: "public-ingress-cert",
-      namespace,
-    },
-    "spec": {
-      secretName: "public-ingress-cert",
-      issuerRef: {
-        kind: "ClusterIssuer",
-        name: certManagerIssuerName,
+  let certRes: Resource | undefined = undefined;
+  if (projectConfig.getObject<Record<string, string>>("enabled")?.cloudflare) {
+    const cfSettings = projectConfig.requireSecretObject<CfSettings>("cloudflare");
+    const tlsKey = cfSettings.originKey;
+    const tlsCert = cfSettings.originCert;
+
+    certRes = new k8s.core.v1.Secret("public-ingress-cert", {
+      metadata: {
+        namespace,
+        name: "public-ingress-cert",
       },
-      isCA: false,
-      privateKey: {
-        algorithm: "ECDSA",
-        size: 256,
+      type: "kubernetes.io/tls",
+      stringData: {
+        "tls.key": tlsKey,
+        "tls.crt": tlsCert,
       },
-      dnsNames: [
-        domain,
-        `*.${domain}`,
-        ...extraHosts,
-      ],
-      ...certSpec,
-    },
-  }, {
-    provider,
-    dependsOn: [ ns, ...deployed.certManager.dependencies! ],
-  });
+    }, {
+      provider,
+    });
+  }
+  if (!certRes) {
+    certRes = new k8s.apiextensions.CustomResource("public-ingress-cert", {
+      apiVersion: "cert-manager.io/v1",
+      kind: "Certificate",
+      metadata: {
+        name: "public-ingress-cert",
+        namespace,
+      },
+      "spec": {
+        secretName: "public-ingress-cert",
+        issuerRef: {
+          kind: "ClusterIssuer",
+          name: certManagerIssuerName,
+        },
+        isCA: false,
+        privateKey: {
+          algorithm: "ECDSA",
+          size: 256,
+        },
+        dnsNames: [
+          domain,
+          `*.${domain}`,
+          ...extraHosts,
+        ],
+        ...certSpec,
+      },
+    }, {
+      provider,
+      dependsOn: [ ns, ...deployed.certManager.dependencies! ],
+    });
+  }
 
   const gatewayRes = new k8s.apiextensions.CustomResource("public-ingress-gateway", {
     apiVersion: "gateway.networking.k8s.io/v1beta1",
