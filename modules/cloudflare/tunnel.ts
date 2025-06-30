@@ -21,7 +21,7 @@ export default function tunnelStack(accountId: string, zoneId: string) {
   const ingressSettings = {
     service: "https://gateway-istio.public-ingress.svc.cluster.local",
     originRequest: {
-      noTlsVerify: true,
+      originServerName: domain,
     },
   };
   const ingress = new cf.ZeroTrustTunnelCloudflaredConfig("ingress-config", {

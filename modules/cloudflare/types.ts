@@ -1,5 +1,6 @@
 export interface Settings {
   account: string;
   zone: string;
-  caPool?: string;
+  originCert: string;
+  originKey: string;
 }
