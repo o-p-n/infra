@@ -4,6 +4,7 @@ config:
   o-p-n:domain: outer-planes.net
   o-p-n:cloudflare:
     account: 09e23dd041054ac8d267a7e115f96d29
+    zone: c5660ae123056b05b14d7b21e360fcf8
   o-p-n:disabled:
     metallb: true
   cloudflare:apiToken:

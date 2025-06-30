@@ -10,6 +10,7 @@ import deployKind from "./kind";
 import deployMicrok8s from "./microk8s";
 import doStack from "../../modules/digitalocean";
 import { OrgSecret } from "../../modules/github/secrets";
+import cfDnsStack from "../../modules/cloudflare/dns";
 
 const config = new Config("o-p-n");
 
@@ -35,6 +36,9 @@ export = async () => {
   }
 
   const outputs = await deployer(domain, resOpts);
+  if (enabled.cloudflare) {
+    cfDnsStack(domain);
+  }
 
   if (enabled.github) {
     const secret = new OrgSecret("kubeconfig-secret", {
