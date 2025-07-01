@@ -11,8 +11,7 @@ The resources are divided into two projects:
 
 Further, there are three stacks:
 * `local` for local development and testing, using [KinD](https://kind.sigs.k8s.io/)
-* `intranet` for shared semi-private workloads on a home lab, using [microk8s]([https](https://microk8s.io/)
-* `public` for public-fasing workloads on [Digital Ocean](digitalocean.com), using DOKS (Digital Ocean Kubernetes Service)
+* `public` for public-fasing workloads on a home lab, using [microk8s]([https](https://microk8s.io/) for compute and [Cloudflare tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to bridge them onto the internet.
 
 Resources are provisioned using [Pulumi](https://pulumi.com).  The backend state is managed on a local filesystem and secrets are managed using separate per-environment passphrases.
 
@@ -24,7 +23,7 @@ The following components are necessary to deploy infrastructure:
 * `kind` (for `local`), version 0.27.0 or later
 * `kubectl`, version 1.31 or later
 
-In addition, an up-to-date copy of the state backend and its associated passphrase are needed.  Both are maintained separate from this repository at present.
+In addition, an up-to-date copy of the state backend and its associated passphrase are needed.  Both are maintained separate from this repository.
 
 ## DEPLOYING
 
