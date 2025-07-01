@@ -56,7 +56,7 @@ no-autoupdate: true
       name: "cloudflared",
     },
     spec: {
-      replicas: 1,
+      replicas: 2,
       selector: {
         matchLabels: {
           app: "cloudflared",
@@ -105,6 +105,13 @@ no-autoupdate: true
                   readOnly: true,
                 },
               ],
+              ports: [
+                {
+                  name: "cf-stats",
+                  containerPort: 20244,
+                  protocol: "TCP",
+                },
+              ],
             },
           ],
           volumes: [
@@ -120,6 +127,35 @@ no-autoupdate: true
     },
   }, opts);
   resources.push(deployment);
+
+  const monitor = new k8s.apiextensions.CustomResource(`{namespace}-monitor`, {
+    apiVersion: "monitoring.coreos.com/v1",
+    kind: "PodMonitor",
+    metadata: {
+      namespace,
+      name: "cloudflared-monitor",
+      labels: {
+        monitoring: "cloudflared",
+      },
+    },
+    spec: {
+      selector: {
+        matchLabels: {
+          app: "cloudflared",
+        },
+      },
+      jobLabel: "cf-stats",
+      podTargetLabels: [ "app" ],
+      podMetricsEndpoints: [
+        {
+          portNumber: 20244,
+          path: "/metrics",
+          interval: "10s",
+        },
+      ],
+    },
+  }, opts);
+  resources.push(monitor);
 
   return {
     namespace: ns,
