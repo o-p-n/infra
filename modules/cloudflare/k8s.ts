@@ -4,6 +4,8 @@ import { Config, Output, Resource } from "@pulumi/pulumi";
 
 import { ModuleResult, ModuleResultSet } from "../k8s/_basics";
 
+import dashboards from "./dashboards";
+
 const namespace = "cloudflare";
 const version = "2025.6.1";
 
@@ -128,7 +130,7 @@ no-autoupdate: true
   }, opts);
   resources.push(deployment);
 
-  const monitor = new k8s.apiextensions.CustomResource(`{namespace}-monitor`, {
+  const monitor = new k8s.apiextensions.CustomResource(`${namespace}-monitor`, {
     apiVersion: "monitoring.coreos.com/v1",
     kind: "PodMonitor",
     metadata: {
@@ -156,6 +158,21 @@ no-autoupdate: true
     },
   }, opts);
   resources.push(monitor);
+
+  for (const [key, content] of Object.entries(dashboards)) {
+    const data: Record<string, string> = {};
+    data[`${key}.json`] = content;
+    const dashboard = new k8s.core.v1.ConfigMap(`${namespace}-dashboard-${key}`, {
+      metadata: {
+        namespace,
+        name: key,
+        labels: {
+          "grafana_dashboard": "1",
+        },
+      },
+      data,
+    }, opts);
+  }
 
   return {
     namespace: ns,
