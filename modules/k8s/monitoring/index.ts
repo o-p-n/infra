@@ -41,6 +41,14 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
           serviceMonitorSelectorNilUsesHelmValues: false,
         },
       },
+      defaultRules: {
+        disabled: {
+          // disable now known-problematic rules
+          kubeControllerManagerDown: true,
+          kubeProxyDown: true,
+          kubeSchedulerDown: true,
+        },
+      },
     },
   }, {
     dependsOn: ns,
