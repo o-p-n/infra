@@ -42,11 +42,43 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
         },
       },
       defaultRules: {
+        rules: {
+          kubeControllerManager: false,
+          kubeProxy: false,
+          kubeScheduler: false,
+        },
         disabled: {
           // disable now known-problematic rules
           kubeControllerManagerDown: true,
           kubeProxyDown: true,
           kubeSchedulerDown: true,
+        },
+      },
+      kubeControllerManager: {
+        enabled: false,
+        service: {
+          enabled: false,
+        },
+        serviceMonitor: {
+          enabled: false,
+        },
+      },
+      kubeProxy: {
+        enabled: false,
+        service: {
+          enabled: false,
+        },
+        serviceMonitor: {
+          enabled: false,
+        },
+      },
+      kubeScheduler: {
+        enabled: false,
+        service: {
+          enabled: false,
+        },
+        serviceMonitor: {
+          enabled: false,
         },
       },
     },
