@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 31,
+  "id": 36,
   "links": [],
   "panels": [
     {
@@ -194,7 +194,7 @@
           "useBackend": false
         }
       ],
-      "title": "QUIC Round Trip Time (ms)",
+      "title": "QUIC Round Trip Time",
       "type": "stat"
     },
     {
@@ -283,12 +283,16 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "editorMode": "code",
-          "expr": "sum by(pod) (rate(cloudflared_tunnel_total_requests[$__rate_interval]))",
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(pod) (increase(cloudflared_tunnel_total_requests[1m]))",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "{{pod}} total",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         },
         {
           "datasource": {
@@ -296,7 +300,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum by(pod) (rate(cloudflared_tunnel_request_errors[1m]))",
+          "expr": "sum by(pod) (increase(cloudflared_tunnel_request_errors[1m]))",
           "hide": false,
           "instant": false,
           "legendFormat": "{{pod}} errors",
@@ -390,8 +394,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(status_code) (rate(cloudflared_tunnel_response_by_code[$__rate_interval]))",
+          "editorMode": "code",
+          "expr": "sum by(status_code) (increase(cloudflared_tunnel_response_by_code[1m]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{pod}} {{status_code}}",
@@ -425,7 +429,7 @@
     }
   ],
   "preload": false,
-  "refresh": "30s",
+  "refresh": "",
   "schemaVersion": 41,
   "tags": [
     "cloudflare"
@@ -440,6 +444,6 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Cloudflare / Ingress Tunnels",
-  "uid": "42320b19-ad7f-4ded-9721-8f83cc41d08b",
+  "uid": "7544a724-ad81-4fa3-b175-99c2a044a626",
   "version": 1
 }
