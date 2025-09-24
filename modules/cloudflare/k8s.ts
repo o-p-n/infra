@@ -7,7 +7,7 @@ import { ModuleResult, ModuleResultSet } from "../k8s/_basics";
 import dashboards from "./dashboards";
 
 const namespace = "cloudflare";
-const version = "2025.7.0";
+const version = "2025.9.1";
 
 type TokenResult = cf.GetZeroTrustTunnelCloudflaredTokenResult;
 
@@ -52,13 +52,12 @@ no-autoupdate: true
   }, opts);
   resources.push(configSecret);
 
-  const deployment = new k8s.apps.v1.Deployment(`${namespace}-cloudflared`, {
+  const deployment = new k8s.apps.v1.DaemonSet(`${namespace}-cloudflared`, {
     metadata: {
       namespace,
       name: "cloudflared",
     },
     spec: {
-      replicas: 2,
       selector: {
         matchLabels: {
           app: "cloudflared",
