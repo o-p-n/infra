@@ -1,7 +1,7 @@
 import * as k8s from "@pulumi/kubernetes";
 import { Config } from "@pulumi/pulumi";
 
-const version = "1.26.1";
+const version = "1.28.1";
 const namespace = "istio-system";
 const repositoryOpts = {
   repo: "https://istio-release.storage.googleapis.com/charts",
