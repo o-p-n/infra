@@ -5,7 +5,6 @@ import { K8sModuleRegistry } from "../../modules/k8s/_basics";
 import infraCoreStack from "../../modules/k8s/infra-core";
 import istioSystemStack from "../../modules/k8s/istio-system";
 import certManagerStack from "../../modules/k8s/cert-manager";
-import metallbStack from "../../modules/k8s/metallb";
 
 import cloudflareStack, { Settings as CFSettings } from "../../modules/cloudflare";
 import publicIngressStack from "../../modules/k8s/public-ingress";
@@ -30,9 +29,6 @@ export = async () => {
   await modules.apply("infraCore", infraCoreStack);
   await modules.apply("istioSystem", istioSystemStack);
   await modules.apply("certManager", certManagerStack);
-  if (enabled.metallb) {
-    await modules.apply("metallb", metallbStack);
-  }
   await modules.apply("publicIngress", publicIngressStack);
   await modules.apply("monitoring", monitoringStack);
   await modules.apply("certificates", certificatesStack);

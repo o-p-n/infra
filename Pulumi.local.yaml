@@ -18,5 +18,3 @@ config:
     hostPort: 12676
     containerName: registry
     containerPort: 5000
-  o-p-n:enabled:
-    metallb: true
