@@ -1,5 +1,4 @@
-import { Config, getOrganization, getStack, Output, StackReference } from "@pulumi/pulumi";
-import { Provider as K8sProvideer } from "@pulumi/kubernetes";
+import { Config, Output } from "@pulumi/pulumi";
 
 import { K8sModuleRegistry } from "../../modules/k8s/_basics";
 import infraCoreStack from "../../modules/k8s/infra-core";
@@ -22,9 +21,7 @@ type ModuleEnabledInfo = Record<string, boolean>;
 export = async () => {
   const enabled = config.getObject<ModuleEnabledInfo>("enabled") ?? {};
 
-  const ref = getStackRef("o-p-n.compute");
-  let kubeconfig = config.getSecret("kubeconfig");
-  const modules = new K8sModuleRegistry(ref, kubeconfig);
+  const modules = new K8sModuleRegistry();
 
   await modules.apply("infraCore", infraCoreStack);
   await modules.apply("istioSystem", istioSystemStack);
@@ -40,16 +37,3 @@ export = async () => {
   return modules.deployed;
 }
 
-const PROJECT_STACKS = new Map<string, StackReference>();
-function getStackRef(project: string): StackReference {
-  const org = getOrganization();
-  const stack = getStack();
-  const path = `${org}/${project}/${stack}`;
-
-  let ref = PROJECT_STACKS.get(path);
-  if (!ref) {
-    PROJECT_STACKS.set(path, ref = new StackReference(path));
-  }
-
-  return ref;
-}

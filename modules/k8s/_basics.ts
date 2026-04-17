@@ -3,7 +3,6 @@ import * as k8s from "@pulumi/kubernetes";
 import { Provider } from "@pulumi/kubernetes/provider";
 
 export interface ModuleArgs {
-  reference: pulumi.StackReference;
   config: pulumi.Config;
   provider: k8s.Provider;
 }
@@ -42,30 +41,20 @@ function outputStack(input: ModuleResult) {
 }
 
 export type ModuleResultSet = Record<string, ModuleResult>;
-export type ModuleProvisioner = (provider: k8s.Provider, deployed: ModuleResultSet, ref: pulumi.StackReference) => Promise<ModuleResult>;
+export type ModuleProvisioner = (provider: k8s.Provider, deployed: ModuleResultSet) => Promise<ModuleResult>;
 
 export class K8sModuleRegistry {
   provider: k8s.Provider;
-  ref: pulumi.StackReference;
   results: ModuleResultSet = {};
 
-  constructor(ref: pulumi.StackReference, kubeconfig?: pulumi.Output<string>) {
-    this.ref = ref;
-
-    if (!kubeconfig) {
-      console.log("### use stack output kubeconfig ...");
-      kubeconfig = ref.getOutput("kubeconfig") as pulumi.Output<string>;
-    } else {
-      console.log("!!! use provided kubeconfig!");
-    }
+  constructor() {
     this.provider = new Provider("k8s-provider", {
-      kubeconfig,
       deleteUnreachable: true,
     });
   }
 
   async apply(name: string, fn: ModuleProvisioner) {
-    const input = await fn(this.provider, this.results, this.ref);
+    const input = await fn(this.provider, this.results);
     input.dependencies = [
       ...(input.dependencies ?? []),
       ...((input.namespace && [ input.namespace ]) ?? []),
