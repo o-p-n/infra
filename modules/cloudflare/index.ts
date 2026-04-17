@@ -1,4 +1,3 @@
-import * as cf from "@pulumi/cloudflare";
 import * as k8s from "@pulumi/kubernetes";
 import { Config } from "@pulumi/pulumi";
 
@@ -14,11 +13,22 @@ const config = new Config("o-p-n");
 export default async function stack(provider: k8s.Provider, deployed: ModuleResultSet) {
   const settings = config.requireObject<Settings>("cloudflare");
   const { account: accountId, zone: zoneId } = settings;
+  const domain = config.require("domain");
 
+  const dns = dnsStack(domain);
   const tunnel = tunnelStack(accountId, zoneId);
   const k8s = k8sStack(tunnel.token, provider, deployed);
 
-  return k8s;
+  const resources = [
+    ...dns.mx,
+    ...dns.txt,
+    ...(k8s.resources ?? []),
+  ];
+
+  return {
+    ...k8s,
+    resources,
+  };
 }
 
 export { Settings };
