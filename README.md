@@ -25,8 +25,9 @@ In addition, an up-to-date copy of the state backend and its associated passphra
 ## DEPLOYING
 
 Deploying updates involves the following process (per environment "stack"):
-1. declare the relevant stack passphrase.
+1. declare the relevant stack passphrase and Kubernetes configuration.
    > Export the relevant passphrase in the `PULUMI_CONFIG_PASSPHRASE` environment variable
+   > Export the relevant config path in the `KUBECONFIG` environment variable
 
 2. deploy the `projects/o-p-n.k8s` project:
    ```bash
