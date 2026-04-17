@@ -2,14 +2,11 @@
 
 This repository manages the base infrastructure for [outer-planes.net](https://outer-planes.net):
 
-* Foundational compute and networking resources
 * Kubernetes cluster
 
-The resources are divided into two projects:
-* `o-p-n.compute` for the foundational compute and networking resources
-* `o-p-n.k8s` for the base-level kubernetes resources
+Those resources are maintained in `projects/o-p-n.k8s`
 
-Further, there are three stacks:
+Further, there are two stacks:
 * `local` for local development and testing, using [KinD](https://kind.sigs.k8s.io/)
 * `public` for public-fasing workloads on a home lab, using [microk8s]([https](https://microk8s.io/) for compute and [Cloudflare tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to bridge them onto the internet.
 
@@ -31,14 +28,7 @@ Deploying updates involves the following process (per environment "stack"):
 1. declare the relevant stack passphrase.
    > Export the relevant passphrase in the `PULUMI_CONFIG_PASSPHRASE` environment variable
 
-2. deploy the `projects/o-p-n.compute` project:
-   ```bash
-   cd projects/o-p-n.compute
-   pulumi -s <stack> up
-   cd ../..
-   ```
-
-3. deploy the `projects/o-p-n.k8s` project:
+2. deploy the `projects/o-p-n.k8s` project:
    ```bash
    cd projects/o-p-n.k8s
    pulumi -s <stack> up
