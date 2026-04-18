@@ -1,10 +1,10 @@
 # outer-planes.net Kubernetes Infrastructure
 
-This repository manages the base infrastructure for [outer-planes.net](https://outer-planes.net):
+This repository manages the base infrastructure for [outer-planes.net](https://outer-planes.net).
 
-* Kubernetes cluster
+# KUBERNETES RESOURCES
 
-Those resources are maintained in `projects/o-p-n.k8s`
+Those resources are maintained in `o-p-n.k8s`
 
 Further, there are two stacks:
 * `local` for local development and testing, using [KinD](https://kind.sigs.k8s.io/)
@@ -17,8 +17,13 @@ Resources are provisioned using [Pulumi](https://pulumi.com).  The backend state
 The following components are necessary to deploy infrastructure:
 * `pulumi` command-line interface, latest version
 * Docker engine, version 24 or later
-* `kind` (for `local`), version 0.27.0 or later
 * `kubectl`, version 1.31 or later
+
+For local testing, the following are also needed:
+
+* `kind`, version 0.27.0 or later
+* `cloud-provider-kind`, version 0.10.0 or later
+
 
 In addition, an up-to-date copy of the state backend and its associated passphrase are needed.  Both are maintained separate from this repository.
 
@@ -29,9 +34,9 @@ Deploying updates involves the following process (per environment "stack"):
    > Export the relevant passphrase in the `PULUMI_CONFIG_PASSPHRASE` environment variable
    > Export the relevant config path in the `KUBECONFIG` environment variable
 
-2. deploy the `projects/o-p-n.k8s` project:
+2. deploy the `o-p-n.k8s` project:
    ```bash
-   cd projects/o-p-n.k8s
+   cd o-p-n.k8s
    pulumi -s <stack> up
    cd ../..
    ```
