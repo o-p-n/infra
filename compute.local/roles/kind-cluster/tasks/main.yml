@@ -1,0 +1,5 @@
+---
+- include_tasks: install-kubectl.yml
+- include_tasks: install-kind.yml
+- include_tasks: create-cluster.yml
+- include_tasks: verify.yml

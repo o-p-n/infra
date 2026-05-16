@@ -1,0 +1,10 @@
+---
+- name: Verify cluster connectivity
+  command: kubectl cluster-info
+  register: cluster_info
+  changed_when: false
+
+- name: Verify nodes are ready
+  command: kubectl get nodes -o wide
+  register: nodes_output
+  changed_when: false

@@ -1,0 +1,14 @@
+---
+- name: Check if kubectl is installed
+  command: kubectl version --client --short
+  register: kubectl_check
+  changed_when: false
+  failed_when: false
+
+- name: Download and install kubectl
+  unarchive:
+    src: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/
+    remote_src: true
+    mode: "0755"
+  when: kubectl_check.rc != 0

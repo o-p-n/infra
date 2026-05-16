@@ -1,0 +1,9 @@
+---
+- name: Setup local KinD cluster with container registry
+  hosts: kind-hosts
+  gather_facts: true
+  become: true
+
+  roles:
+    - role: kind-cluster
+    - role: local-registry

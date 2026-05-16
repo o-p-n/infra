@@ -1,0 +1,17 @@
+---
+# KinD cluster configuration
+kind_cluster_name: kind-local
+kind_kubernetes_version: "v1.31.0"
+kind_node_count: 1
+kind_container_name: kind
+
+# Local container registry configuration
+registry_host: localhost
+registry_host_port: 12676
+registry_container_port: 5000
+registry_container_name: registry
+registry_image: "docker.io/library/registry:2"
+registry_data_dir: "/var/lib/registry"
+
+# kubectl configuration
+kubectl_version: "v1.31.0"

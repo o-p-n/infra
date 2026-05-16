@@ -1,0 +1,13 @@
+---
+- name: Check if kind is installed
+  command: kind version
+  register: kind_check
+  changed_when: false
+  failed_when: false
+
+- name: Download and install kind
+  get_url:
+    url: "https://kind.sigs.k8s.io/dl/{{ kind_version }}/kind-linux-amd64"
+    dest: /usr/local/bin/kind
+    mode: "0755"
+  when: kind_check.rc != 0

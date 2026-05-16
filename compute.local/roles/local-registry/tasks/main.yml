@@ -1,0 +1,3 @@
+---
+- include_tasks: setup-registry.yml
+- include_tasks: connect-registry.yml

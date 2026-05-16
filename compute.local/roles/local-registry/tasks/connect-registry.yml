@@ -1,0 +1,8 @@
+---
+- name: Connect KinD nodes to local registry
+  command: >
+    kind connect registry {{ registry_container_name }}
+    --cluster {{ kind_cluster_name }}
+  register: kind_connect
+  changed_when: kind_connect.rc == 0
+  failed_when: false
