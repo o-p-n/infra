@@ -1,20 +1,24 @@
-#!/usr/bin/env bash
+#! /usr/bin/env bash
+
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IMAGE="o-p-n/ansible:latest"
+PROJECT_DIR="$(pwd)"
 
-# Determine SSH agent socket mount path based on host OS
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  SSH_AGENT_HOST_PATH="/run/host-services/ssh-auth.sock"
-else
-  SSH_AGENT_HOST_PATH="${SSH_AUTH_SOCK}"
-fi
 
-docker run --rm -it \
+DOCKER_SSH_OPTS=""
+case $(uname -s) in
+  "Darwin")
+    DOCKER_SSH_OPTS="-v /run/host-services/ssh-auth.sock:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent"
+    ;;
+  "Linux")
+    DOCKER_SSH_OPTS="-v ${SSH_AUTH_SOCK}:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent"
+    ;;
+esac
+
+docker run --rm -ti \
   --network=host \
-  -v "${SCRIPT_DIR}":/workspace \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v "${SSH_AGENT_HOST_PATH}":/ssh-agent \
-  -e SSH_AUTH_SOCK="/ssh-agent" \
-  o-p-n/ansible:latest \
-  ansible-playbook -i /workspace/inventory /workspace/playbook.yml "$@"
+  ${DOCKER_SSH_OPTS} \
+  -v "${PROJECT_DIR}:/workspace:rw" \
+  "${IMAGE}" \
+  "$@"
