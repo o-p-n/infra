@@ -1,0 +1,14 @@
+version: 0.1.0
+addons:
+  - name: community
+  - name: dns
+  - name: rbac
+  - name: metrics-server
+extraKubeletArgs:
+  --cluster-domain: cluster.local
+  --cluster-dns: 10.152.183.10
+extraSANs:
+  - outer-planes.casa
+{% for host in ansible_play_hosts | sort %}
+  - {{ host }}
+{% endfor %}

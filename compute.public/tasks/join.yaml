@@ -1,0 +1,34 @@
+- name: Determine primary node
+  ansible.builtin.set_fact:
+    microk8s_primary: "{{ ansible_play_hosts[0] }}"
+
+- name: Wait for nodes to be ready
+  ansible.builtin.command: microk8s status --wait-ready
+  changed_when: false
+
+- name: List current cluster nodes
+  ansible.builtin.command: microk8s kubectl get nodes -o wide
+  register: microk8s_cluster_nodes
+  delegate_to: "{{ microk8s_primary }}"
+  delegate_facts: true
+  changed_when: false
+
+- name: Apply current node to cluster
+  block:
+    - name: Determine cluster membership status
+      ansible.builtin.set_fact:
+        microk8s_node_missing: "{{ hostvars[microk8s_primary].microk8s_cluster_nodes.stdout.find(inventory_hostname_short) == -1 }}"
+    - name: Obtain join command from primary node
+      ansible.builtin.shell: |
+        microk8s add-node --token-ttl -1 | grep -E -m1 'microk8s join ([0-9]{1,3}[\\.]){3}[0-9]{1,3}'
+      register: microk8s_join_cmd
+      when: microk8s_node_missing
+      delegate_to: "{{ microk8s_primary }}"
+
+    - name: Join current node to primary
+      ansible.builtin.command: "{{ microk8s_join_cmd.stdout }}"
+      register: microk8s_node_join
+      when: microk8s_node_missing
+      failed_when:
+        - microk8s_node_join.rc != 0
+  when: inventory_hostname != microk8s_primary
