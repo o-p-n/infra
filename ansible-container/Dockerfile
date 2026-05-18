@@ -1,7 +1,7 @@
 FROM python:3.14-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV ANSIBLE_FORCE_COLOR=true ANSIBLE_HOST_KEY_CHECKING=false
+ENV ANSIBLE_FORCE_COLOR=true
 
 RUN apt update \
     && apt upgrade --yes --no-install-recommends \
