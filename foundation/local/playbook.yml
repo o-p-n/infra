@@ -1,9 +1,14 @@
 ---
 - name: Setup local KinD cluster with container registry
-  hosts: kind-hosts
+  hosts: kind_hosts
   gather_facts: true
-  become: true
+
+  pre_tasks:
+    - name: Gather host platform information
+      ansible.builtin.set_fact:
+        host_platform_os: "{{ ansible_facts['os_family'] | lower }}"
+        host_platform_arch: "{{ ansible_facts['architecture'] | lower | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}"
 
   roles:
     - role: kind-cluster
-    - role: local-registry
+    # - role: local-registry

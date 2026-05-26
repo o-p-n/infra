@@ -1,0 +1,23 @@
+---
+- name: Check if docker is installed
+  ansible.builtin.shell: docker --version
+  register: docker_check
+  changed_when: false
+  # failed_when: false
+
+- name: Check if kind is installed
+  ansible.builtin.shell: kind version
+  register: kind_check
+  changed_when: false
+  # failed_when: false
+
+- name: Check if kubectl is installed
+  ansible.builtin.shell: kubectl version --client
+  register: kubectl_check
+  changed_when: false
+  # failed_when: false
+
+- name: Fail if prerequisites are missing
+  ansible.builtin.fail:
+    msg: "docker and/or kind and/or kubectl are not installed. Please install it before running the playbook."
+  when: docker_check.rc != 0 or kind_check.rc != 0 or kubectl_check.rc != 0

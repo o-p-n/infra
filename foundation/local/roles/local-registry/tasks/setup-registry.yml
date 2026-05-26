@@ -1,12 +1,12 @@
 ---
 - name: Check if registry container exists
-  command: docker inspect {{ registry_container_name }}
+  ansible.builtin.shell: docker inspect {{ registry_container_name }}
   register: registry_inspect
   changed_when: false
   failed_when: false
 
 - name: Remove existing registry container
-  command: docker rm -f {{ registry_container_name }}
+  ansible.builtin.shell: docker rm -f {{ registry_container_name }}
   when: registry_inspect.rc == 0
 
 - name: Run local container registry

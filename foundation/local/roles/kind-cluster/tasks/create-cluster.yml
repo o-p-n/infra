@@ -1,22 +1,31 @@
 ---
 - name: Create KinD cluster config
+  register: kind_config
   template:
     src: kind-config.yml.j2
     dest: /tmp/kind-config.yml
     mode: "0644"
+  notify: Delete KinD cluster
+
+- name: Flush handlers for KinD cluster
+  ansible.builtin.meta: flush_handlers
 
 - name: Create KinD cluster
-  command: >
-    kind create cluster
-    --name {{ kind_cluster_name }}
-    --config /tmp/kind-config.yml
-    --image "kindest/node:{{ kind_kubernetes_version }}"
+  ansible.builtin.shell: >
+      kind create cluster
+      --name {{ kind_cluster_name }}
+      --config /tmp/kind-config.yml
+      --kubeconfig ~/.kube/local.config
+      --image "kindest/node:{{ kind_kubernetes_version }}"
+      --wait 5m
   register: kind_create
   changed_when: kind_create.rc == 0
-  failed_when: "'already exists' not in kind_create.stderr and kind_create.rc != 0"
+  failed_when:
+    - kind_create.rc != 0
+    - "'already exist' not in kind_create.stderr"
 
 - name: Configure kubectl for KinD cluster
-  command: kind get kubeconfig --name {{ kind_cluster_name }}
+  ansible.builtin.shell: kind get kubeconfig --name {{ kind_cluster_name }}
   register: kubeconfig
   changed_when: false
 

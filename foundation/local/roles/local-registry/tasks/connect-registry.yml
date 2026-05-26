@@ -1,6 +1,6 @@
 ---
 - name: Connect KinD nodes to local registry
-  command: >
+  ansible.builtin.shell: >
     kind connect registry {{ registry_container_name }}
     --cluster {{ kind_cluster_name }}
   register: kind_connect

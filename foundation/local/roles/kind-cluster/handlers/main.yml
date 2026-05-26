@@ -1,0 +1,4 @@
+---
+- name: Delete KinD cluster
+  ansible.builtin.shell: kind delete cluster --name {{ kind_cluster_name }}
+  when: kind_config.changed

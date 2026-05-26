@@ -1,8 +1,8 @@
 ---
 # KinD cluster configuration
-kind_cluster_name: kind-local
-kind_kubernetes_version: "v1.31.0"
-kind_node_count: 1
+kind_cluster_name: local
+kind_kubernetes_version: "v1.34.0"
+kind_node_count: 2
 kind_container_name: kind
 
 # Local container registry configuration
@@ -15,3 +15,6 @@ registry_data_dir: "/var/lib/registry"
 
 # kubectl configuration
 kubectl_version: "v1.31.0"
+
+# Shell inputs
+shell_path: ~/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
