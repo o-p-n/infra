@@ -1,8 +1,23 @@
 ---
-- name: Connect KinD nodes to local registry
-  ansible.builtin.shell: >
-    kind connect registry {{ registry_container_name }}
-    --cluster {{ kind_cluster_name }}
-  register: kind_connect
-  changed_when: kind_connect.rc == 0
-  failed_when: false
+- name: Create KinD node registry config 
+  ansible.builtin.template:
+    src: registry-config.toml.j2
+    dest: /tmp/registry_config.toml
+    mode: "0644"
+
+- name: Determine KinD nodes
+  ansible.builtin.shell: kind get nodes --name {{ kind_cluster_name }}
+  register: kind_cluster_nodes
+
+- name: Create registry config directory in KinD nodes
+  community.docker.docker_container_exec:
+    container: "{{ item }}"
+    command: mkdir -p /etc/containerd/certs.d
+  loop: "{{ kind_cluster_nodes.stdout_lines }}"
+
+- name: Apply registry config to KinD nodes
+  community.docker.docker_container_copy_into:
+    container: "{{ item }}"
+    path: /tmp/registry_config.toml
+    container_path: /etc/containerd/certs.d/localhost:{{ registry_host_port }}
+  loop: "{{ kind_cluster_nodes.stdout_lines }}"

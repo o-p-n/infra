@@ -11,4 +11,4 @@
 
   roles:
     - role: kind-cluster
-    # - role: local-registry
+    - role: local-registry

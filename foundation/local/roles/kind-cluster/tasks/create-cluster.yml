@@ -1,7 +1,7 @@
 ---
 - name: Create KinD cluster config
   register: kind_config
-  template:
+  ansible.builtin.template:
     src: kind-config.yml.j2
     dest: /tmp/kind-config.yml
     mode: "0644"
