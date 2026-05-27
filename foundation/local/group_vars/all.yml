@@ -14,7 +14,7 @@ registry_image: "docker.io/library/registry:2"
 registry_data_dir: "/var/lib/registry"
 
 # kubectl configuration
-kubectl_version: "v1.31.0"
+kubectl_version: "v1.34.0"
 
 # Shell inputs
 shell_path: ~/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
