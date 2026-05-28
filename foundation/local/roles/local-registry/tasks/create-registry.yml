@@ -1,0 +1,23 @@
+---
+- name: Check if registry container exists
+  community.docker.docker_container:
+    name: "{{ registry_container_name }}"
+  register: registry_inspect
+  changed_when: false
+  failed_when: false
+
+- name: Print registry container info
+  ansible.builtin.debug:
+    var: registry_inspect.container
+  when: "'container' in registry_inspect"
+
+- name: Run local container registry
+  community.docker.docker_container:
+    name: "{{ registry_container_name }}"
+    image: "{{ registry_image }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "{{ registry_host_port }}:{{ registry_container_port }}"
+    networks:
+      - name: "kind"
