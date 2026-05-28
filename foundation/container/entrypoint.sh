@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+ssh-keyscan localhost | grep -v '#' > ~/.ssh/known_hosts
+
 CMD="$1"
 shift
 

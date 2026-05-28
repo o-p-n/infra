@@ -9,6 +9,7 @@ RUN apt update \
         git \
         iputils-ping \
         openssh-client \
+        sshpass \
   && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir \
@@ -21,6 +22,8 @@ RUN ansible-galaxy collection install \
     community.general \
     ansible.posix \
     community.docker
+
+RUN mkdir -p ~/.ssh && chmod 600 ~/.ssh
 
 WORKDIR /workspace
 
