@@ -10,7 +10,4 @@ case "${CMD}" in
   "run")
     ansible "$@"
     ;;
-  "shell")
-    exec "${SHELL}" "$@"
-    ;;
 esac

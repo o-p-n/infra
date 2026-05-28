@@ -1,0 +1,11 @@
+---
+- name: Create local registry
+  community.docker.docker_container:
+    name: "{{ registry_container_name }}"
+    image: "{{ registry_image }}"
+    restart_policy: always
+    ports:
+      - "{{ registry_host_port}}:{{ registry_container_port }}"
+    networks:
+      - name: bridge
+      - name: kind
