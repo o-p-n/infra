@@ -42,49 +42,6 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
     },
   }, { provider });
 
-  let extDnsConfig = ingressConfig.getSecretObject<ExternalDnsConfig>("external-dns");
-  if (extDnsConfig) {
-    const extDnsSecret = new k8s.core.v1.Secret("ext-dns-token", {
-      metadata: {
-        namespace,
-        name: "ext-dns-token",
-      },
-      type: "Opaque",
-      stringData: {
-        ACCESS_TOKEN: extDnsConfig.apply(config => config.accessToken),
-      },
-    }, {
-      provider,
-      dependsOn: [ ns ],
-    });
-    const extDnsRelease = new k8s.helm.v3.Release(`${namespace}-ext-dns`, {
-      chart: "external-dns",
-      version: versions["external-dns"],
-      namespace,
-      repositoryOpts: {
-        repo: "https://kubernetes-sigs.github.io/external-dns",
-      },
-      values: {
-        provider: extDnsConfig.apply(config => config.provider),
-        env: [
-          {
-            name: extDnsConfig.apply(config => config.envVarName),
-            valueFrom: {
-              secretKeyRef: {
-                name: "ext-dns-token",
-                key: "ACCESS_TOKEN",
-              },
-            },
-          },
-        ],
-      },
-    }, {
-      dependsOn: [ ns ],
-      provider,
-    });  
-
-    gatewayAnnotations["external-dns.alpha.kubernetes.io/hostname"] = domain;
-  }
   if (serviceType) {
     gatewayAnnotations["networking.istio.io/service-type"] = serviceType;
   }
