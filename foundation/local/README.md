@@ -2,23 +2,53 @@
 
 This Ansible project provisions a local Kubernetes cluster using KinD (Kubernetes in Docker) with support for a local container registry.
 
-## Prerequisites
+## PREREQUISITES
 
 The following must be installed and running on the target host **before** running the playbook:
+
+- **Docker** engine version `29.0.0` or higher (desktop version `4.25` or higher)
+- **Python** version `3.14` or higher
+- **kind** version `0.31.0` or higher
+- **ansible** version `13.0` or higher
+
 
 - **Docker** — the Docker daemon must be running and accessible (the playbook container mounts `/var/run/docker.sock`)
 - **SSH server** — an SSH server must be running on the host so the playbook container can connect back to `localhost`
 - **ssh-agent** — an active ssh-agent with your key loaded, forwarded into the playbook container
 
-## Usage
+## USING
 
-Run the playbook from within a Docker container:
+### Running Playbooks
+
+Apply the default playbook:
 
 ```bash
-./run.sh
+./run.sh playbook playbook.yml
 ```
 
-## Configuration
+Apply a specific tag or skip certain tasks:
+
+```bash
+./run.sh playbook playbook.yml --tags kind-cluster
+./run.sh playbook playbook.yml --skip-tags local-registry
+```
+
+Run with extra variables:
+
+```bash
+./run.sh playbook playbook.yml -e kind_node_count=2
+```
+
+### Running Ad-Hoc Commands
+
+Execute ad-hoc Ansible commands against the inventory:
+
+```bash
+./run.sh run all -m ping
+./run.sh run kind_hosts -a "systemctl status docker"
+```
+
+## CONFIGURING
 
 Edit `group_vars/all.yml` to customize:
 
@@ -28,18 +58,3 @@ Edit `group_vars/all.yml` to customize:
 | `kind_node_count` | `1` | Number of worker nodes |
 | `registry_host_port` | `12676` | Host port for the registry |
 | `registry_container_port` | `5000` | Container port for the registry |
-
-## Project Structure
-
-```
-compute.local/
-├── ansible.cfg
-├── inventory/
-│   └── hosts
-├── group_vars/
-│   └── all.yml
-├── roles/
-│   ├── kind-cluster/
-│   └── local-registry/
-└── playbook.yml
-```
