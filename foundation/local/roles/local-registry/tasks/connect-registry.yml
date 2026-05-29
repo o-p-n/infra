@@ -16,11 +16,10 @@
     container: "{{ item }}"
     command: mkdir -p /etc/containerd/certs.d/localhost:{{ registry_host_port }}
   loop: "{{ kind_cluster_nodes.stdout_lines }}"
-  when: node_registry_config.changed
 
 - name: Apply registry config to KinD nodes
   community.docker.docker_container_copy_into:
     container: "{{ item }}"
     path: /tmp/registry_hosts.toml
-    container_path: /etc/containerd/certs.d/localhost:{{ registry_host_port }}/hosts:toml
+    container_path: /etc/containerd/certs.d/localhost:{{ registry_host_port }}/hosts.toml
   loop: "{{ kind_cluster_nodes.stdout_lines }}"
