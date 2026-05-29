@@ -3,5 +3,15 @@
   ansible.builtin.set_fact:
     target_platform_os: "{{ ansible_facts['os_family'] | lower }}"
     target_platform_architecture: "{{ ansible_facts['architecture'] | lower | replace('aarch64', 'arm64') | replace('x86_64', 'amd64') }}"
+  tags:
+    - local-registry
+
 - include_tasks: create-registry.yml
+  tags:
+    - local-registry
+    - local-registry-create
+
 - include_tasks: connect-registry.yml
+  tags:
+    - local-registry
+    - local-registry-connect

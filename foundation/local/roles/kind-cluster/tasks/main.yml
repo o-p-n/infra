@@ -1,4 +1,15 @@
 ---
 - include_tasks: check-prerequisites.yml
+  tags:
+    - kind-cluster
+    - kind-cluster-prerequisites
+
 - include_tasks: create-cluster.yml
+  tags:
+    - kind-cluster
+    - kind-cluster-create
+
 - include_tasks: verify.yml
+  tags:
+    - kind-cluster
+    - kind-cluster-verify
