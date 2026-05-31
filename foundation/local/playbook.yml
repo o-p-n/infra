@@ -3,6 +3,10 @@
   hosts: kind_hosts
   gather_facts: true
 
+  pre_tasks:
+    - name: Setup temp directory
+      ansible.builtin.shell: mkdir -p {{ temp_dir }}
+
   roles:
     - role: check-prerequisites
     - role: kind-cluster
