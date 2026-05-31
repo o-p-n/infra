@@ -3,12 +3,6 @@
   hosts: kind_hosts
   gather_facts: true
 
-  pre_tasks:
-    - name: Gather host platform information
-      ansible.builtin.set_fact:
-        host_platform_os: "{{ ansible_facts['os_family'] | lower }}"
-        host_platform_arch: "{{ ansible_facts['architecture'] | lower | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}"
-
   roles:
     - role: check-prerequisites
     - role: kind-cluster
