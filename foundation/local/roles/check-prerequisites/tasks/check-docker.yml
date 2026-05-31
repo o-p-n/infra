@@ -3,3 +3,20 @@
   ansible.builtin.shell: docker --version
   register: docker_check
   changed_when: false
+
+- name: Get docker version
+  ansible.builtin.set_fact:
+    docker_version: "{{ docker_check.stdout | regex_replace('^Docker version ([0-9]+\\.[0-9]+\\.[0-9]+).*', '\\1') }}"
+  when: docker_check.rc == 0
+
+- name: Print docker version
+  ansible.builtin.debug:
+    msg: "Docker version: {{ docker_version | default('not found') }}"
+
+- name: Fail if docker version is too old
+  ansible.builtin.fail:
+    msg: "Docker >= 29.0.0 is required. Found {{ docker_version | default('not installed') }}."
+  when:
+      - docker_check.rc == 0
+      - docker_version is defined
+      - docker_version is version('29.0.0', '<')

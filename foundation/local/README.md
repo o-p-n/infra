@@ -7,7 +7,7 @@ This Ansible project provisions a local Kubernetes cluster using KinD (Kubernete
 The following must be installed and running on the target host **before** running the playbook:
 
 - **Docker** engine version `29.0.0` or higher (desktop version `4.25` or higher)
-- **Python** version `3.14` or higher
+- **Python** version `3.10` or higher
 - **kind** version `0.31.0` or higher
 - **ansible** version `13.0` or higher
 

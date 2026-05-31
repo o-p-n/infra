@@ -13,8 +13,7 @@
   tags:
     - check-prerequisites
     - check-prerequisites-kubectl
-
-- include_tasks: fail-if-missing.yml
+- include_tasks: check-python.yml
   tags:
-    - check-prerequisites
-    - check-prerequisites-fail
+     - check-prerequisites
+     - check-prerequisites-python
