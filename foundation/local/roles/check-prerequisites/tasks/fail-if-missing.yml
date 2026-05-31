@@ -1,0 +1,5 @@
+---
+- name: Fail if prerequisites are missing
+  ansible.builtin.fail:
+    msg: "docker and/or kind and/or kubectl are not installed. Please install it before running the playbook."
+  when: docker_check.rc != 0 or kind_check.rc != 0 or kubectl_check.rc != 0

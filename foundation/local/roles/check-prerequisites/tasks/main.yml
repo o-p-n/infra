@@ -1,0 +1,20 @@
+---
+- include_tasks: check-docker.yml
+  tags:
+    - check-prerequisites
+    - check-prerequisites-docker
+
+- include_tasks: check-kind.yml
+  tags:
+    - check-prerequisites
+    - check-prerequisites-kind
+
+- include_tasks: check-kubectl.yml
+  tags:
+    - check-prerequisites
+    - check-prerequisites-kubectl
+
+- include_tasks: fail-if-missing.yml
+  tags:
+    - check-prerequisites
+    - check-prerequisites-fail

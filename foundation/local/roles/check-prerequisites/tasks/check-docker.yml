@@ -1,0 +1,5 @@
+---
+- name: Check if docker is installed
+  ansible.builtin.shell: docker --version
+  register: docker_check
+  changed_when: false

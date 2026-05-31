@@ -1,0 +1,5 @@
+---
+- name: Check if kind is installed
+  ansible.builtin.shell: kind version
+  register: kind_check
+  changed_when: false

@@ -1,0 +1,5 @@
+---
+- name: Check if kubectl is installed
+  ansible.builtin.shell: kubectl version --client
+  register: kubectl_check
+  changed_when: false

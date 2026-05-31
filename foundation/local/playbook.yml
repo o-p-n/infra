@@ -10,5 +10,6 @@
         host_platform_arch: "{{ ansible_facts['architecture'] | lower | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}"
 
   roles:
+    - role: check-prerequisites
     - role: kind-cluster
     - role: local-registry
