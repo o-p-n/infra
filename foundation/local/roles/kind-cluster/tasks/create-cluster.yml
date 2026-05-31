@@ -3,7 +3,7 @@
   register: kind_config
   ansible.builtin.template:
     src: kind-config.yml.j2
-    dest: /tmp/kind-config.yml
+    dest: "{{ temp_dir }}/kind-config.yml"
     mode: "0644"
   notify: Delete KinD cluster
 
@@ -13,8 +13,8 @@
 - name: Create KinD cluster
   ansible.builtin.shell: >
       kind create cluster
-      --name {{ kind_cluster_name }}
-      --config /tmp/kind-config.yml
+       --name {{ kind_cluster_name }}
+       --config {{ temp_dir }}/kind-config.yml
       --kubeconfig ~/.kube/local.config
       --image "kindest/node:{{ kind_kubernetes_version }}"
       --wait 5m

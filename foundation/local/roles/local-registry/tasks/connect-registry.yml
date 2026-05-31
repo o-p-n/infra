@@ -2,7 +2,7 @@
 - name: Create KinD node registry config
   ansible.builtin.template:
     src: registry-config.toml.j2
-    dest: /tmp/registry_hosts.toml
+    dest: "{{ temp_dir }}/registry_hosts.toml"
     mode: "0644"
   register: node_registry_config
 
@@ -20,6 +20,6 @@
 - name: Apply registry config to KinD nodes
   community.docker.docker_container_copy_into:
     container: "{{ item }}"
-    path: /tmp/registry_hosts.toml
+    path: "{{ temp_dir }}/registry_hosts.toml"
     container_path: /etc/containerd/certs.d/localhost:{{ registry_host_port }}/hosts.toml
   loop: "{{ kind_cluster_nodes.stdout_lines }}"

@@ -8,6 +8,9 @@ kind_container_name: kind
 # Local container registry configuration
 registry_host: localhost
 registry_host_port: 12676
+
+# Temporary directory for intermediate files
+temp_dir: "{{ playbook_dir }}/../../tmp"
 registry_container_port: 5000
 registry_container_name: registry
 registry_image: "docker.io/library/registry:3"
