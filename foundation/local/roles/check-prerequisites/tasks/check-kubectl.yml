@@ -6,7 +6,7 @@
 
 - name: Get kubectl client version
   ansible.builtin.set_fact:
-    kubectl_client_version: "{{ kubectl_check.stdout_lines[0] | regex_replace('^Client Version:.*gitVersion:\\s*([0-9]+\\.[0-9]+\\.[0-9]+).*', '\\1') if kubectl_check.stdout_lines | default([]) | length > 0 else '' }}"
+    kubectl_client_version: "{{ kubectl_check.stdout_lines[0] | regex_replace('^Client Version:\\s*v([0-9]+\\.[0-9]+\\.[0-9]+).*', '\\1') if kubectl_check.stdout_lines | default([]) | length > 0 else '' }}"
   when: kubectl_check.rc == 0
 
 - name: Print kubectl client version
@@ -19,4 +19,4 @@
   when:
         - kubectl_check.rc == 0
         - kubectl_client_version is defined
-        - kubectl_client_version is version('1.34.0', '<')
+        - kubectl_client_version is version('1.34.0', '<=')
