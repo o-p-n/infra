@@ -5,17 +5,17 @@
     src: kind-config.yml.j2
     dest: "{{ temp_dir }}/kind-config.yml"
     mode: "0644"
-  notify: Delete KinD cluster
 
-- name: Flush handlers for KinD cluster
-  ansible.builtin.meta: flush_handlers
+- name: Delete KinD cluster
+  ansible.builtin.shell: kind delete cluster --name {{ kind_cluster_name }}
+  when: kind_config.changed
 
 - name: Create KinD cluster
   ansible.builtin.shell: >
       kind create cluster
-       --name {{ kind_cluster_name }}
-       --config {{ temp_dir }}/kind-config.yml
-      --kubeconfig ~/.kube/local.config
+      --name {{ kind_cluster_name }}
+      --config {{ temp_dir }}/kind-config.yml
+      --kubeconfig {{ temp_dir }}/kube.config
       --image "kindest/node:{{ kind_kubernetes_version }}"
       --wait 5m
   register: kind_create
