@@ -32,5 +32,5 @@
 - name: Save kubeconfig
   copy:
     content: "{{ kubeconfig.stdout }}"
-    dest: ~/.kube/local.config
+    dest: ~/.kube/{{ kind_cluster_name }}.config
     mode: "0600"
