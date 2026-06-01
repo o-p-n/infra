@@ -1,10 +1,10 @@
 ---
 - name: Verify cluster connectivity
-  ansible.builtin.shell: KUBECONFIG=~/.kube/local.config kubectl cluster-info
+  ansible.builtin.shell: KUBECONFIG=~/.kube/{{ kind_cluster_name }}.config kubectl cluster-info
   register: cluster_info
   changed_when: false
 
 - name: Verify nodes are ready
-  ansible.builtin.shell: KUBECONFIG=~/.kube/local.config kubectl get nodes -o wide
+  ansible.builtin.shell: KUBECONFIG=~/.kube/{{ kind_cluster_name }}.config kubectl get nodes -o wide
   register: nodes_output
   changed_when: false
