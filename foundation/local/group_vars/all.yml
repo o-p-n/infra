@@ -1,23 +1,18 @@
 ---
+# Temporary directory for intermediate files
+temp_dir: "{{ playbook_dir }}/../../tmp/foundation:local"
+
 # KinD cluster configuration
 kind_cluster_name: local
 kind_kubernetes_version: "v1.34.0"
 kind_node_count: 3
-kind_container_name: kind
-
-# Local container registry configuration
-registry_host: localhost
-registry_host_port: 12676
-
-# Temporary directory for intermediate files
-temp_dir: "{{ playbook_dir }}/../../tmp/foundation:local"
-registry_container_port: 5000
-registry_container_name: registry
-registry_image: "docker.io/library/registry:3"
-registry_data_dir: "/var/lib/registry"
 
 # kubectl configuration
 kubectl_version: "v1.34.0"
 
-# Shell inputs
-shell_path: ~/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
+# Local container registry configuration
+registry_host: localhost
+registry_host_port: 12676
+registry_container_port: 5000
+registry_container_name: registry
+registry_image: "docker.io/library/registry:3"

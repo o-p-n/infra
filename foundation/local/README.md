@@ -9,6 +9,7 @@ The following must be installed and running on the target host **before** runnin
 - **Docker** engine version `29.0.0` or higher (desktop version `4.25` or higher)
 - **Python** version `3.10` or higher
 - **kind** version `0.31.0` or higher
+- **kubectl** verson `1.34.0` or higher
 - **ansible** version `13.0` or higher
 
 ## USING
@@ -47,9 +48,15 @@ Execute ad-hoc Ansible commands against the inventory:
 
 Edit `group_vars/all.yml` to customize:
 
-| Variable | Default | Description |
-|---|---|---|
-| `kind_kubernetes_version` | `v1.31.0` | Kubernetes version for KinD nodes |
-| `kind_node_count` | `1` | Number of worker nodes |
-| `registry_host_port` | `12676` | Host port for the registry |
-| `registry_container_port` | `5000` | Container port for the registry |
+| Variable | Description |
+|---|-|
+| `temp_dir` | Directory for intermediate files |
+| `kind_cluster_name` | Name of the KinD cluster |
+| `kind_kubernetes_version` | Kubernetes version for KinD nodes |
+| `kind_node_count` | Number of worker nodes |
+| `kubectl_version` | kubectl client version to install |
+| `registry_host` | Hostname the registry is reachable from |
+| `registry_host_port` | Host port for the registry |
+| `registry_container_name` | Name of the registry container |
+| `registry_container_port` | Container port for the registry |
+| `registry_image` | Registry container image |
