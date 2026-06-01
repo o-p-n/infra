@@ -19,4 +19,4 @@
   when:
         - kubectl_check.rc == 0
         - kubectl_client_version is defined
-        - kubectl_client_version is version('1.34.0', '<=')
+        - kubectl_client_version is version('1.34.0', '<')
