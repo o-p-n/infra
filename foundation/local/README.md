@@ -9,7 +9,7 @@ The following must be installed and running on the target host **before** runnin
 - **Docker** engine version `29.0.0` or higher (desktop version `4.25` or higher)
 - **Python** version `3.10` or higher
 - **kind** version `0.31.0` or higher
-- **kubectl** verson `1.34.0` or higher
+- **kubectl** version `1.34.0` or higher
 - **ansible** version `13.0` or higher
 
 ## USING
