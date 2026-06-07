@@ -1,4 +1,8 @@
-FROM python:3.14-slim
+FROM docker.io/docker:29.5.2-cli AS dind
+
+
+
+FROM python:3.14-slim AS main
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ANSIBLE_FORCE_COLOR=true
@@ -16,7 +20,8 @@ RUN pip install --no-cache-dir \
     ansible==13.5.0 \
     ansible-lint==26.4.0 \
     jmespath==1.1.0 \
-    netaddr==1.3.0
+    netaddr==1.3.0 \
+    docker==7.1.0
 
 RUN ansible-galaxy collection install \
     community.general \
@@ -26,6 +31,8 @@ RUN ansible-galaxy collection install \
 RUN mkdir -p ~/.ssh && chmod 600 ~/.ssh
 
 WORKDIR /workspace
+
+COPY --from=dind /usr/local/bin/docker /usr/local/bin/docker
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
