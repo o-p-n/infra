@@ -1,15 +1,14 @@
 ---
-- name: Create KinD node registry config
-  ansible.builtin.template:
-    src: registry-config.toml.j2
-    dest: "{{ temp_dir }}/registry_hosts.toml"
-    mode: "0644"
-  register: node_registry_config
-
 - name: Determine KinD nodes
   ansible.builtin.shell: kind get nodes --name {{ kind_cluster_name }}
+  environment:
+    PATH: "{{ remote_path }}"
   register: kind_cluster_nodes
   changed_when: false
+
+- name: Print KinD nodes
+  ansible.builtin.debug:
+    var: kind_cluster_nodes
 
 - include_tasks: setup-registry-nodes.yml
   loop: "{{ kind_cluster_nodes.stdout_lines }}"

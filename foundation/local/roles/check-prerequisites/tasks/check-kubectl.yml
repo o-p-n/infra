@@ -1,6 +1,8 @@
 ---
 - name: Check if kubectl is installed
   ansible.builtin.shell: kubectl version --client
+  environment:
+    PATH: "{{ remote_path }}"
   register: kubectl_check
   changed_when: false
 
@@ -12,6 +14,7 @@
 - name: Print kubectl client version
   ansible.builtin.debug:
     msg: "Kubectl client version: {{ kubectl_client_version | default('not found') }}"
+  changed_when: false
 
 - name: Fail if kubectl version is too old
   ansible.builtin.fail:

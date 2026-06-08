@@ -1,6 +1,7 @@
 ---
 # Temporary directory for intermediate files
-temp_dir: "{{ playbook_dir }}/../../tmp/foundation:local"
+temp_dir: "${TMPDIR}/foundation:local"
+remote_path: "${HOME}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/bin"
 
 # KinD cluster configuration
 kind_cluster_name: local

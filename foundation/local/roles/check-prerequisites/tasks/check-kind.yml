@@ -1,6 +1,8 @@
 ---
 - name: Check if kind is installed
   ansible.builtin.shell: kind --version
+  environment:
+    PATH: "{{ remote_path }}"
   register: kind_check
   changed_when: false
 
@@ -12,6 +14,7 @@
 - name: Print kind version
   ansible.builtin.debug:
     msg: "Kind version: {{ kind_version | default('not found') }}"
+  changed_when: false
 
 - name: Fail if kind version is too old
   ansible.builtin.fail:

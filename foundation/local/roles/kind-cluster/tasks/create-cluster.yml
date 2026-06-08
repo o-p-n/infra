@@ -18,6 +18,8 @@
       --kubeconfig {{ temp_dir }}/kube.config
       --image "kindest/node:{{ kind_kubernetes_version }}"
       --wait 5m
+  environment:
+    PATH: "{{ remote_path }}"
   register: kind_create
   changed_when: kind_create.rc == 0
   failed_when:
@@ -26,11 +28,13 @@
 
 - name: Configure kubectl for KinD cluster
   ansible.builtin.shell: kind get kubeconfig --name {{ kind_cluster_name }}
+  environment:
+    PATH: "{{ remote_path }}"
   register: kubeconfig
   changed_when: false
 
 - name: Save kubeconfig
   copy:
     content: "{{ kubeconfig.stdout }}"
-    dest: ~/.kube/{{ kind_cluster_name }}.config
+    dest: "~/.kube/{{ kind_cluster_name }}.config"
     mode: "0600"

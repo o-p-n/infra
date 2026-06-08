@@ -1,6 +1,8 @@
 ---
 - name: Check if docker is installed
   ansible.builtin.shell: docker --version
+  environment:
+    PATH: "{{ remote_path }}"
   register: docker_check
   changed_when: false
 
@@ -12,6 +14,7 @@
 - name: Print docker version
   ansible.builtin.debug:
     msg: "Docker version: {{ docker_version | default('not found') }}"
+  changed_when: false
 
 - name: Fail if docker version is too old
   ansible.builtin.fail:

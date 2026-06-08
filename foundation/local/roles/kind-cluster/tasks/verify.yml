@@ -1,10 +1,14 @@
 ---
 - name: Verify cluster connectivity
   ansible.builtin.shell: KUBECONFIG=~/.kube/{{ kind_cluster_name }}.config kubectl cluster-info
+  environment:
+    PATH: "{{ remote_path }}"
   register: cluster_info
   changed_when: false
 
 - name: Verify nodes are ready
   ansible.builtin.shell: KUBECONFIG=~/.kube/{{ kind_cluster_name }}.config kubectl get nodes -o wide
+  environment:
+    PATH: "{{ remote_path }}"
   register: nodes_output
   changed_when: false
