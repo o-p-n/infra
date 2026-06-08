@@ -7,7 +7,7 @@ shift
 
 case "${CMD}" in
   "playbook")
-    ansible-playbook -i inventory "$@"
+    ansible-playbook "$@"
     ;;
   "run")
     ansible "$@"
