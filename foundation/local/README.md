@@ -1,16 +1,19 @@
-# compute.local - Local KinD Cluster Setup
+# foundation:local - Local KinD Cluster Setup
 
 This Ansible project provisions a local Kubernetes cluster using KinD (Kubernetes in Docker) with support for a local container registry.
+
+Ansible runs in a container with host-based networking support, and drives changes to the local system via SSH. The output is a KinD cluster named `local` with 4 nodes, plus and a local registry running on `localhost:12676`. The name, node count, and registry information are configurable.
 
 ## PREREQUISITES
 
 The following must be installed and running on the target host **before** running the playbook:
 
-- **Docker** engine version `29.0.0` or higher (desktop version `4.25` or higher)
+- **SSH** server and agent running locally
+- **Docker** engine version `29.0.0` or higher (desktop version `4.25` or higher) with `--network=host` support
+  - Docker Desktop needed for MacOS
 - **Python** version `3.10` or higher
 - **kind** version `0.31.0` or higher
 - **kubectl** version `1.34.0` or higher
-- **ansible** version `13.0` or higher
 
 ## USING
 
@@ -50,13 +53,14 @@ Edit `group_vars/all.yml` to customize:
 
 | Variable | Description |
 |---|-|
-| `temp_dir` | Directory for intermediate files |
+| `temp_dir` | Temporary directory for intermediate files |
+| `remote_path` | Remote PATH for executable locations |
 | `kind_cluster_name` | Name of the KinD cluster |
 | `kind_kubernetes_version` | Kubernetes version for KinD nodes |
 | `kind_node_count` | Number of worker nodes |
-| `kubectl_version` | kubectl client version to install |
-| `registry_host` | Hostname the registry is reachable from |
+| `kubectl_version` | kubectl client version |
+| `registry_host` | Hostname for the registry |
 | `registry_host_port` | Host port for the registry |
 | `registry_container_name` | Name of the registry container |
-| `registry_container_port` | Container port for the registry |
+| `registry_container_port` | Internal port of the registry container |
 | `registry_image` | Registry container image |
