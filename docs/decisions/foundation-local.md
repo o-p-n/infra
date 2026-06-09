@@ -60,15 +60,7 @@ The `kind delete cluster` task fires when the config template changes (`when: ki
 
 **Status:** Intentional
 
-The inventory (`inventory/hosts.yml`) only supports localhost with `ansible_connection: local`. This is a local development tool, not a multi-host deployment.
-
----
-
-## `ansible.cfg` Legacy Directive
-
-**Status:** Accepted
-
-`callback_whitelist = timer, profile_tasks` uses the legacy directive. It still functions in the current Ansible version and is not blocking.
+The inventory (`inventory/hosts.yml`) only supports localhost with `ansible_connection: ssh`. The playbook runs Ansible from a container that connects to the host via SSH. This is a local development tool, not a multi-host deployment.
 
 ---
 
