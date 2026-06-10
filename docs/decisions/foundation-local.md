@@ -44,7 +44,7 @@ Only the repo-root `.gitignore` is used. There is no need for a nested `.gitigno
 
 **Status:** Intentional
 
-The `kind delete cluster` task fires when the config template changes (`when: kind_config.changed`). Since the template is rendered with Jinja2 on every run, the cluster is always deleted and recreated. This is the desired behavior for local development — a fresh cluster each time.
+The `kind delete cluster` task fires when the generated config changes (`when: kind_config.changed`). Since the config is written to a temp directory, it may be recreated more frequently than if stored in a durable location — but this is an acceptable tradeoff for local development. The intent is a fresh cluster whenever the configuration changes.
 
 ---
 
