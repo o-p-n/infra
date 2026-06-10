@@ -20,6 +20,6 @@
   ansible.builtin.fail:
     msg: "Docker >= 29.0.0 is required. Found {{ docker_version | default('not installed') }}."
   when:
-      - docker_check.rc == 0
-      - docker_version is defined
-      - docker_version is version('29.0.0', '<')
+    - docker_check.rc == 0
+    - docker_version is defined
+    - docker_version is version('29.0.0', '<')

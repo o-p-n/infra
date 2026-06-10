@@ -8,26 +8,26 @@
   register: node_registry_config
 
 - block:
-  - name: Determine if registry config exists in node
-    community.docker.docker_container_exec:
-      container: "{{ item }}"
-      command: ls -lhA /etc/containerd/certs.d/localhost:{{ registry_host_port }}/hosts.toml
-    delegate_to: localhost
-    register: node_registry_setup
-    failed_when: false
-    changed_when: false
+    - name: Determine if registry config exists in node
+      community.docker.docker_container_exec:
+        container: "{{ item }}"
+        command: ls -lhA /etc/containerd/certs.d/localhost:{{ registry_host_port }}/hosts.toml
+      delegate_to: localhost
+      register: node_registry_setup
+      failed_when: false
+      changed_when: false
 
-  - name: Create registry config directory in KinD nodes
-    community.docker.docker_container_exec:
-      container: "{{ item }}"
-      command: mkdir -p /etc/containerd/certs.d/localhost:{{ registry_host_port }}
-    delegate_to: localhost
-    when: node_registry_setup.rc != 0
+    - name: Create registry config directory in KinD nodes
+      community.docker.docker_container_exec:
+        container: "{{ item }}"
+        command: mkdir -p /etc/containerd/certs.d/localhost:{{ registry_host_port }}
+      delegate_to: localhost
+      when: node_registry_setup.rc != 0
 
-  - name: Apply registry config to KinD nodes
-    community.docker.docker_container_copy_into:
-      container: "{{ item }}"
-      path: "{{ temp_dir }}/registry_hosts.toml"
-      container_path: /etc/containerd/certs.d/localhost:{{ registry_host_port }}/hosts.toml
-    delegate_to: localhost
-    when: node_registry_setup.rc != 0
+    - name: Apply registry config to KinD nodes
+      community.docker.docker_container_copy_into:
+        container: "{{ item }}"
+        path: "{{ temp_dir }}/registry_hosts.toml"
+        container_path: /etc/containerd/certs.d/localhost:{{ registry_host_port }}/hosts.toml
+      delegate_to: localhost
+      when: node_registry_setup.rc != 0

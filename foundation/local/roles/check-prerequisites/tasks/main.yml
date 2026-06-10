@@ -15,5 +15,5 @@
     - check-prerequisites-kubectl
 - include_tasks: check-python.yml
   tags:
-     - check-prerequisites
-     - check-prerequisites-python
+    - check-prerequisites
+    - check-prerequisites-python

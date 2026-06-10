@@ -1,7 +1,6 @@
 FROM docker.io/docker:29.5.2-cli AS dind
 
 
-
 FROM python:3.14-slim AS main
 
 ENV DEBIAN_FRONTEND=noninteractive

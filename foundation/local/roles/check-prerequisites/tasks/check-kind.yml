@@ -20,6 +20,6 @@
   ansible.builtin.fail:
     msg: "Kind >= 0.31.0 is required. Found {{ kind_version | default('not installed') }}."
   when:
-       - kind_check.rc == 0
-       - kind_version is defined
-       - kind_version is version('0.31.0', '<')
+    - kind_check.rc == 0
+    - kind_version is defined
+    - kind_version is version('0.31.0', '<')

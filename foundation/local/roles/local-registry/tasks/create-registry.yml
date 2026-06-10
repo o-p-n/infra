@@ -9,4 +9,3 @@
     networks:
       - name: bridge
       - name: kind
-  delegate_to: localhost
