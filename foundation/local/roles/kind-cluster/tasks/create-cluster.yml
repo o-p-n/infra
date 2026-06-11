@@ -11,20 +11,20 @@
   when: kind_config.changed
 
 - name: Create KinD cluster
-  ansible.builtin.shell: >
-      kind create cluster
-      --name {{ kind_cluster_name }}
-      --config {{ temp_dir }}/kind-config.yml
-      --kubeconfig {{ temp_dir }}/kube.config
-      --image "kindest/node:{{ kind_kubernetes_version }}"
-      --wait 5m
+  ansible.builtin.shell: |
+      kind create cluster \
+          --name {{ kind_cluster_name }} \
+          --config {{ temp_dir }}/kind-config.yml \
+          --kubeconfig {{ temp_dir }}/kube.config \
+          --image "kindest/node:{{ kind_kubernetes_version }}" \
+          --wait 5m
   environment:
     PATH: "{{ remote_path }}"
   register: kind_create
-  changed_when: kind_create.rc == 0
   failed_when:
     - kind_create.rc != 0
     - "'already exist' not in kind_create.stderr"
+  changed_when: kind_create.rc == 0
 
 - name: Configure kubectl for KinD cluster
   ansible.builtin.shell: kind get kubeconfig --name {{ kind_cluster_name }}
