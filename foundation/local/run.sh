@@ -29,7 +29,7 @@ docker run --rm -ti \
   -v "${PWD}:/workspace:ro" \
   -v "${WORKING_TMPDIR}:/scratch:rw" \
   -v "/var/run/docker.sock:/var/run/docker.sock" \
-  -e "ANSIBLE_LOCAL_TMP=/workspace/temp" \
+  -e "ANSIBLE_LOCAL_TMP=/scratch" \
   -e "ANSIBLE_REMOTE_USER=${ANSIBLE_REMOTE_USER}" \
   -e "TMPDIR=/scratch" \
   o-p-n/ansible:latest "$@"
