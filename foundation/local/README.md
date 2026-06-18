@@ -22,20 +22,20 @@ The following must be installed and running on the target host **before** runnin
 Apply the default playbook:
 
 ```bash
-./run.sh playbook playbook.yml
+./run.sh playbook playbook.yaml
 ```
 
 Apply a specific tag or skip certain tasks:
 
 ```bash
-./run.sh playbook playbook.yml --tags kind-cluster
-./run.sh playbook playbook.yml --skip-tags local-registry
+./run.sh playbook playbook.yaml --tags kind-cluster
+./run.sh playbook playbook.yaml --skip-tags local-registry
 ```
 
 Run with extra variables:
 
 ```bash
-./run.sh playbook playbook.yml -e kind_node_count=2
+./run.sh playbook playbook.yaml -e kind_node_count=2
 ```
 
 ### Running Ad-Hoc Commands
@@ -49,7 +49,7 @@ Execute ad-hoc Ansible commands against the inventory:
 
 ## CONFIGURING
 
-Edit `group_vars/all.yml` to customize:
+Edit `group_vars/all.yaml` to customize:
 
 | Variable | Description |
 |---|-|

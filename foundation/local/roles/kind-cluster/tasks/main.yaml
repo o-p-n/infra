@@ -1,10 +1,10 @@
 ---
-- include_tasks: create-cluster.yml
+- include_tasks: create-cluster.yaml
   tags:
     - kind-cluster
     - kind-cluster-create
 
-- include_tasks: verify.yml
+- include_tasks: verify.yaml
   tags:
     - kind-cluster
     - kind-cluster-verify

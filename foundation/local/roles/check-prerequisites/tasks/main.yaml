@@ -1,19 +1,19 @@
 ---
-- include_tasks: check-docker.yml
+- include_tasks: check-docker.yaml
   tags:
     - check-prerequisites
     - check-prerequisites-docker
 
-- include_tasks: check-kind.yml
+- include_tasks: check-kind.yaml
   tags:
     - check-prerequisites
     - check-prerequisites-kind
 
-- include_tasks: check-kubectl.yml
+- include_tasks: check-kubectl.yaml
   tags:
     - check-prerequisites
     - check-prerequisites-kubectl
-- include_tasks: check-python.yml
+- include_tasks: check-python.yaml
   tags:
     - check-prerequisites
     - check-prerequisites-python

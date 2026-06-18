@@ -2,19 +2,21 @@
 - name: Create KinD cluster config
   register: kind_config
   ansible.builtin.template:
-    src: kind-config.yml.j2
-    dest: "{{ temp_dir }}/kind-config.yml"
+    src: kind-config.yaml.j2
+    dest: "{{ temp_dir }}/kind-config.yaml"
     mode: "0644"
 
 - name: Delete KinD cluster
   ansible.builtin.shell: kind delete cluster --name {{ kind_cluster_name }}
+  environment:
+    PATH: "{{ remote_path }}"
   when: kind_config.changed
 
 - name: Create KinD cluster
   ansible.builtin.shell: |
       kind create cluster \
           --name {{ kind_cluster_name }} \
-          --config {{ temp_dir }}/kind-config.yml \
+          --config {{ temp_dir }}/kind-config.yaml \
           --kubeconfig {{ temp_dir }}/kube.config \
           --image "kindest/node:{{ kind_kubernetes_version }}" \
           --wait 5m

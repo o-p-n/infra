@@ -10,5 +10,5 @@
   ansible.builtin.debug:
     var: kind_cluster_nodes
 
-- include_tasks: setup-registry-nodes.yml
+- include_tasks: setup-registry-nodes.yaml
   loop: "{{ kind_cluster_nodes.stdout_lines }}"

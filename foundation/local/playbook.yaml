@@ -4,8 +4,12 @@
   gather_facts: true
 
   pre_tasks:
-    - name: Setup temp directory
+    - name: Setup temp directory (managed)
       ansible.builtin.shell: mkdir -p {{ temp_dir }}
+    - name: Setup temp dir (control)
+      ansible.builtin.shell: mkdir -p {{ temp_dir }}
+      delegate_to: localhost
+
 
   roles:
     - role: check-prerequisites

@@ -1,6 +1,6 @@
 ---
 # Temporary directory for intermediate files
-temp_dir: "${TMPDIR}/foundation:local"
+temp_dir: "${TMPDIR}/foundation-local"
 remote_path: "${HOME}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/bin"
 
 # KinD cluster configuration
