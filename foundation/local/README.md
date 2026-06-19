@@ -8,14 +8,21 @@ Ansible runs in a container with host-based networking support, and drives chang
 
 The following must be installed and running on the target host **before** running the playbook:
 
-- **SSH** server and agent running locally
-- **Docker** engine version `29.0.0` or higher (desktop version `4.25` or higher) with `--network=host` support
-  - Docker Desktop needed for MacOS
-- **Python** version `3.10` or higher
-- **kind** version `0.31.0` or higher
-- **kubectl** version `1.34.0` or higher
+ - **SSH** server and agent running locally
+ - **Docker** engine version `29.0.0` or higher (desktop version `4.25` or higher) with `--network=host` support
+   - Docker Desktop needed for MacOS
+ - **Python** version `3.10` or higher
+ - **kind** version `0.31.0` or higher
+ - **kubectl** version `1.34.0` or higher
 
 ## USING
+
+> [!IMPORTANT]
+> The Ansible container cannot prompt for passwords; this can prevent it from connecting to your local development machine (which it does over SSH). Work around this by using SSH keys and preloading your key with `ssh-add`:
+>
+> ```
+> ssh-add ~/.ssh/id_ed25519
+> ```
 
 ### Running Playbooks
 
