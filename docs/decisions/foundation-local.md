@@ -80,8 +80,10 @@ There is no documented `--tags teardown` or standalone cleanup script. The clust
 
 ---
 
-## `kind create cluster` Multi-Line Command
+## Aggressive `ssh-keyscan` in Container Entrypoint
+    
+**Status:** Intentional
 
-**Status:** Accepted
+The `entrypoint.sh` script performs an aggressive `ssh-keyscan localhost`. This is intentional to allow containers created from this image to reliably connect to the host-local SSH server (the developer's machine) without manual host key verification.
 
-The `kind create cluster` shell command uses YAML multiline scalar (`>`) for readability. The newlines are folded into spaces at runtime. This is a style preference — the command works correctly.
+---

@@ -15,17 +15,13 @@ RUN apt update \
         sshpass \
   && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir \
-    ansible==13.5.0 \
-    ansible-lint==26.4.0 \
-    jmespath==1.1.0 \
-    netaddr==1.3.0 \
-    docker==7.1.0
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt \
+    && rm requirements.txt
 
-RUN ansible-galaxy collection install \
-    community.general \
-    ansible.posix \
-    community.docker
+COPY requirements.yml .
+RUN ansible-galaxy collection install -r requirements.yml \
+    && rm requirements.yml
 
 RUN mkdir -p ~/.ssh && chmod 600 ~/.ssh
 

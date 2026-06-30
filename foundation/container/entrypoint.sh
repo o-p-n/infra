@@ -13,6 +13,6 @@ case "${CMD}" in
     ansible "$@"
     ;;
   "shell")
-    exec "${SHELL}" "$@"
+    exec /bin/bash "$@"
     ;;
 esac
