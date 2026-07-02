@@ -1,6 +1,6 @@
 # foundation:container - Containerized Ansible Environment
 
-A Docker container providing a self-contained Ansible execution environment with Kind cluster support, Docker-in-Docker, and all required collections.
+A Docker container providing a self-contained Ansible execution environment with Kind cluster support and all required collections.
 
 ## PROVIDED
 
@@ -15,7 +15,7 @@ The container provides the following components:
 ## BUILDING
 
 ```bash
-docker build -t o-p-n/ansible:latest .
+make build
 ```
 
 ## USING
