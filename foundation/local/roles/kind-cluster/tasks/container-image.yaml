@@ -1,0 +1,5 @@
+---
+- name: Pull KinD node image
+  community.docker.docker_image_pull:
+    name: kindest/node:{{kind_kubernetes_version}}
+  delegate_to: localhost

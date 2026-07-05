@@ -1,0 +1,15 @@
+---
+- include_tasks: container-image.yaml
+  tags:
+    - kind-cluster
+    - kind-cluter-container-image
+
+- include_tasks: create-cluster.yaml
+  tags:
+    - kind-cluster
+    - kind-cluster-create
+
+- include_tasks: verify.yaml
+  tags:
+    - kind-cluster
+    - kind-cluster-verify

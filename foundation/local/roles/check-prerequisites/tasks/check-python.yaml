@@ -1,0 +1,25 @@
+---
+- name: Check if python3 is installed
+  ansible.builtin.shell: python3 --version
+  environment:
+    PATH: "{{ remote_path }}"
+  register: python_check
+  changed_when: false
+
+- name: Get python3 version
+  ansible.builtin.set_fact:
+    python_version: "{{ python_check.stdout | regex_replace('Python ([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') }}"
+  when: python_check.rc == 0
+
+- name: Print python3 version
+  ansible.builtin.debug:
+    msg: "Python3 version: {{ python_version | default('not found') }}"
+  changed_when: false
+
+- name: Fail if python3 version is too old
+  ansible.builtin.fail:
+    msg: "Python 3.10 or higher is required. Found {{ python_version | default('not installed') }}."
+  when:
+    - python_check.rc == 0
+    - python_version is defined
+    - python_version is version('3.10', '<')

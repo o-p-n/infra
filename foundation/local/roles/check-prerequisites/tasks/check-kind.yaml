@@ -1,0 +1,25 @@
+---
+- name: Check if kind is installed
+  ansible.builtin.shell: kind --version
+  environment:
+    PATH: "{{ remote_path }}"
+  register: kind_check
+  changed_when: false
+
+- name: Get kind version
+  ansible.builtin.set_fact:
+    kind_version: "{{ kind_check.stdout | regex_replace('^kind version ([0-9]+\\.[0-9]+\\.[0-9]+).*', '\\1') }}"
+  when: kind_check.rc == 0
+
+- name: Print kind version
+  ansible.builtin.debug:
+    msg: "Kind version: {{ kind_version | default('not found') }}"
+  changed_when: false
+
+- name: Fail if kind version is too old
+  ansible.builtin.fail:
+    msg: "Kind >= 0.31.0 is required. Found {{ kind_version | default('not installed') }}."
+  when:
+    - kind_check.rc == 0
+    - kind_version is defined
+    - kind_version is version('0.31.0', '<')

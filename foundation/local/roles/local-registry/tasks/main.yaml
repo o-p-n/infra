@@ -1,0 +1,10 @@
+---
+- include_tasks: create-registry.yaml
+  tags:
+    - local-registry
+    - local-registry-create
+
+- include_tasks: connect-registry.yaml
+  tags:
+    - local-registry
+    - local-registry-connect

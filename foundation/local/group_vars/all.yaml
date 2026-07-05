@@ -1,0 +1,19 @@
+---
+# Temporary directory for intermediate files
+temp_dir: "${TMPDIR}/foundation-local"
+remote_path: "${HOME}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/bin"
+
+# KinD cluster configuration
+kind_cluster_name: local
+kind_kubernetes_version: "v1.34.0"
+kind_node_count: 3
+
+# kubectl configuration
+kubectl_version: "v1.34.0"
+
+# Local container registry configuration
+registry_host: localhost
+registry_host_port: 12676
+registry_container_port: 5000
+registry_container_name: registry
+registry_image: "docker.io/library/registry:3"

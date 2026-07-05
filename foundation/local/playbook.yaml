@@ -1,0 +1,17 @@
+---
+- name: Setup local KinD cluster with container registry
+  hosts: kind_hosts
+  gather_facts: true
+
+  pre_tasks:
+    - name: Setup temp directory (managed)
+      ansible.builtin.shell: mkdir -p {{ temp_dir }}
+    - name: Setup temp dir (control)
+      ansible.builtin.shell: mkdir -p {{ temp_dir }}
+      delegate_to: localhost
+
+
+  roles:
+    - role: check-prerequisites
+    - role: kind-cluster
+    - role: local-registry
