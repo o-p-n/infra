@@ -1,15 +1,20 @@
 ---
 - name: Deploy microk8s
-  hosts: nodes
+  hosts: all
+  gather_facts: false
+  pre_tasks:
+    - name: Populate known_hosts on control node
+      delegate_to: localhost
+      ansible.builtin.shell: |
+        ssh-keyscan "{{ inventory_hostname }}" >> ~/.ssh/known_hosts
+      changed_when: false
+      failed_when: false
+    - name: Gather facts from hosts
+      ansible.builtin.gather_facts:
   roles:
     - role: microk8s
-      tasks_from: install
+      tasks_from: install.yaml
     - role: microk8s
-      tasks_from: config
-
-- name: Assemble cluster
-  hosts: nodes
-  serial: 1
-  roles:
+      tasks_from: config.yaml
     - role: microk8s
-      tasks_from: join
+      tasks_from: join.yaml
