@@ -15,6 +15,7 @@
   changed_when: false
 
 - name: Apply current node to cluster
+  when: inventory_hostname != microk8s_primary
   block:
     - name: Determine cluster membership status
       ansible.builtin.set_fact:
@@ -25,6 +26,7 @@
       register: microk8s_join_cmd
       when: microk8s_node_missing
       delegate_to: "{{ microk8s_primary }}"
+      changed_when: false
 
     - name: Join current node to primary
       ansible.builtin.command: "{{ microk8s_join_cmd.stdout }}"
@@ -32,4 +34,4 @@
       when: microk8s_node_missing
       failed_when:
         - microk8s_node_join.rc != 0
-  when: inventory_hostname != microk8s_primary
+
