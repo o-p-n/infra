@@ -1,3 +1,4 @@
+---
 - name: Determine primary node
   ansible.builtin.set_fact:
     microk8s_primary: "{{ ansible_play_hosts[0] }}"

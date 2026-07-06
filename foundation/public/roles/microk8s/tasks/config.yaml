@@ -1,9 +1,11 @@
+---
 - name: Generate launch config
   become: true
   register: launch_config
   ansible.builtin.template:
-    src: ../templates/launch-config.yaml.j2
+    src: launch-config.yaml.j2
     dest: /var/snap/microk8s/common/.microk8s.yaml
+
 - name: Apply launch configuration
   become: true
   ansible.builtin.shell: |

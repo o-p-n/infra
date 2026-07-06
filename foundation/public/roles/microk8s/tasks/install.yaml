@@ -1,3 +1,4 @@
+---
 - name: Install microk8s
   become: true
   check_mode: true
@@ -7,11 +8,13 @@
       - microk8s
     channel: "{{ microk8s_version }}"
     classic: true
+
 - name: Install snapd
   become: true
   ansible.builtin.package:
     name: snapd
     state: present
+
 - name: Install microk8s
   become: true
   community.general.snap:
