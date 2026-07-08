@@ -34,4 +34,3 @@
       when: microk8s_node_missing
       failed_when:
         - microk8s_node_join.rc != 0
-

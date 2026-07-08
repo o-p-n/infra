@@ -12,9 +12,6 @@
     - name: Gather facts from hosts
       ansible.builtin.gather_facts:
   roles:
-    - role: microk8s
-      tasks_from: install.yaml
-    - role: microk8s
-      tasks_from: config.yaml
-    - role: microk8s
-      tasks_from: join.yaml
+    - role: microk8s-install
+    - role: microk8s-config
+    - role: microk8s-join
