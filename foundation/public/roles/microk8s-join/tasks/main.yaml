@@ -2,10 +2,12 @@
 - name: Determine primary node
   ansible.builtin.set_fact:
     microk8s_primary: "{{ ansible_play_hosts[0] }}"
+  tags: microk8s-join
 
 - name: Wait for nodes to be ready
   ansible.builtin.command: microk8s status --wait-ready
   changed_when: false
+  tags: microk8s-join
 
 - name: List current cluster nodes
   ansible.builtin.command: microk8s kubectl get nodes -o wide
@@ -13,9 +15,11 @@
   delegate_to: "{{ microk8s_primary }}"
   delegate_facts: true
   changed_when: false
+  tags: microk8s-join
 
 - name: Apply current node to cluster
   when: inventory_hostname != microk8s_primary
+  tags: microk8s-join
   block:
     - name: Determine cluster membership status
       ansible.builtin.set_fact:
@@ -27,7 +31,6 @@
       when: microk8s_node_missing
       delegate_to: "{{ microk8s_primary }}"
       changed_when: false
-
     - name: Join current node to primary
       ansible.builtin.command: "{{ microk8s_join_cmd.stdout }}"
       register: microk8s_node_join

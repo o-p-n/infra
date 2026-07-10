@@ -8,12 +8,14 @@
       - microk8s
     channel: "{{ microk8s_version }}"
     classic: true
+  tags: microk8s-install
 
 - name: Install snapd
   become: true
   ansible.builtin.package:
     name: snapd
     state: present
+  tags: microk8s-install
 
 - name: Install microk8s
   become: true
@@ -22,3 +24,4 @@
       - microk8s
     channel: "{{ microk8s_version }}"
     classic: true
+  tags: microk8s-install
