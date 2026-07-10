@@ -1,32 +1,36 @@
 # Foundation - Basic Infrastructure
 
-Kubernetes cluster environments for `outer-planes.net` in various environments.
+Kubernetes cluster environments for `outer-planes.casa`.
 
-This directory contains the infrastructure that provisions and configures Kubernetes clusters across different environments. Each sub-project targets a specific deployment context — starting with a local KinD cluster, with additional environments planned.
+This directory contains infrastructure for provisioning and configuring Kubernetes clusters across different environments.
 
-## USAGE
+## ENVIRONMENTS
 
-### ENVIRONMENTS
-- **`local`**_(./local/)_ Provision a local KinD (Kubernetes in Docker) cluster with a built-in container registry, driven by Ansible playbooks.
+- **`local`** (./local/) Provisions a local KinD cluster with a built-in container registry.
+- **`public`** (./public/) Provisions a MicroK8s cluster on remote hosts.
 
-### SUPPORT
+## SUPPORT
 
-The `container` sub-project defines an Ansible execution environment, as a Docker container.
-
-
+- **`container`** (./container/) Provides the Ansible execution environment as a Docker container.
 
 ## GETTING STARTED
 
-Build the Ansible container:
-
+### 1. Build the Ansible container
 ```bash
-cd foundation/container && docker build -t o-p-n/ansible:latest .
+cd foundation/container && make build
 ```
 
-Provision the local cluster:
+### 2. Provision a cluster
+Navigate to the target environment and use the provided `run.sh` script.
 
+**Local Cluster:**
 ```bash
-cd foundation/local && ./run.sh playbook playbook.yml
+cd foundation/local && ./run.sh playbook playbook.yaml
 ```
 
-See each sub-project's README for details.
+**Public Cluster:**
+```bash
+cd foundation/public && ./run.sh playbook playbook.yaml
+```
+
+*Refer to each sub-project's `README.md` for specific configuration and usage details.*
