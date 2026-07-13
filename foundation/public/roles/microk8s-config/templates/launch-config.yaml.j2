@@ -1,0 +1,16 @@
+---
+version: 0.1.0
+addons:
+{% for addon in microk8s_addons %}
+  - name: {{ addon }}
+{% endfor %}
+extraKubeletArgs:
+  --cluster-domain: cluster.local
+  --cluster-dns: 10.152.183.10
+extraSANs:
+{% for san in microk8s_extra_sans %}
+  - {{ san }}
+{% endfor %}
+{% for host in ansible_play_hosts | sort %}
+  - {{ host }}
+{% endfor %}

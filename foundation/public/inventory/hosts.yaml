@@ -1,0 +1,7 @@
+nodes:
+  hosts:
+    elysium-armoria.local:
+    elysium-belierin.local:
+    elysium-eronia.local:
+  vars:
+    ansible_user: bot

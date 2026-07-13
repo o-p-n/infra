@@ -1,0 +1,16 @@
+---
+- name: Generate launch config
+  become: true
+  register: microk8s_launch_config
+  ansible.builtin.template:
+    src: launch-config.yaml.j2
+    dest: /var/snap/microk8s/common/.microk8s.yaml
+    mode: '0644'
+  tags: microk8s-config
+
+- name: Apply launch configuration
+  become: true
+  ansible.builtin.shell: |
+    snap set microk8s config="$(cat /var/snap/microk8s/common/.microk8s.yaml)"
+  when: microk8s_launch_config.changed
+  tags: microk8s-config

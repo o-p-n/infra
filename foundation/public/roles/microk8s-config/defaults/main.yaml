@@ -1,0 +1,8 @@
+---
+microk8s_addons:
+  - community
+  - dns
+  - rbac
+  - metrics-server
+microk8s_extra_sans:
+  - outer-planes.casa
