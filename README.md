@@ -1,42 +1,43 @@
-# outer-planes.net Kubernetes Infrastructure
+# outer-planes.net Infrastructure
 
 This repository manages the base infrastructure for [outer-planes.net](https://outer-planes.net).
 
-# KUBERNETES RESOURCES
+## ARCHITECTURE
 
-Those resources are maintained in `o-p-n.k8s`
+The infrastructure is managed in two sequential layers:
 
-Further, there are two stacks:
-* `local` for local development and testing, using [KinD](https://kind.sigs.k8s.io/)
-* `public` for public-fasing workloads on a home lab, using [microk8s]([https](https://microk8s.io/) for compute and [Cloudflare tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to bridge them onto the internet.
+- **[foundation](./foundation/)**: Provides the base cluster environments and execution tooling. This is the first layer to be applied.
+- **[framing](./framing/)**: Provisions Kubernetes resources and services on top of the established foundation.
 
-Resources are provisioned using [Pulumi](https://pulumi.com).  The backend state is managed on a local filesystem and secrets are managed using separate per-environment passphrases.
+## QUICK START
 
-## PREREQUISITES
+To interact with this repository, use `foundation` for the foundational compute resources (kubernetes runtime) and `framing` for the common kubernetes framework resources.
 
-The following components are necessary to deploy infrastructure:
-* `pulumi` command-line interface, latest version
-* Docker engine, version 24 or later
-* `kubectl`, version 1.31 or later
+### 1. Foundation
 
-For local testing, the following are also needed:
+Navigate to the `foundation` directory to provision clusters using the provided scripts.
 
-* `kind`, version 0.27.0 or later
-* `cloud-provider-kind`, version 0.10.0 or later
+```bash
+cd foundation
 
+# one-time action: creates the provisioning container
+cd container && make build
 
-In addition, an up-to-date copy of the state backend and its associated passphrase are needed.  Both are maintained separate from this repository.
+# Example for local cluster
+cd local && ./run.sh playbook playbook.yaml
+```
 
-## DEPLOYING
+#### 2. Framing
 
-Deploying updates involves the following process (per environment "stack"):
-1. declare the relevant stack passphrase and Kubernetes configuration.
-   > Export the relevant passphrase in the `PULUMI_CONFIG_PASSPHRASE` environment variable
-   > Export the relevant config path in the `KUBECONFIG` environment variable
+Navigate to the `framing` directory to provision Kubernetes infrastructure on top of the cluster.
+> [!IMPORTANT]
+> You must set the `PULUMI_CONFIG_PASSPHRASE` environment variable to unlock secrets.
 
-2. deploy the `o-p-n.k8s` project:
-   ```bash
-   cd o-p-n.k8s
-   pulumi -s <stack> up
-   cd ../..
-   ```
+```bash
+cd framing
+export PULUMI_CONFIG_PASSPHRASE=<your-secret-passphrase>
+pulumi up --stack <stack>
+```
+
+*For detailed configuration and usage instructions, please refer to the individual `README.md` files in each sub-project.*
+

@@ -1,4 +1,4 @@
-# compute - Kubernetes Infrastructure Provisioning
+# framing - Kubernetes Infrastructure Provisioning
 
 This project uses Pulumi to provision and manage Kubernetes infrastructure for different environments (local and public).
 
