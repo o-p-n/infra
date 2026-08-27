@@ -7,7 +7,7 @@ import { ModuleResult, ModuleResultSet } from "../k8s/_basics";
 import dashboards from "./dashboards";
 
 const namespace = "cloudflare";
-const version = "2026.3.0";
+const version = "2026.8.2";
 
 type TokenResult = cf.GetZeroTrustTunnelCloudflaredTokenResult;
 
