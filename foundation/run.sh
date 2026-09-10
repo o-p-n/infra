@@ -10,7 +10,7 @@ HOST_OS="$(uname -s)"
 case "${HOST_OS}" in
 
   "Darwin")
-    DOCKER_SSH_OPTS="-v /run/host-services/ssh-auth.sock:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent" 
+    DOCKER_SSH_OPTS="-v /run/host-services/ssh-auth.sock:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent"
     ;;
 
   *)
@@ -19,14 +19,15 @@ case "${HOST_OS}" in
 
 esac
 
-WORKING_TMPDIR=${SCRIPT_DIR}/../../tmp
+WORKING_SRCDIR=${SCRIPT_DIR}
+WORKING_TMPDIR=${SCRIPT_DIR}/../tmp
 
 mkdir -p "${WORKING_TMPDIR}"
 
 docker run --rm -ti \
   --network=host \
   ${DOCKER_SSH_OPTS:-} \
-  -v "${PWD}:/workspace:ro" \
+  -v "${WORKING_SRCDIR}:/workspace:ro" \
   -v "${WORKING_TMPDIR}:/scratch:rw" \
   -v "/var/run/docker.sock:/var/run/docker.sock" \
   -e "ANSIBLE_LOCAL_TMP=/scratch" \
