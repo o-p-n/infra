@@ -5,11 +5,12 @@ remote_path: "${HOME}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/bin"
 
 # KinD cluster configuration
 kind_cluster_name: local
-kind_kubernetes_version: "v1.34.0"
+kind_kubernetes_version: "v{{ kubernetes_version_full }}"
+kind_node_image: "kindest/node:{{ kind_kubernetes_version }}"
 kind_node_count: 3
 
 # kubectl configuration
-kubectl_version: "v1.34.0"
+kubectl_version: "v{{ kubernetes_version_full }}"
 
 # Local container registry configuration
 registry_host: localhost

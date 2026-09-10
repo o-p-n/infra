@@ -18,7 +18,7 @@
           --name {{ kind_cluster_name }} \
           --config {{ temp_dir }}/kind-config.yaml \
           --kubeconfig {{ temp_dir }}/kube.config \
-          --image "kindest/node:{{ kind_kubernetes_version }}" \
+          --image "{{ kind_node_image }}" \
           --wait 5m
   environment:
     PATH: "{{ remote_path }}"

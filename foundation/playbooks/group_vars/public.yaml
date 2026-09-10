@@ -1,3 +1,3 @@
 ---
 microk8s_domain: outer-planes.casa
-microk8s_version: 1.34/stable
+microk8s_version: "{{ kubernetes_version_short }}/stable"
