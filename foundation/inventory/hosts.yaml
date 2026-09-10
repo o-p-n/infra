@@ -1,0 +1,18 @@
+# Consolidated inventory for all hosts
+# local group: hosts for the local environment
+# public group: hosts for the public environment
+
+local:
+  hosts:
+    target:
+      ansible_connection: ssh
+      ansible_host: localhost
+      ansible_python_interpreter: auto_silent
+
+public:
+  hosts:
+    elysium-armoria.local:
+    elysium-belierin.local:
+    elysium-eronia.local:
+  vars:
+    ansible_user: bot
