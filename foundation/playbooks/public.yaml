@@ -1,6 +1,6 @@
 ---
 - name: Deploy microk8s
-  hosts: all
+  hosts: public
   gather_facts: false
   pre_tasks:
     - name: Populate known_hosts on control node

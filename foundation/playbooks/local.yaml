@@ -1,6 +1,6 @@
 ---
 - name: Setup local KinD cluster with container registry
-  hosts: kind_hosts
+  hosts: local
   gather_facts: true
 
   pre_tasks:

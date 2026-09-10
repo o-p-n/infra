@@ -11,7 +11,7 @@ case "${CMD}" in
     shift
     case "${PLAYBOOK}" in
       "local"|"public")
-        ansible-playbook /workspace/playbooks/${PLAYBOOK}.yaml "$@"
+        ansible-playbook playbooks/${PLAYBOOK}.yaml "$@"
         ;;
       *)
         ansible-playbook ${PLAYBOOK} "$@"
