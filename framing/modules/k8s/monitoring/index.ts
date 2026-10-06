@@ -2,7 +2,7 @@ import { Config, CustomResourceOptions, Resource } from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import { ModuleResult, ModuleResultSet } from "../_basics";
 
-const version = "89.1.0";
+const version = "92.0.0";
 const namespace = "monitoring";
 
 const projectConfig = new Config("o-p-n");
@@ -15,9 +15,6 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
   const ns = new k8s.core.v1.Namespace(namespace, {
     metadata: {
       name: namespace,
-      labels: {
-        "istio.io/dataplane-mode": "ambient"
-      }
     },
   }, { provider });
 
