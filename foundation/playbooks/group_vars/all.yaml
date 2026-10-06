@@ -1,0 +1,12 @@
+# Global variables applied to all hosts
+
+# Kubernetes version configuration
+kubernetes_major: "1"
+kubernetes_minor: "34"
+kubernetes_patch: "0"
+
+# Derived version strings
+kubernetes_version_short: "{{ kubernetes_major }}.{{ kubernetes_minor }}"
+kubernetes_version_full: "{{ kubernetes_major }}.{{ kubernetes_minor }}.{{ kubernetes_patch }}"
+
+

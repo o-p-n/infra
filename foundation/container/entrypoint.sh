@@ -7,7 +7,16 @@ shift
 
 case "${CMD}" in
   "playbook")
-    ansible-playbook "$@"
+    PLAYBOOK="$1"
+    shift
+    case "${PLAYBOOK}" in
+      "local"|"public")
+        ansible-playbook playbooks/${PLAYBOOK}.yaml "$@"
+        ;;
+      *)
+        ansible-playbook ${PLAYBOOK} "$@"
+        ;;
+    esac
     ;;
   "run")
     ansible "$@"
