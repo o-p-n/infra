@@ -63,6 +63,7 @@ export default async function stack(provider: k8s.Provider, deployed: ModuleResu
           kubeControllerManagerDown: true,
           kubeProxyDown: true,
           kubeSchedulerDown: true,
+          PrometheusNotConnectedToAlertmanagers: true,
         },
       },
       kubeControllerManager: {
