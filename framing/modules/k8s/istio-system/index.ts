@@ -1,10 +1,10 @@
 import * as k8s from "@pulumi/kubernetes";
 import { Config } from "@pulumi/pulumi";
 
-const version = "1.30.4";
+const version = "1.31.4";
 const namespace = "istio-system";
 const repositoryOpts = {
-  repo: "https://istio-release.storage.googleapis.com/charts",
+  repo: "https://blob.istio.io/istio-release/charts",
 };
 
 export default async function stack(provider: k8s.Provider) {
